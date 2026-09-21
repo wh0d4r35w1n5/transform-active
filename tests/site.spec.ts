@@ -13,11 +13,12 @@ test('the complete page loads with working images and no runtime errors', async 
   page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()) })
   await page.reload()
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Transform.')
-  for (const id of ['classes', 'schedule', 'teachers', 'philosophy', 'membership', 'community']) {
+  for (const id of ['gym', 'classes', 'schedule', 'teachers', 'philosophy', 'membership', 'community']) {
     await expect(page.locator(`#${id}`)).toBeAttached()
   }
-  await expect(page.locator('.practice-card')).toHaveCount(5)
-  await expect(page.locator('.practice-card img')).toHaveCount(5)
+  await expect(page.locator('.practice-card')).toHaveCount(6)
+  await expect(page.locator('.practice-card img')).toHaveCount(6)
+  await expect(page.locator('.gym-photo img')).toHaveCount(3)
   await expect(page.locator('.teacher-card')).toHaveCount(3)
   await expect(page.locator('.pricing-card')).toHaveCount(3)
   await expect(page.locator('.testimonial-card')).toHaveCount(3)
