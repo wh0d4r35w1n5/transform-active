@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { motion } from 'motion/react'
+import { useEffect, useRef, useState, type FormEvent, type PointerEvent } from 'react'
+import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react'
 import { Anchor, ArrowDown, ArrowRight, Check, Clock3, Facebook, History, Instagram, Leaf, Mail, MapPin, Menu, Pause, Play, Sprout, Sun, TrendingUp, UsersRound, Waves, Wind } from 'lucide-react'
 import { BreathingCircles, GrainOverlay, Logo, Reveal, RoundSeal, SectionHeading } from './components/brand'
+import { GymShot, Magnetic } from './components/fx'
 import { BookingDialog, type BookingIntent } from './components/BookingDialog'
 import { Schedule } from './components/Schedule'
 import { Button } from './components/ui/button'
@@ -67,7 +68,7 @@ function Header({ onTrial }: { onTrial: () => void }) {
       <div className="header-inner">
         <Logo />
         <nav className="desktop-nav" aria-label="Main navigation">{navigation.map(({ label, id }) => <a key={id} href={`#${id}`} className={cn(active === id && 'is-active')}>{label}</a>)}</nav>
-        <Button className="desktop-trial" size="sm" onClick={onTrial}>Free Trial for Locals <ArrowRight aria-hidden="true" /></Button>
+        <Magnetic><Button className="desktop-trial" size="sm" onClick={onTrial}>Free Trial for Locals <ArrowRight aria-hidden="true" /></Button></Magnetic>
         <Dialog open={menuOpen} onOpenChange={setMenuOpen}>
           <DialogTrigger asChild><Button ref={menuTrigger} className="mobile-menu-trigger" variant="ghost" size="icon" aria-label="Open navigation menu"><Menu size={25} aria-hidden="true" /></Button></DialogTrigger>
           <DialogContent className="mobile-menu" onCloseAutoFocus={(event) => {
@@ -82,7 +83,7 @@ function Header({ onTrial }: { onTrial: () => void }) {
             <DialogTitle className="sr-only">Explore Transform Active</DialogTitle>
             <DialogDescription className="sr-only">Navigate to classes, the timetable, our teachers, membership, or the community.</DialogDescription>
             <nav aria-label="Mobile navigation">{navigation.map(({ label, id }, index) => <a key={id} href={`#${id}`} onClick={() => setMenuOpen(false)}><span>0{index + 1}</span>{label}<ArrowRight size={22} aria-hidden="true" /></a>)}</nav>
-            <Button variant="light" size="lg" onClick={() => { pendingTrial.current = true; setMenuOpen(false) }}>Free Trial for Locals <ArrowRight aria-hidden="true" /></Button>
+            <Magnetic><Button variant="light" size="lg" onClick={() => { pendingTrial.current = true; setMenuOpen(false) }}>Free Trial for Locals <ArrowRight aria-hidden="true" /></Button></Magnetic>
             <p className="mobile-menu-cue">Move. Breathe. Transform.</p>
           </DialogContent>
         </Dialog>
@@ -91,22 +92,53 @@ function Header({ onTrial }: { onTrial: () => void }) {
   )
 }
 
+const finePointer = () => typeof window !== 'undefined' && window.matchMedia('(pointer: fine)').matches
+
+function StaggerWord({ word, className, delay, reducedMotion }: { word: string; className?: string; delay: number; reducedMotion: boolean }) {
+  return (
+    <span className={className} aria-hidden="true">
+      {word.split('').map((char, index) => (
+        <motion.span
+          key={index}
+          style={{ display: 'inline-block' }}
+          initial={reducedMotion ? false : { opacity: 0, y: 24, filter: 'blur(7px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ delay: delay + index * 0.032, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >{char}</motion.span>
+      ))}
+    </span>
+  )
+}
+
 function Hero({ onTrial }: { onTrial: () => void }) {
   const [paused, setPaused] = useState(false)
   const reducedMotion = useReducedMotion()
   const entrance = (y: number) => reducedMotion ? false : { opacity: 0, y }
+  const { scrollY } = useScroll()
+  const photoY = useTransform(scrollY, [0, 900], [0, 85])
+  const glowX = useMotionValue(-800)
+  const glowY = useMotionValue(-800)
+  const glowSpringX = useSpring(glowX, { stiffness: 55, damping: 17 })
+  const glowSpringY = useSpring(glowY, { stiffness: 55, damping: 17 })
+
+  function onHeroPointerMove(event: PointerEvent<HTMLElement>) {
+    if (reducedMotion || !finePointer()) return
+    glowX.set(event.clientX)
+    glowY.set(event.clientY)
+  }
 
   return (
-    <section id="home" className="hero">
-      <div className="hero-photo-frame"><img src={asset('gym-1.webp')} alt="The Transform Active gym floor — benches, racks, free weights and mirrored walls in the Mullumbimby studio" width="1500" height="904" fetchPriority="high" /><div className="hero-photo-wash" /></div>
+    <section id="home" className="hero" onPointerMove={onHeroPointerMove}>
+      {!reducedMotion && <motion.div className="cursor-glow" style={{ x: glowSpringX, y: glowSpringY }} aria-hidden="true" />}
+      <div className="hero-photo-frame"><motion.img src={asset('gym-1.webp')} alt="The Transform Active gym floor — benches, racks, free weights and mirrored walls in the Mullumbimby studio" width="1500" height="904" fetchPriority="high" style={{ y: reducedMotion ? 0 : photoY }} initial={reducedMotion ? false : { scale: 1.16 }} animate={{ scale: 1.07 }} transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }} /><div className="hero-photo-wash" /></div>
       <BreathingCircles paused={paused} />
       <div className="hero-seal"><RoundSeal /></div>
       <div className="container hero-container">
         <div className="hero-content">
           <motion.p className="eyebrow hero-eyebrow" initial={entrance(10)} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.6 }}><span />24-Hour Holistic Fitness Centre · Mullumbimby</motion.p>
-          <motion.h1 initial={reducedMotion ? false : { opacity: 0, y: 25, filter: 'blur(8px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ delay: 0.3, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}><span>Move.</span><span>Breathe.</span><span className="hero-accent">Transform.</span></motion.h1>
+          <h1 aria-label="Move. Breathe. Transform."><StaggerWord word="Move." delay={0.32} reducedMotion={!!reducedMotion} /><StaggerWord word="Breathe." delay={0.52} reducedMotion={!!reducedMotion} /><StaggerWord word="Transform." className="hero-accent" delay={0.72} reducedMotion={!!reducedMotion} /></h1>
           <motion.p className="hero-description" initial={entrance(20)} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.65 }}>Mullumbimby&apos;s 24-hour community gym — Technogym-equipped floor, 25 group classes a week from yoga to boxing, personal training and an infrared sauna.</motion.p>
-          <motion.div className="hero-actions" initial={entrance(20)} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65, duration: 0.65 }}><Button size="lg" onClick={onTrial}>Free Trial for Locals <ArrowRight aria-hidden="true" /></Button><a className="hero-schedule-link" href="#gym">Explore the Gym <ArrowDown size={15} aria-hidden="true" /></a></motion.div>
+          <motion.div className="hero-actions" initial={entrance(20)} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65, duration: 0.65 }}><Magnetic><Button size="lg" onClick={onTrial}>Free Trial for Locals <ArrowRight aria-hidden="true" /></Button></Magnetic><a className="hero-schedule-link" href="#gym">Explore the Gym <ArrowDown size={15} aria-hidden="true" /></a></motion.div>
           <motion.div className="breathing-cue" initial={entrance(0)} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9, duration: 0.8 }}><button type="button" className={cn('breathing-toggle', (paused || reducedMotion) && 'is-paused')} onClick={() => setPaused((value) => !value)} aria-label={paused ? 'Resume breathing animation' : 'Pause breathing animation'} aria-pressed={paused} disabled={!!reducedMotion}><span className="breathing-dot" /><span>Inhale. Exhale. Begin.</span>{paused ? <Play size={11} aria-hidden="true" /> : <Pause size={11} aria-hidden="true" />}</button></motion.div>
         </div>
       </div>
@@ -124,14 +156,26 @@ const facilityShots = [
 
 const facilityFacts = ['24/7 member access', 'Technogym equipment', 'Deadlift platform', 'Outdoor functional zone', 'Infrared sauna', 'Personal training']
 
+const stripFacts = [
+  { icon: Clock3, label: '24/7 member access' },
+  { icon: UsersRound, label: '25 group classes a week' },
+  { icon: Waves, label: 'Infrared sauna' },
+  { icon: History, label: 'Mullum\u2019s gym since 2011' },
+  { icon: Sun, label: 'Free trial for locals' },
+]
+
+function StripFacts() {
+  return <>{stripFacts.map(({ icon: Icon, label }) => <span key={label}><Icon size={20} strokeWidth={1.3} aria-hidden="true" />{label}</span>)}</>
+}
+
 function Facilities() {
   return (
     <>
-      <div className="welcome-strip"><div className="container"><span><Clock3 size={20} strokeWidth={1.3} aria-hidden="true" />24/7 member access</span><span><UsersRound size={20} strokeWidth={1.3} aria-hidden="true" />25 group classes a week</span><span><Waves size={20} strokeWidth={1.3} aria-hidden="true" />Infrared sauna</span><span><History size={20} strokeWidth={1.3} aria-hidden="true" />Mullum&rsquo;s gym since 2011</span><span><Sun size={20} strokeWidth={1.3} aria-hidden="true" />Free trial for locals</span></div></div>
+      <div className="welcome-strip"><div className="marquee-viewport"><div className="marquee-track"><div className="marquee-group"><StripFacts /></div><div className="marquee-group" aria-hidden="true"><StripFacts /></div></div></div></div>
       <section id="gym" className="section gym-section" aria-labelledby="gym-title">
         <div className="container">
           <Reveal className="gym-heading"><p className="eyebrow">Inside Transform Active</p><h2 id="gym-title">More than a <em>studio.</em></h2><p className="gym-sub">A complete 24-hour gym under one roof in Mullumbimby — grown from the community gym Gabe built in 2011, and a community that makes it feel like yours.</p></Reveal>
-          <div className="gym-photo-band" role="group" aria-label="Photos of the Transform Active gym — scroll horizontally to see more" tabIndex={0}>{facilityShots.map((shot, index) => <Reveal key={shot.image} className="gym-photo" delay={index * 0.1}><img src={asset(shot.image)} alt={`${shot.label} — ${shot.detail}`} loading="lazy" style={{ objectPosition: shot.position }} /><span className="gym-photo-caption"><strong>{shot.label}</strong><span>{shot.detail}</span></span></Reveal>)}</div>
+          <div className="gym-photo-band" role="group" aria-label="Photos of the Transform Active gym — scroll horizontally to see more" tabIndex={0}>{facilityShots.map((shot, index) => <GymShot key={shot.image} shot={shot} index={index} />)}</div>
           <Reveal className="facility-chips">{facilityFacts.map((fact) => <span key={fact}><Check size={13} strokeWidth={2} aria-hidden="true" />{fact}</span>)}</Reveal>
         </div>
       </section>
@@ -150,7 +194,7 @@ function Practices({ onBook }: { onBook: (intent: BookingIntent) => void }) {
             return (
               <motion.article
                 key={practice.name}
-                className="practice-card"
+                className="practice-card spotlight"
                 initial={reducedMotion ? false : { opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
@@ -206,7 +250,7 @@ function Membership({ onBook }: { onBook: (intent: BookingIntent) => void }) {
     <section id="membership" className="section pricing-section">
       <div className="container">
         <SectionHeading eyebrow="Membership" title={<>Everything from <em>$24.95</em> a Week</>}>24/7 gym access on every plan. Unlimited classes and the infrared sauna from $24.95 a week on 12 Months Lifestyle — debited weekly in AUD, 30 days&apos; written notice.</SectionHeading>
-        <div className="pricing-grid">{pricing.map((tier, index) => <Reveal key={tier.id} delay={index * 0.12}><motion.div className={cn('pricing-card', index === 1 && 'pricing-featured')} whileHover={reducedMotion ? undefined : { y: -6 }} transition={{ duration: 0.3 }}>
+        <div className="pricing-grid">{pricing.map((tier, index) => <Reveal key={tier.id} delay={index * 0.12}><motion.div className={cn('pricing-card spotlight', index === 1 && 'pricing-featured')} whileHover={reducedMotion ? undefined : { y: -6 }} transition={{ duration: 0.3 }}>
           {index === 1 && <span className="popular-badge"><Sun size={13} aria-hidden="true" />All-inclusive</span>}
           <p className="tier-name">{tier.name}</p><p className="tier-description">{tier.commitment}</p><p className="tier-price">{tier.price}</p><p className="tier-period">{tier.period}</p>
           <ul>{tier.features.map((feature) => <li key={feature}><Check size={16} strokeWidth={1.6} aria-hidden="true" /><span>{feature}</span></li>)}</ul>
@@ -221,7 +265,7 @@ function Membership({ onBook }: { onBook: (intent: BookingIntent) => void }) {
 function Testimonials() {
   return (
     <section className="section testimonials-section" aria-labelledby="testimonials-title">
-      <div className="container"><Reveal className="section-heading"><p className="eyebrow">More than a gym</p><h2 id="testimonials-title">What the <em>Community</em> Says</h2><p className="section-description">Real words from real members — shared as Google reviews.</p></Reveal><div className="testimonial-grid">{testimonials.map((testimonial, index) => <Reveal key={testimonial.name} delay={index * 0.15} className="testimonial-card"><span className="quote-mark" aria-hidden="true">“</span><blockquote><p>{testimonial.quote}</p><footer><span className={`testimonial-avatar avatar-${index}`} aria-hidden="true">{testimonial.initials}</span><span><cite>{testimonial.name}</cite><span className="testimonial-detail">{testimonial.detail}</span></span></footer></blockquote></Reveal>)}</div>
+      <div className="container"><Reveal className="section-heading"><p className="eyebrow">More than a gym</p><h2 id="testimonials-title">What the <em>Community</em> Says</h2><p className="section-description">Real words from real members — shared as Google reviews.</p></Reveal><div className="testimonial-grid">{testimonials.map((testimonial, index) => <Reveal key={testimonial.name} delay={index * 0.15} className="testimonial-card spotlight"><span className="quote-mark" aria-hidden="true">“</span><blockquote><p>{testimonial.quote}</p><footer><span className={`testimonial-avatar avatar-${index}`} aria-hidden="true">{testimonial.initials}</span><span><cite>{testimonial.name}</cite><span className="testimonial-detail">{testimonial.detail}</span></span></footer></blockquote></Reveal>)}</div>
         <Reveal className="classes-note"><Instagram size={15} strokeWidth={1.4} aria-hidden="true" /><span>Have a moment to share? <a className="text-link" href={STUDIO.review} target="_blank" rel="noopener noreferrer">Leave the studio a Google review</a>.</span></Reveal>
       </div>
     </section>
@@ -255,7 +299,7 @@ function Community({ onTrial }: { onTrial: () => void }) {
 
   return (
     <>
-      <section className="first-class-banner"><div className="banner-circle banner-circle-one" /><div className="banner-circle banner-circle-two" /><Reveal className="container first-class-inner"><div><p className="eyebrow">A little curious? That's all you need.</p><h2>Try Transform Active<br /><em>free.</em></h2></div><div className="first-class-action"><Button variant="light" size="lg" onClick={onTrial}>Free Trial for Locals <ArrowRight aria-hidden="true" /></Button><p>Local? Experience the gym before deciding.</p></div></Reveal></section>
+      <section className="first-class-banner"><div className="banner-circle banner-circle-one" /><div className="banner-circle banner-circle-two" /><Reveal className="container first-class-inner"><div><p className="eyebrow">A little curious? That's all you need.</p><h2>Try Transform Active<br /><em>free.</em></h2></div><div className="first-class-action"><Magnetic><Button variant="light" size="lg" onClick={onTrial}>Free Trial for Locals <ArrowRight aria-hidden="true" /></Button></Magnetic><p>Local? Experience the gym before deciding.</p></div></Reveal></section>
       <section id="community" className="section community-section"><div className="community-orbit orbit-one" aria-hidden="true" /><div className="community-orbit orbit-two" aria-hidden="true" /><Reveal className="community-inner"><Leaf size={31} strokeWidth={1.2} className="community-leaf" aria-hidden="true" /><p className="eyebrow">Join our community</p><h2>Stay <em>Rooted.</em></h2><p className="community-description">Timetable changes, new classes and studio news — plus the occasional dose of calm. One email when it matters, never spam.</p>
         {state === 'success' || state === 'duplicate' ? <div className="newsletter-success" role="status"><span className="newsletter-success-heading"><Check size={22} aria-hidden="true" />{state === 'success' ? 'You\u2019re on the list.' : 'You\u2019re already on the list.'}</span><p>{state === 'success' ? 'Welcome to the community — studio updates will land in your inbox when they matter.' : 'No need to sign up twice — we\u2019ll keep you posted.'}</p><button type="button" onClick={() => { setState('idle'); setEmail('') }}>Back to the form <ArrowRight size={14} aria-hidden="true" /></button></div> : <><form className="newsletter-form" onSubmit={join}><label className="sr-only" htmlFor="newsletter-email">Your email address</label><Input id="newsletter-email" name="email" type="email" autoComplete="email" placeholder="Your email address" value={email} onChange={(event) => setEmail(event.target.value)} maxLength={254} aria-describedby="newsletter-privacy" required /><Button type="submit" variant="light" disabled={state === 'submitting'}>{state === 'submitting' ? 'Joining…' : 'Join the Community'} <ArrowRight aria-hidden="true" /></Button></form>{state === 'error' && <p className="newsletter-error" role="alert">We couldn&apos;t reach the community list just now — try again, or <a className="text-link-light" href={STUDIO.instagram} target="_blank" rel="noopener noreferrer">follow @transformactivemullum</a> instead.</p>}<p className="newsletter-privacy" id="newsletter-privacy">Your email is used for studio updates only. Unsubscribe anytime.</p><p className="newsletter-instagram"><a className="text-link-light" href={STUDIO.instagram} target="_blank" rel="noopener noreferrer"><Instagram size={14} aria-hidden="true" /> @transformactivemullum</a></p></>}
       </Reveal></section>
@@ -309,6 +353,18 @@ export default function App() {
   const [info, setInfo] = useState<InfoPage | null>(null)
   const openTrial = () => setBooking({ kind: 'trial' })
   const bookSession = (session?: Session) => setBooking({ kind: 'class', session })
+
+  useEffect(() => {
+    const onMove = (event: globalThis.PointerEvent) => {
+      const card = (event.target as Element).closest?.('.spotlight') as HTMLElement | null
+      if (!card) return
+      const rect = card.getBoundingClientRect()
+      card.style.setProperty('--mx', `${event.clientX - rect.left}px`)
+      card.style.setProperty('--my', `${event.clientY - rect.top}px`)
+    }
+    window.addEventListener('pointermove', onMove)
+    return () => window.removeEventListener('pointermove', onMove)
+  }, [])
 
   return (
     <>
