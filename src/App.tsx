@@ -5,6 +5,7 @@ import { BreathingCircles, GrainOverlay, Logo, Reveal, RoundSeal, SectionHeading
 import { GymShot, Magnetic } from './components/fx'
 import { BookingDialog, type BookingIntent } from './components/BookingDialog'
 import { Schedule } from './components/Schedule'
+import { Toolkit } from './components/Toolkit'
 import { Button } from './components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from './components/ui/dialog'
 import { Input } from './components/ui/input'
@@ -17,6 +18,7 @@ const navigation = [
   { label: 'The Gym', id: 'gym' },
   { label: 'Classes', id: 'classes' },
   { label: 'Timetable', id: 'schedule' },
+  { label: 'Toolkit', id: 'toolkit' },
   { label: 'Teachers', id: 'teachers' },
   { label: 'Membership', id: 'membership' },
   { label: 'Community', id: 'community' },
@@ -312,9 +314,9 @@ function Footer({ onBook, onInfo }: { onBook: (intent: BookingIntent) => void; o
     <footer className="site-footer"><div className="container"><div className="footer-grid">
       <div className="footer-brand"><Logo light /><p>Move. Breathe. Transform.</p><p className="footer-intro">A 24-hour holistic fitness centre in the heart of Mullumbimby — classes, gym, sauna and community.</p><div className="footer-socials"><a href={STUDIO.instagram} target="_blank" rel="noopener noreferrer" aria-label="Transform Active on Instagram"><Instagram size={18} strokeWidth={1.5} aria-hidden="true" /></a><a href={STUDIO.facebook} target="_blank" rel="noopener noreferrer" aria-label="Transform Active on Facebook"><Facebook size={18} strokeWidth={1.5} aria-hidden="true" /></a></div></div>
       <div><h3>Find your practice</h3><ul>{practices.map((practice) => <li key={practice.name}><button type="button" onClick={() => onBook({ kind: 'class', practice: practice.name as PracticeName })}>{practice.name}</button></li>)}</ul></div>
-      <div><h3>The studio</h3><ul><li><button type="button" onClick={() => onInfo('About the studio')}>About us</button></li><li><a href="#teachers">Our teachers</a></li><li><a href="#schedule">Timetable</a></li><li><a href="#membership">Membership</a></li><li><button type="button" onClick={() => onInfo('Class FAQs')}>Class FAQs</button></li></ul></div>
+      <div><h3>The studio</h3><ul><li><button type="button" onClick={() => onInfo('About the studio')}>About us</button></li><li><a href="#teachers">Our teachers</a></li><li><a href="#schedule">Timetable</a></li><li><a href="#toolkit">Free toolkit</a></li><li><a href="#membership">Membership</a></li><li><button type="button" onClick={() => onInfo('Class FAQs')}>Class FAQs</button></li></ul></div>
       <div className="footer-visit"><h3>Come say hello</h3><address><span><MapPin size={15} aria-hidden="true" />4/4 Towers Dr<br />Mullumbimby NSW 2482</span><span><Clock3 size={15} aria-hidden="true" />Staffed Mon–Thu 7:30am–5:30pm<br />Fri til 4pm · Sat til 10:30am<br />Members: 24/7</span><a href={STUDIO.telephone}>{STUDIO.phone} <ArrowRight size={13} aria-hidden="true" /></a><a href={STUDIO.mailto}>{STUDIO.email} <Mail size={13} aria-hidden="true" /></a></address></div>
-    </div><div className="footer-bottom"><p>© 2026 Transform Active. All rights reserved.</p><span className="footer-made">Rooted in community. Made with intention.</span><div><button type="button" onClick={() => onInfo('Privacy Policy')}>Privacy</button><span aria-hidden="true">·</span><button type="button" onClick={() => onInfo('Class FAQs')}>Studio FAQs</button></div></div></div></footer>
+    </div><div className="footer-bottom"><p>© {new Date().getFullYear()} Transform Active. All rights reserved.</p><span className="footer-made">Rooted in community. Made with intention.</span><div><button type="button" onClick={() => onInfo('Privacy Policy')}>Privacy</button><span aria-hidden="true">·</span><button type="button" onClick={() => onInfo('Class FAQs')}>Studio FAQs</button></div></div></div></footer>
   )
 }
 
@@ -371,7 +373,7 @@ export default function App() {
       <a href="#main-content" className="skip-link">Skip to content</a>
       <GrainOverlay />
       <Header onTrial={openTrial} />
-      <main id="main-content"><Hero onTrial={openTrial} /><Facilities /><Practices onBook={setBooking} /><Schedule onBook={bookSession} /><Instructors onInfo={setInfo} /><Philosophy /><Membership onBook={setBooking} /><Testimonials /><Community onTrial={openTrial} /></main>
+      <main id="main-content"><Hero onTrial={openTrial} /><Facilities /><Practices onBook={setBooking} /><Schedule onBook={bookSession} /><Toolkit /><Instructors onInfo={setInfo} /><Philosophy /><Membership onBook={setBooking} /><Testimonials /><Community onTrial={openTrial} /></main>
       <Footer onBook={setBooking} onInfo={setInfo} />
       <BookingDialog intent={booking} onClose={() => setBooking(null)} />
       <InfoDialog page={info} onClose={() => setInfo(null)} />

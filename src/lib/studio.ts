@@ -1,3 +1,4 @@
+import { STUDIO } from './catalog'
 import { asset } from './assets'
 
 export type ClassCategory = 'Yoga & mindful' | 'Pilates & barre' | 'Strength' | 'Cardio & dance'
@@ -63,9 +64,9 @@ export const practices = [
   },
   {
     name: 'Barre Align',
-    category: 'Yoga & mindful',
+    category: 'Pilates & barre',
     duration: null,
-    image: asset('class-barre.png'),
+    image: asset('class-barre.webp'),
     imagePosition: '50% 45%',
     note: 'Ballet · Pilates · yoga',
     description: 'A full-body class blending ballet, Pilates and yoga, with a strong emphasis on balance, alignment and mindful movement. Dynamic, low-impact work at the barre, then focused core on the mat and a deep, restorative breath.',
@@ -152,7 +153,7 @@ export const weeklySchedule: ClassTemplate[][] = [
   ],
   [
     { name: 'Pilates Sculpt', time: '07:00', teacher: 'Jess', category: 'Pilates & barre' },
-    { name: 'Barre Align', time: '08:00', teacher: 'Jess', category: 'Yoga & mindful' },
+    { name: 'Barre Align', time: '08:00', teacher: 'Jess', category: 'Pilates & barre' },
     { name: 'Functional Strength', time: '09:30', teacher: 'Tomm', category: 'Strength' },
     { name: 'Activated Strength', time: '17:30', teacher: 'Lillian', category: 'Strength' },
     { name: 'Primal Flow', time: '18:30', teacher: 'Lillian', category: 'Yoga & mindful' },
@@ -178,6 +179,18 @@ export const weeklySchedule: ClassTemplate[][] = [
 ]
 
 export type Session = ClassTemplate & { id: string; startsAt: Date; day: number }
+
+// Timetable times are studio-local (Australia/Sydney). Compare against the
+// studio clock, not the visitor's device timezone, so "today" and "finished"
+// stay correct for interstate and overseas visitors.
+export function studioNow(reference = new Date()) {
+  const parts = new Intl.DateTimeFormat('en-AU', {
+    timeZone: STUDIO.timezone, year: 'numeric', month: 'numeric', day: 'numeric',
+    hour: 'numeric', minute: 'numeric', second: 'numeric', hourCycle: 'h23',
+  }).formatToParts(reference)
+  const get = (type: string) => Number(parts.find((part) => part.type === type)?.value)
+  return new Date(get('year'), get('month') - 1, get('day'), get('hour'), get('minute'), get('second'))
+}
 
 export function getWeekStart(date = new Date(), offset = 0) {
   const start = new Date(date)

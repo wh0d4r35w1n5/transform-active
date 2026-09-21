@@ -3,7 +3,7 @@ import { ArrowUpRight, CalendarDays, ChevronLeft, ChevronRight, MoveHorizontal }
 import { Button } from './ui/button'
 import { Reveal, SectionHeading } from './brand'
 import { STUDIO } from '../lib/catalog'
-import { categorySlug, formatTime, getWeekSessions, getWeekStart, weekdays, type ClassCategory, type ClassFilter, type Session } from '../lib/studio'
+import { categorySlug, formatTime, getWeekSessions, getWeekStart, studioNow, weekdays, type ClassCategory, type ClassFilter, type Session } from '../lib/studio'
 import { cn } from '../lib/utils'
 
 const filters: ClassFilter[] = ['All classes', 'Yoga & mindful', 'Pilates & barre', 'Strength', 'Cardio & dance']
@@ -11,7 +11,7 @@ const filters: ClassFilter[] = ['All classes', 'Yoga & mindful', 'Pilates & barr
 export function Schedule({ onBook }: { onBook: (session?: Session) => void }) {
   const [filter, setFilter] = useState<ClassFilter>('All classes')
   const [weekOffset, setWeekOffset] = useState(0)
-  const now = new Date()
+  const now = studioNow()
   const start = getWeekStart(now, weekOffset)
   const sessions = getWeekSessions(start)
   const end = new Date(start)

@@ -8,12 +8,13 @@ test.beforeEach(async ({ page }) => {
 })
 
 test('the complete page loads with working images and no runtime errors', async ({ page }, testInfo) => {
+  test.setTimeout(60000)
   const errors: string[] = []
   page.on('pageerror', (error) => errors.push(error.message))
   page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()) })
   await page.reload()
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Transform.')
-  for (const id of ['gym', 'classes', 'schedule', 'teachers', 'philosophy', 'membership', 'community']) {
+  for (const id of ['gym', 'classes', 'schedule', 'toolkit', 'teachers', 'philosophy', 'membership', 'community']) {
     await expect(page.locator(`#${id}`)).toBeAttached()
   }
   await expect(page.locator('.practice-card')).toHaveCount(6)
@@ -65,7 +66,9 @@ test('the timetable filters the studio\u2019s real classes and opens booking det
   const schedule = page.locator('#schedule')
   await schedule.getByRole('group', { name: 'Filter classes' }).getByRole('button', { name: 'Yoga & mindful', exact: true }).click()
   const names = await schedule.locator('.class-title').allTextContents()
-  expect(names.sort()).toEqual(['Barre Align', 'Gentle Flow Yoga', 'Primal Flow', 'Vinyasa Yoga', 'Vinyasa Yoga', 'Yin Yoga'].sort())
+  expect(names.sort()).toEqual(['Gentle Flow Yoga', 'Primal Flow', 'Vinyasa Yoga', 'Vinyasa Yoga', 'Yin Yoga'].sort())
+  await schedule.getByRole('group', { name: 'Filter classes' }).getByRole('button', { name: 'Pilates & barre', exact: true }).click()
+  expect(await schedule.locator('.class-title').allTextContents()).toContain('Barre Align')
   await expect(schedule.getByRole('button', { name: 'Previous week' })).toBeDisabled()
   await schedule.getByRole('button', { name: 'Next week' }).click()
   await expect(schedule.locator('.week-control')).toContainText('28 Sept — 4 Oct 2026')

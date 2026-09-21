@@ -20,7 +20,9 @@ test('the timetable matches the studio\u2019s published weekly schedule', () => 
   expect(week[5][0]).toMatchObject({ time: '09:30', name: 'Vinyasa Yoga', teacher: 'Marli', duration: 75 })
   expect(week[6][0]).toMatchObject({ time: '09:15', name: 'Boxing Fundamentals', teacher: 'Karl' })
   const yoga = week.flat().filter((session) => session.category === 'Yoga & mindful')
-  expect(yoga.map((session) => session.name)).toEqual(['Vinyasa Yoga', 'Yin Yoga', 'Barre Align', 'Primal Flow', 'Gentle Flow Yoga', 'Vinyasa Yoga'])
+  expect(yoga.map((session) => session.name)).toEqual(['Vinyasa Yoga', 'Yin Yoga', 'Primal Flow', 'Gentle Flow Yoga', 'Vinyasa Yoga'])
+  const barre = week.flat().filter((session) => session.name === 'Barre Align')
+  expect(barre.map((session) => session.category)).toEqual(['Pilates & barre'])
   expect(new Set(week.flat().map((session) => session.id)).size).toBe(25)
 })
 

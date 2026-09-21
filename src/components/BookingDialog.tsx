@@ -2,7 +2,7 @@ import { ArrowUpRight, CalendarDays, Check, Clock3, KeyRound, Leaf, Mail, Smartp
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from './ui/dialog'
 import { Button } from './ui/button'
 import { getPlan, STUDIO, type PlanId } from '../lib/catalog'
-import { formatSession, formatTime, getUpcomingSessions, type PracticeName, type Session } from '../lib/studio'
+import { formatSession, formatTime, getUpcomingSessions, studioNow, type PracticeName, type Session } from '../lib/studio'
 
 export type BookingIntent =
   | { kind: 'trial' }
@@ -65,7 +65,7 @@ function BookingBody({ intent }: { intent: BookingIntent }) {
     )
   }
 
-  const upcoming = getUpcomingSessions().filter((session) => !intent.practice || session.name === intent.practice).slice(0, 4)
+  const upcoming = getUpcomingSessions(studioNow()).filter((session) => !intent.practice || session.name === intent.practice).slice(0, 4)
   const session = intent.session
   return (
     <>
