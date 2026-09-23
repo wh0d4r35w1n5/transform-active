@@ -2,8 +2,8 @@ import { expect, test } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import {
   activityLevels, bmiCategory, bmiFor, books, buildMealPlan, buildRoutine, dailyNeeds,
-  gymPlaylistMoods, planNutrition, recipes, restSeconds, shoppingList, spotifySearch,
-  videos, yogaPlaylistMoods,
+  defaultShowId, gymPlaylistMoods, planNutrition, radioShows, recipes, restSeconds,
+  shoppingListSections, spotifySearch, videos, yogaPlaylistMoods,
 } from '../src/lib/toolkit'
 
 test('the meal planner builds a seven-day plan that respects the chosen focus', () => {
@@ -19,9 +19,18 @@ test('the meal planner builds a seven-day plan that respects the chosen focus', 
   expect(planNutrition(plan, 'Monday').kcal).toBeGreaterThan(0)
   const withoutSnacks = buildMealPlan('balanced', false)
   expect(withoutSnacks[0].meals).toHaveLength(3)
-  const list = shoppingList(plan)
-  expect(list.length).toBeGreaterThan(10)
-  expect(new Set(list.map(([item]) => item)).size).toBe(list.length)
+  const sections = shoppingListSections(plan)
+  expect(sections.length).toBeGreaterThanOrEqual(4)
+  const items = sections.flatMap((section) => section.items.map((item) => item.text))
+  expect(items.length).toBeGreaterThan(15)
+  expect(new Set(items).size).toBe(items.length)
+  // Quantities are merged into buyable amounts, not repeated per recipe.
+  expect(items.some((item) => item.includes('×'))).toBe(false)
+  // Aggregation happened: a week of meals always shares ingredients, so some
+  // item must carry a merged quantity above a single recipe's amount.
+  expect(items.some((item) => /^(\d{2,}|\d[¼½¾]|[2-9]) /.test(item))).toBe(true)
+  // Every item lands in a real store section.
+  expect(sections.every((section) => section.items.length > 0)).toBe(true)
 })
 
 test('BMI maths and categories match the standard adult bands', () => {
@@ -65,6 +74,18 @@ test('routine builder returns the requested days with real exercises', () => {
   }
 })
 
+test('transform radio channels are all embeddable live streams', () => {
+  expect(radioShows.length).toBeGreaterThanOrEqual(5)
+  for (const show of radioShows) {
+    expect(show.videoId).toMatch(/^[A-Za-z0-9_-]{11}$/)
+    expect(show.name.length).toBeGreaterThan(2)
+  }
+  const ids = radioShows.map((show) => show.id)
+  expect(defaultShowId(new Date('2026-09-21T08:00:00'))).toBe('floor')
+  expect(defaultShowId(new Date('2026-09-21T23:00:00'))).toBe('wind')
+  expect(ids).toContain(defaultShowId(new Date('2026-09-21T15:00:00')))
+})
+
 test('playlists, books and videos are fully populated with real links', () => {
   for (const mood of [...gymPlaylistMoods, ...yogaPlaylistMoods]) {
     expect(mood.tracks.length).toBeGreaterThanOrEqual(8)
@@ -86,11 +107,11 @@ test.describe('toolkit UI', () => {
     await page.locator('#toolkit').scrollIntoViewIfNeeded()
   })
 
-  test('all ten public tools are listed and switchable', async ({ page }) => {
+  test('all eleven public tools are listed and switchable', async ({ page }) => {
     const toolkit = page.locator('#toolkit')
     await expect(toolkit.getByRole('heading', { name: /Active Life/ })).toBeVisible()
     const picker = toolkit.getByRole('group', { name: 'Choose a tool' })
-    await expect(picker.getByRole('button')).toHaveCount(10)
+    await expect(picker.getByRole('button')).toHaveCount(11)
     await expect(toolkit.locator('.planner-day')).toHaveCount(8) // 7 days + shopping list
     await picker.getByRole('button', { name: /Body Metrics/ }).click()
     await expect(toolkit.locator('.bmi-tool')).toBeVisible()
@@ -98,10 +119,27 @@ test.describe('toolkit UI', () => {
     await expect(toolkit.locator('.book-card')).toHaveCount(6)
   })
 
+  test('transform radio plays free live channels inside the YouTube player', async ({ page }) => {
+    const toolkit = page.locator('#toolkit')
+    await toolkit.getByRole('button', { name: /Transform Radio/ }).click()
+    const channels = toolkit.getByRole('group', { name: 'Choose a radio channel' })
+    await expect(channels.getByRole('button')).toHaveCount(radioShows.length)
+    const frame = toolkit.locator('.radio-frame iframe')
+    await expect(frame).toHaveAttribute('src', /youtube-nocookie\.com\/embed\//)
+    await expect(frame).toHaveAttribute('title', /Transform Radio/)
+    await expect(toolkit.locator('.radio-live')).toContainText('Live now')
+    await expect(toolkit.locator('.radio-note')).toContainText('YouTube')
+    const firstSrc = await frame.getAttribute('src')
+    await channels.getByRole('button', { name: 'Beast Mode' }).click()
+    await expect(toolkit.locator('.radio-frame iframe')).not.toHaveAttribute('src', firstSrc!)
+    await expect(channels.getByRole('button', { name: 'Beast Mode' })).toHaveAttribute('aria-pressed', 'true')
+  })
+
   test('the meal planner reshuffles and produces a shopping list', async ({ page }) => {
     const toolkit = page.locator('#toolkit')
     await toolkit.getByRole('button', { name: 'Reshuffle week' }).click()
     await expect(toolkit.locator('.shop-list li').first()).toBeVisible()
+    await expect(toolkit.locator('.shop-section h5').first()).toBeVisible()
     await toolkit.getByRole('button', { name: '+ Snacks' }).click()
     await expect(toolkit.locator('.planner-day').first().locator('.planner-meal')).toHaveCount(4)
     await toolkit.getByRole('button', { name: 'Higher protein' }).click()

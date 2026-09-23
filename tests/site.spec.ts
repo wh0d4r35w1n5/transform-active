@@ -220,3 +220,22 @@ test('the page and dialogs pass automated accessibility checks', async ({ page }
   await page.getByRole('button', { name: 'Free Trial for Locals', exact: true }).first().click()
   expect(await audit()).toEqual([])
 })
+
+test('SEO foundations: canonical, robots, sitemap and structured data', async ({ page, request }) => {
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /transform-active\/$/)
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /index, follow/)
+  await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute('content', '1500')
+  await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', /gym-1\.webp/)
+  const jsonLd = await page.locator('script[type="application/ld+json"]').textContent()
+  const graph = JSON.parse(jsonLd!)['@graph'] as { '@type': string }[]
+  expect(graph.map((node) => node['@type'])).toEqual(['HealthClub', 'WebSite'])
+  const robots = await request.get('/robots.txt')
+  expect(robots.ok()).toBe(true)
+  expect(await robots.text()).toContain('Sitemap:')
+  const sitemap = await request.get('/sitemap.xml')
+  expect(sitemap.ok()).toBe(true)
+  expect(await sitemap.text()).toContain('transform-active/')
+  for (const image of await page.locator('img').all()) {
+    expect(await image.getAttribute('alt')).not.toBeNull()
+  }
+})

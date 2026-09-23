@@ -160,16 +160,95 @@ export function buildMealPlan(focus: DietFocus, withSnacks: boolean): PlannedDay
   }))
 }
 
-export function shoppingList(plan: PlannedDay[]) {
-  const items = new Map<string, number>()
+// Shopping list — aggregates real quantities per item and groups by store
+// section, so "1/2 cup oats" in four recipes becomes "2 cups rolled oats".
+
+const SHOP_UNITS = /^(cup|cups|tin|tins|can|cans|tbsp|tsp|g|kg|ml|l|clove|cloves|slice|slices|bunch|bunches|handful|handfuls|fillet|fillets|packet|packets|scoop|scoops)\b/i
+const UNIT_SINGULAR: Record<string, string> = { cups: 'cup', tins: 'tin', cans: 'can', cloves: 'clove', slices: 'slice', bunches: 'bunch', handfuls: 'handful', fillets: 'fillet', packets: 'packet', scoops: 'scoop' }
+const UNIT_PLURAL: Record<string, string> = { cup: 'cups', tin: 'tins', can: 'cans', clove: 'cloves', slice: 'slices', bunch: 'bunches', handful: 'handfuls', fillet: 'fillets', packet: 'packets', scoop: 'scoops' }
+
+function parseQty(raw: string): number | null {
+  const parts = raw.split('/').map(Number)
+  if (parts.length === 2) return parts[1] ? parts[0] / parts[1] : null
+  return Number.isFinite(parts[0]) ? parts[0] : null
+}
+
+interface ParsedIngredient { qty: number | null; unit: string | null; name: string }
+
+function parseIngredient(raw: string): ParsedIngredient {
+  const qtyMatch = raw.trim().match(/^(\d+(?:[./\s]+\d+)*)\s*(.*)$/)
+  if (!qtyMatch || qtyMatch[1].trim() === '') return { qty: null, unit: null, name: raw.trim() }
+  const qty = parseQty(qtyMatch[1].replace(/\s+/g, ''))
+  if (qty === null) return { qty: null, unit: null, name: raw.trim() }
+  const rest = qtyMatch[2].split(',')[0].trim()
+  const unitMatch = rest.match(/^([a-zA-Z]+)\s+(.+)$/)
+  if (unitMatch && SHOP_UNITS.test(unitMatch[1])) {
+    return { qty, unit: UNIT_SINGULAR[unitMatch[1].toLowerCase()] ?? unitMatch[1].toLowerCase(), name: unitMatch[2] }
+  }
+  return { qty, unit: null, name: rest }
+}
+
+interface ShopItem { name: string; qty: number | null; unit: string | null; recipes: number }
+
+const SECTIONS: { name: string; match: RegExp }[] = [
+  { name: 'Frozen', match: /frozen|ice cream/ },
+  { name: 'Produce', match: /spinach|rocket|leaves|lettuce|tomato|cucumber|carrot|capsicum|pumpkin|potato|avocado|lemon|lime|ginger|garlic|banana|berries|broccoli|broccolini|corn|mushroom|onion|apple|mango|zucchini|kale|beetroot|radish|herb|chilli/ },
+  { name: 'Dairy & eggs', match: /milk|yoghurt|yogurt|feta|haloumi|ricotta|butter|egg|parmesan|cheese|cream/ },
+  { name: 'Meat & seafood', match: /chicken|salmon|beef|mince|tuna|fish|prawn|bacon|turkey|lamb|pork/ },
+  { name: 'Bakery & wraps', match: /tortilla|wrap|sourdough|bread|roll|bun|pita/ },
+]
+
+const PANTRY_FIRST = /peanut butter|almond butter|coconut milk|rice|oats|pasta|noodle|quinoa|flour|honey|syrup|oil|vinegar|sauce|paste|cocoa|cacao|seed|nut\b|protein powder|tahini|miso|stock|yeast|sugar|spice|cumin|paprika|turmeric|cinnamon|salt|pepper/
+
+const OES_PLURALS = /(potato|tomato)$/
+
+export interface ShopSection { name: string; items: { text: string; detail?: string }[] }
+
+function fmtQty(qty: number): string {
+  const whole = Math.floor(qty)
+  const frac = qty - whole
+  const glyph = Math.abs(frac - 0.25) < 0.01 ? '¼' : Math.abs(frac - 0.5) < 0.01 ? '½' : Math.abs(frac - 0.75) < 0.01 ? '¾' : null
+  if (glyph) return whole ? `${whole}${glyph}` : glyph
+  return `${Math.round(qty * 10) / 10}`
+}
+
+export function shoppingListSections(plan: PlannedDay[]): ShopSection[] {
+  const merged = new Map<string, ShopItem>()
   for (const day of plan) {
     for (const meal of day.meals) {
       for (const ingredient of meal.recipe.ingredients) {
-        items.set(ingredient, (items.get(ingredient) ?? 0) + 1)
+        const { qty, unit, name } = parseIngredient(ingredient)
+        const key = `${name.toLowerCase()}|${unit ?? ''}`
+        const existing = merged.get(key)
+        if (existing) {
+          if (qty !== null) existing.qty = (existing.qty ?? 0) + qty
+          existing.recipes += 1
+        } else {
+          merged.set(key, { name, qty, unit, recipes: 1 })
+        }
       }
     }
   }
-  return [...items.entries()].sort(([a], [b]) => a.localeCompare(b))
+  const grouped = new Map<string, { text: string; detail?: string }[]>()
+  for (const item of merged.values()) {
+    const name = item.name.toLowerCase()
+    const section = PANTRY_FIRST.test(name) ? 'Tins, jars & pantry' : (SECTIONS.find((s) => s.match.test(name))?.name ?? 'Tins, jars & pantry')
+    let text = item.name.charAt(0).toUpperCase() + item.name.slice(1)
+    let detail: string | undefined
+    if (item.qty !== null) {
+      const unit = item.unit && item.qty > 1 ? (UNIT_PLURAL[item.unit] ?? item.unit) : item.unit
+      let label = item.name
+      if (!item.unit && item.qty > 1 && !name.endsWith('s')) label = OES_PLURALS.test(name) ? `${item.name}es` : `${item.name}s`
+      text = `${fmtQty(item.qty)}${unit ? ` ${unit}` : ''} ${label}`
+    } else if (item.recipes > 1) {
+      detail = `used in ${item.recipes} recipes`
+    }
+    grouped.set(section, [...(grouped.get(section) ?? []), { text, detail }])
+  }
+  const order = ['Produce', 'Meat & seafood', 'Dairy & eggs', 'Bakery & wraps', 'Frozen', 'Tins, jars & pantry']
+  return order
+    .filter((name) => grouped.has(name))
+    .map((name) => ({ name, items: grouped.get(name)!.sort((a, b) => a.text.localeCompare(b.text)) }))
 }
 
 export function planNutrition(plan: PlannedDay[], day: string) {
@@ -569,6 +648,31 @@ export function spotifySearch(track: { title: string; artist: string }) {
 
 export function trackList(mood: PlaylistMood, playlistName: string) {
   return `${playlistName} — ${mood.name}\n${mood.tracks.map((track, index) => `${index + 1}. ${track.title} — ${track.artist}`).join('\n')}`
+}
+
+// ---- Transform Radio ----------------------------------------------------------
+// Free 24/7 live streams played inside YouTube's own embedded player — nothing
+// is re-streamed or hosted here, so licensing stays with YouTube and each
+// channel's owners. Verified live & embeddable via oEmbed.
+
+export interface RadioShow { id: string; name: string; hint: string; videoId: string }
+
+export const radioShows: RadioShow[] = [
+  { id: 'floor', name: 'Gym Floor', hint: 'High-energy EDM built for big sessions', videoId: 'y_rgrhvjuUM' },
+  { id: 'beast', name: 'Beast Mode', hint: 'Dubstep, hardstyle & trap — no mercy', videoId: 'G2OoIofTOm0' },
+  { id: 'steady', name: 'Steady State', hint: 'House & chillout for long cardio', videoId: '36YnV9STBqc' },
+  { id: 'stretch', name: 'Stretch & Flow', hint: 'Jazzy lofi for Pilates and mobility', videoId: '5yx6BWlEVcY' },
+  { id: 'synth', name: 'Night Drive', hint: 'Synthwave for late-night sessions', videoId: '4xDzrJKXOOY' },
+  { id: 'wind', name: 'Wind Down', hint: 'Sleepy lofi for savasana & evenings', videoId: 'rUxyKA_-grg' },
+]
+
+export function defaultShowId(date = new Date()): string {
+  const hour = date.getHours()
+  if (hour < 10) return 'floor'
+  if (hour < 14) return 'steady'
+  if (hour < 17) return 'stretch'
+  if (hour < 21) return 'floor'
+  return 'wind'
 }
 
 // ---- Recommended books ----------------------------------------------------

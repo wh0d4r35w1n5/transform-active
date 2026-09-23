@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type Dispatch, type ReactNode, type SetStateAction } from 'react'
-import { ArrowUpRight, Blend, BookOpen, Calculator, CalendarRange, Check, CheckCircle2, ChefHat, Circle, Copy, CupSoda, Dumbbell, ListMusic, MonitorPlay, Music2, Pause, Play, Printer, RefreshCw, RotateCcw, Salad, ShieldCheck, Sparkles, Timer, X } from 'lucide-react'
+import { ArrowUpRight, Blend, BookOpen, Calculator, CalendarRange, Check, CheckCircle2, ChefHat, Circle, Copy, CupSoda, Dumbbell, ListMusic, MonitorPlay, Music2, Pause, Play, Printer, Radio, RefreshCw, RotateCcw, Salad, ShieldCheck, Sparkles, Timer, X } from 'lucide-react'
 import { Reveal, SectionHeading } from './brand'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
@@ -8,13 +8,13 @@ import {
   activityLevels, bmiCategory, bmiFor, bmiLabels, books, buildMealPlan, buildRoutine,
   clearSavedBody, dailyNeeds, dietFocuses, gymPlaylistMoods, loadSavedBody, mealBase,
   mealExtras, mealProteins, mealSauces, mealVeg, planNutrition, recipes, routineGoals,
-  routineLevels, saveBody, shoppingList, smoothieBases, smoothieBoosts, smoothieFruits,
-  spotifySearch, trackList, videos, yogaPlaylistMoods, type DietFocus, type MealType,
-  type PlaylistMood, type Recipe, type RoutineExercise, type RoutineGoal, type RoutineLevel,
-  type SavedBody, type Sex,
+  routineLevels, saveBody, shoppingListSections, smoothieBases, smoothieBoosts, smoothieFruits,
+  spotifySearch, trackList, videos, yogaPlaylistMoods, defaultShowId, radioShows,
+  type DietFocus, type MealType, type PlaylistMood, type Recipe, type RoutineExercise,
+  type RoutineGoal, type RoutineLevel, type SavedBody, type Sex,
 } from '../lib/toolkit'
 
-type ToolId = 'planner' | 'recipes' | 'meal' | 'smoothie' | 'bmi' | 'routine' | 'gym-music' | 'yoga-music' | 'books' | 'videos'
+type ToolId = 'planner' | 'recipes' | 'meal' | 'smoothie' | 'bmi' | 'routine' | 'radio' | 'gym-music' | 'yoga-music' | 'books' | 'videos'
 
 const tools: { id: ToolId; name: string; icon: typeof Salad; hint: string }[] = [
   { id: 'planner', name: 'Meal Planner', icon: CalendarRange, hint: 'A full week, mapped out' },
@@ -23,6 +23,7 @@ const tools: { id: ToolId; name: string; icon: typeof Salad; hint: string }[] = 
   { id: 'smoothie', name: 'Smoothie Creator', icon: CupSoda, hint: 'Blend your own' },
   { id: 'bmi', name: 'Body Metrics', icon: Calculator, hint: 'BMI + daily energy needs' },
   { id: 'routine', name: 'Gym Routine', icon: Dumbbell, hint: 'A plan for the floor' },
+  { id: 'radio', name: 'Transform Radio', icon: Radio, hint: 'Free 24/7 live channels' },
   { id: 'gym-music', name: 'Gym Playlist', icon: ListMusic, hint: 'Session soundtracks' },
   { id: 'yoga-music', name: 'Yoga Playlist', icon: Music2, hint: 'Practice soundscapes' },
   { id: 'books', name: 'Books', icon: BookOpen, hint: 'Reading worth your time' },
@@ -168,9 +169,9 @@ function MealPlanner() {
       return { ...meal, recipe: picked ?? rotated }
     }),
   }))
-  const list = shoppingList(display)
+  const list = shoppingListSections(display)
   const planText = display.map((day) => `${day.day}\n${day.meals.map((meal) => `  ${meal.type}: ${meal.recipe.name}`).join('\n')}`).join('\n\n')
-  const listText = `Shopping list\n${list.map(([item, count]) => `${item}${count > 1 ? ` ×${count}` : ''}`).join('\n')}`
+  const listText = `Shopping list\n${list.map((section) => `${section.name}\n${section.items.map((item) => `  ${item.text}${item.detail ? ` (${item.detail})` : ''}`).join('\n')}`).join('\n\n')}`
 
   const swap = (day: string, type: MealType) => {
     const pool = recipes.filter((recipe) => recipe.type === type && recipe.focus.includes(focus))
@@ -220,7 +221,14 @@ function MealPlanner() {
         })}
         <div className="planner-day planner-shop">
           <h4>Shopping list</h4>
-          <ul className="shop-list">{list.map(([item, count]) => <li key={item}>{item}{count > 1 && <span> ×{count}</span>}</li>)}</ul>
+          <div className="shop-list">
+            {list.map((section) => (
+              <div key={section.name} className="shop-section">
+                <h5>{section.name}</h5>
+                <ul>{section.items.map((item) => <li key={item.text}>{item.text}{item.detail && <span> · {item.detail}</span>}</li>)}</ul>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
       <EstimateNote />
@@ -638,6 +646,40 @@ function RoutineCreator() {
 
 // ---- Playlist builders ------------------------------------------------------
 
+function RadioStation() {
+  const [showId, setShowId] = usePersistentState('ta-radio-show', defaultShowId())
+  const show = radioShows.find((s) => s.id === showId) ?? radioShows[0]
+  return (
+    <div>
+      <div className="tool-controls no-print" role="group" aria-label="Choose a radio channel">
+        {radioShows.map((s) => (
+          <button key={s.id} className={`filter-pill${s.id === show.id ? ' is-active' : ''}`} aria-pressed={s.id === show.id} onClick={() => setShowId(s.id)}>
+            {s.name}
+          </button>
+        ))}
+      </div>
+      <div className="radio-player">
+        <div className="radio-frame">
+          <iframe
+            key={show.id}
+            src={`https://www.youtube-nocookie.com/embed/${show.videoId}?rel=0`}
+            title={`Transform Radio — ${show.name} live stream`}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            loading="lazy"
+          />
+        </div>
+        <div className="radio-meta">
+          <span className="radio-live"><i aria-hidden="true" />Live now</span>
+          <h4>{show.name}</h4>
+          <p>{show.hint} — streaming free, 24/7.</p>
+          <p className="radio-note">Transform Radio plays through YouTube's own player — free for everyone, no app or account needed. Channels are run by their own broadcasters, so the music genuinely never stops changing. Tap the video title inside the player to visit the channel.</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function PlaylistBuilder({ moods, playlistName }: { moods: PlaylistMood[]; playlistName: string }) {
   const [mood, setMood] = usePersistentState(`ta-playlist-${playlistName.replace(/\W+/g, '-').toLowerCase()}`, 0)
   const current = moods[mood]
@@ -740,6 +782,7 @@ export function Toolkit() {
             {tool === 'smoothie' && <SmoothieCreator />}
             {tool === 'bmi' && <BodyMetrics />}
             {tool === 'routine' && <RoutineCreator />}
+            {tool === 'radio' && <RadioStation />}
             {tool === 'gym-music' && <PlaylistBuilder moods={gymPlaylistMoods} playlistName="Transform Active Gym" />}
             {tool === 'yoga-music' && <PlaylistBuilder moods={yogaPlaylistMoods} playlistName="Transform Active Yoga" />}
             {tool === 'books' && <BookShelf />}

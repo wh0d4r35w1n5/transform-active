@@ -488,9 +488,23 @@ select.form-input { text-overflow: ellipsis; padding-right: 25px; }
 .planner-total { font-size: 10px; color: #6b6873; margin: 10px 0 0; padding-top: 10px; border-top: 1px solid #e3ecea; }
 .planner-shop { background: #0b7a6f; border-color: #0b7a6f; grid-column: 1 / -1; }
 .planner-shop h4 { color: #ffffff; }
-.shop-list { list-style: none; margin: 0; padding: 0; font-size: 11px; color: #eef8f6; line-height: 1.55; columns: 4; column-gap: 26px; }
-.shop-list li { padding: 3px 0; break-inside: avoid; }
-.shop-list li > span { color: #eef8f6; }
+.shop-list { margin: 0; padding: 0; font-size: 11px; color: #eef8f6; line-height: 1.55; columns: 4; column-gap: 26px; }
+.shop-section { break-inside: avoid; margin-bottom: 10px; }
+.shop-section h5 { font-size: 9px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #ffffff; margin: 0 0 2px; }
+.shop-section ul { list-style: none; margin: 0; padding: 0; }
+.shop-section li { padding: 2px 0; }
+.shop-section li > span { color: #eef8f6; }
+
+.radio-player { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 22px; align-items: stretch; }
+.radio-frame { position: relative; aspect-ratio: 16 / 9; border-radius: 18px; overflow: hidden; background: #0d0c10; border: 1px solid var(--line-soft); }
+.radio-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.radio-meta { display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+.radio-meta h4 { font-size: 24px; letter-spacing: -0.02em; }
+.radio-meta p { font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+.radio-live { display: inline-flex; align-items: center; gap: 7px; font-size: 10px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #c2402f; }
+.radio-live i { width: 8px; height: 8px; border-radius: 50%; background: #d64833; animation: radioPulse 1.8s ease-in-out infinite; }
+@keyframes radioPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.8); } }
+.radio-note { font-size: 11px !important; color: var(--muted) !important; border-top: 1px solid var(--line-soft); padding-top: 10px; }
 
 .recipe-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .recipe-card { background: #f7fbfa; border: 1px solid #e3ecea; border-radius: 18px; padding: 20px 22px; }
@@ -885,6 +899,7 @@ select.form-input { text-overflow: ellipsis; padding-right: 25px; }
   .tool-heading h3 { font-size: 25px; }
   .planner-grid { grid-template-columns: 1fr; }
   .shop-list { columns: 2; }
+  .radio-player { grid-template-columns: 1fr; }
   .rest-timer { width: calc(100% - 32px); justify-content: space-between; bottom: 16px; padding: 12px 14px; gap: 9px; }
   .rest-info strong { font-size: 23px; }
   .session-exercises { grid-template-columns: 1fr; }

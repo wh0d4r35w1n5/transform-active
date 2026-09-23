@@ -60,7 +60,7 @@ export function GymShot({ shot, index }: { shot: Shot; index: number }) {
       onPointerMove={onPointerMove}
       onPointerLeave={() => { rotateXValue.set(0); rotateYValue.set(0) }}
     >
-      <img src={asset(shot.image)} alt={`${shot.label} — ${shot.detail}`} loading="lazy" style={{ objectPosition: shot.position }} />
+      <img src={asset(shot.image)} alt={`${shot.label} — ${shot.detail}`} loading="lazy" decoding="async" style={{ objectPosition: shot.position }} />
       <span className="gym-photo-sheen" aria-hidden="true" />
       <span className="gym-photo-caption"><strong>{shot.label}</strong><span>{shot.detail}</span></span>
     </motion.div>
