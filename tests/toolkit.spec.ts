@@ -114,14 +114,15 @@ test('dealFresh prefers unseen items before recycling the pool', () => {
 })
 
 test('transform radio channels are all embeddable live streams', () => {
-  expect(radioShows.length).toBeGreaterThanOrEqual(5)
+  expect(radioShows.length).toBeGreaterThanOrEqual(18)
   for (const show of radioShows) {
-    expect(show.videoId).toMatch(/^[A-Za-z0-9_-]{11}$/)
+    // Channel-based live embeds always resolve to the channel's current stream.
+    expect(show.channelId).toMatch(/^UC[A-Za-z0-9_-]{22}$/)
     expect(show.name.length).toBeGreaterThan(2)
   }
   const ids = radioShows.map((show) => show.id)
   expect(defaultShowId(new Date('2026-09-21T08:00:00'))).toBe('floor')
-  expect(defaultShowId(new Date('2026-09-21T23:00:00'))).toBe('wind')
+  expect(defaultShowId(new Date('2026-09-21T23:00:00'))).toBe('cloud')
   expect(ids).toContain(defaultShowId(new Date('2026-09-21T15:00:00')))
 })
 
@@ -188,7 +189,7 @@ test.describe('toolkit UI', () => {
   test('transform radio plays free live channels inside the YouTube player', async ({ page }) => {
     const toolkit = page.locator('#toolkit')
     await toolkit.getByRole('button', { name: /Transform Radio/ }).click()
-    const channels = toolkit.getByRole('group', { name: 'Choose a radio channel' })
+    const channels = toolkit.locator('.radio-groups')
     await expect(channels.locator('.filter-pill')).toHaveCount(radioShows.length)
     await expect(channels.getByRole('button', { name: 'Surprise me' })).toBeVisible()
     const frame = toolkit.locator('.radio-frame iframe')

@@ -1770,34 +1770,43 @@ export function trackList(mood: PlaylistMood, playlistName: string) {
 // is re-streamed or hosted here, so licensing stays with YouTube and each
 // channel's owners. Verified live & embeddable via oEmbed.
 
-export interface RadioShow { id: string; name: string; hint: string; videoId: string }
+export type RadioGroup = 'Train' | 'Focus & unwind' | 'Rest & recover'
 
+export interface RadioShow { id: string; name: string; hint: string; channelId: string; group: RadioGroup }
+
+// Channels embed via /embed/live_stream?channel=… — YouTube resolves that to
+// whatever the channel is streaming right now, so a stream restart can never
+// leave a dead link behind. All verified rendering a live player.
 export const radioShows: RadioShow[] = [
-  { id: 'floor', name: 'Gym Floor', hint: 'High-energy EDM built for big sessions', videoId: 'y_rgrhvjuUM' },
-  { id: 'beast', name: 'Beast Mode', hint: 'Dubstep, hardstyle & trap — no mercy', videoId: 'G2OoIofTOm0' },
-  { id: 'steady', name: 'Steady State', hint: 'House & chillout for long cardio', videoId: '36YnV9STBqc' },
-  { id: 'stretch', name: 'Stretch & Flow', hint: 'Jazzy lofi for Pilates and mobility', videoId: '5yx6BWlEVcY' },
-  { id: 'synth', name: 'Night Drive', hint: 'Synthwave for late-night sessions', videoId: '4xDzrJKXOOY' },
-  { id: 'wind', name: 'Wind Down', hint: 'Sleepy lofi for savasana & evenings', videoId: 'rUxyKA_-grg' },
-  { id: 'lounge', name: 'Recovery Lounge', hint: 'Coffee-shop jazz for rest days', videoId: 'fEvM-OUbaKs' },
-  { id: 'focus', name: 'Deep Focus', hint: 'The classic lofi study radio', videoId: 'jfKfPfyJRdk' },
-  { id: 'owl', name: 'Night Owl', hint: 'Late-night lofi study session', videoId: 'lTRiuFIWV54' },
-  { id: 'essentials', name: 'Essentials', hint: 'Chillhop seasonal beats — mellow movement', videoId: 'jiua2V9q9V0' },
-  { id: 'cafe', name: 'Studio Café', hint: 'Live jazz café — smoothie-bar energy', videoId: 'jRfwYdHDvEw' },
-  { id: 'cloud', name: 'Cloud Rest', hint: 'White noise for sleep & breathwork', videoId: 'm7AFT-dCmTE' },
-  { id: 'piano', name: 'Piano Drift', hint: 'Beautiful piano radio — study & sleep', videoId: 'w9S5ID3nfOc' },
-  { id: 'deepsleep', name: 'Deep Sleep', hint: 'Slow ambient for real wind-down', videoId: '60Xwh_EAxrg' },
-  { id: 'melodic', name: 'Melodic House', hint: 'Monstercat Silk — smooth deep house 24/7', videoId: 'WsDyRAPFBC8' },
-  { id: 'rain', name: 'Tokyo Rain', hint: 'Sleepy lofi with rain on the window', videoId: 'qC7Kry-sWxo' },
+  { id: 'floor', name: 'Gym Floor', hint: 'The Good Life Radio — upbeat EDM & pop remixes', channelId: 'UChs0pSaEoNLV4mevBFGaoKA', group: 'Train' },
+  { id: 'beast', name: 'Beast Mode', hint: 'New Retro Wave — darksynth & heavy electronic', channelId: 'UCD-4g5w1h8xQpLaNS_ghU4g', group: 'Train' },
+  { id: 'spin', name: 'Spin City', hint: 'Spinnin\' Records — mainstage dance anthems', channelId: 'UCpDJl2EmP7Oh90Vylx0dZtA', group: 'Train' },
+  { id: 'steady', name: 'Steady State', hint: 'Chill Music Lab — smooth electronic for cardio', channelId: 'UCkcJ1EQilM6LGDKmqlTq83A', group: 'Train' },
+  { id: 'melodic', name: 'Melodic House', hint: 'Monstercat Silk — deep, driving house 24/7', channelId: 'UCX4sShAQf01LYjYQhG2ZgKg', group: 'Train' },
+  { id: 'synth', name: 'Night Drive', hint: 'Nightride FM — synthwave for after dark', channelId: 'UCJ80_CMnIOrKtMyFbIFIQ7A', group: 'Train' },
+  { id: 'focus', name: 'Deep Focus', hint: 'Lofi Girl — the classic study beats radio', channelId: 'UCSJ4gkVC6NrvII8umztf0Ow', group: 'Focus & unwind' },
+  { id: 'essentials', name: 'Chillhop', hint: 'Chillhop Music — seasonal jazzy beats', channelId: 'UCOxqgCwgOqC2lMqC5PYz_Dg', group: 'Focus & unwind' },
+  { id: 'dream', name: 'Dreamhop', hint: 'Dreamhop Music — lofi with a hazy edge', channelId: 'UCBw8DzJjDU4qVT9JUdDhfaQ', group: 'Focus & unwind' },
+  { id: 'owl', name: 'Night Owl', hint: 'College Music — late-night lofi radio', channelId: 'UC7tdoGx0eQfRJm9Qj6GCs0A', group: 'Focus & unwind' },
+  { id: 'cafe', name: 'Studio Café', hint: 'Cafe Music BGM — jazz café ambience', channelId: 'UCJhjE7wbdYAae1G25m0tHAA', group: 'Focus & unwind' },
+  { id: 'lounge', name: 'Recovery Lounge', hint: 'Ambient Worlds — film-score calm for rest days', channelId: 'UCfR8HhkbpDAwvYxrecNg4Mg', group: 'Focus & unwind' },
+  { id: 'piano', name: 'Piano Drift', hint: 'Soothing Relaxation — Peder B. Helland piano', channelId: 'UCjzHeG1KWoonmf9d5KBvSiw', group: 'Rest & recover' },
+  { id: 'classic', name: 'Classic Calm', hint: 'Yellow Brick Cinema — relaxing classical mix', channelId: 'UCwobzUc3z-0PrFpoRxNszXQ', group: 'Rest & recover' },
+  { id: 'zen', name: 'Meditation', hint: 'Meditative Mind — chanting & healing tones', channelId: 'UCM0YvsRfYfsniGAhjvYFOSA', group: 'Rest & recover' },
+  { id: 'nature', name: 'Nature Walk', hint: 'Nomadic Ambience — forest & trail soundscapes', channelId: 'UCm_4JHHDUlmgpeI7w7-LMyA', group: 'Rest & recover' },
+  { id: 'rain', name: 'Rain Window', hint: 'Calmed By Nature — rain on the glass', channelId: 'UCJuMbdKSMThk2RpALASyXVQ', group: 'Rest & recover' },
+  { id: 'wild', name: 'Wild Earth', hint: 'Nature Relaxation — 4K nature scenes & music', channelId: 'UCz6V71ybMCcJ0-zRuN8JE5w', group: 'Rest & recover' },
+  { id: 'cloud', name: 'Cloud Rest', hint: 'Relaxing White Noise — sleep & breathwork', channelId: 'UCbunYN0o9Yaid7zHaor_UHA', group: 'Rest & recover' },
+  { id: 'deepsleep', name: 'Deep Sleep', hint: 'SleepTube — hypnotic visuals & slow ambient', channelId: 'UCJkWqlhR1-tJpygPdylMl8A', group: 'Rest & recover' },
 ]
 
 export function defaultShowId(date = new Date()): string {
   const hour = date.getHours()
   if (hour < 10) return 'floor'
   if (hour < 14) return 'steady'
-  if (hour < 17) return 'stretch'
+  if (hour < 17) return 'cafe'
   if (hour < 21) return 'floor'
-  return 'wind'
+  return 'cloud'
 }
 
 // ---- Recommended books ----------------------------------------------------

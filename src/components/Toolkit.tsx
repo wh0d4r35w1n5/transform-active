@@ -714,25 +714,33 @@ function RadioStation() {
   const show = radioShows.find((s) => s.id === showId) ?? radioShows[0]
   return (
     <div>
-      <div className="tool-controls no-print" role="group" aria-label="Choose a radio channel">
-        {radioShows.map((s) => (
-          <button key={s.id} className={`filter-pill${s.id === show.id ? ' is-active' : ''}`} aria-pressed={s.id === show.id} onClick={() => setShowId(s.id)}>
-            {s.name}
-          </button>
+      <div className="radio-groups no-print">
+        {(['Train', 'Focus & unwind', 'Rest & recover'] as const).map((group) => (
+          <div key={group} className="tool-controls" role="group" aria-label={`${group} channels`}>
+            <span className="control-label">{group}</span>
+            {radioShows.filter((s) => s.group === group).map((s) => (
+              <button key={s.id} className={`filter-pill${s.id === show.id ? ' is-active' : ''}`} aria-pressed={s.id === show.id} onClick={() => setShowId(s.id)} title={s.hint}>
+                {s.name}
+              </button>
+            ))}
+          </div>
         ))}
-        <Button variant="outline" size="sm" onClick={() => {
-          const unheard = radioShows.filter((s) => s.id !== show.id && !heard.includes(s.id))
-          const pool = unheard.length ? unheard : radioShows.filter((s) => s.id !== show.id)
-          const next = pool[Math.floor(Math.random() * pool.length)]
-          setShowId(next.id)
-          setHeard((prev) => [...prev, next.id].slice(-radioShows.length))
-        }} title="Spin the dial — unheard channels first"><Dices aria-hidden="true" /> Surprise me</Button>
+        <div className="tool-controls">
+          <Button variant="outline" size="sm" onClick={() => {
+            const unheard = radioShows.filter((s) => s.id !== show.id && !heard.includes(s.id))
+            const pool = unheard.length ? unheard : radioShows.filter((s) => s.id !== show.id)
+            const next = pool[Math.floor(Math.random() * pool.length)]
+            setShowId(next.id)
+            setHeard((prev) => [...prev, next.id].slice(-radioShows.length))
+          }} title="Spin the dial — unheard channels first"><Dices aria-hidden="true" /> Surprise me</Button>
+          <span className="radio-count">{radioShows.length} live channels</span>
+        </div>
       </div>
       <div className="radio-player">
         <div className="radio-frame">
           <iframe
             key={show.id}
-            src={`https://www.youtube-nocookie.com/embed/${show.videoId}?rel=0`}
+            src={`https://www.youtube-nocookie.com/embed/live_stream?channel=${show.channelId}&rel=0`}
             title={`Transform Radio — ${show.name} live stream`}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
@@ -743,7 +751,7 @@ function RadioStation() {
           <span className="radio-live"><i aria-hidden="true" />Live now</span>
           <h4>{show.name}</h4>
           <p>{show.hint} — streaming free, 24/7.</p>
-          <p className="radio-note">Transform Radio plays through YouTube's own player — free for everyone, no app or account needed. Channels are run by their own broadcasters, so the music genuinely never stops changing. Tap the video title inside the player to visit the channel.</p>
+          <p className="radio-note">Transform Radio plays through YouTube's own player — free for everyone, no app or account needed. Every channel is tuned to the broadcaster's live 24/7 stream, so it always picks up whatever's on right now — a dead link can't happen. Tap the video title inside the player to visit the channel.</p>
         </div>
       </div>
     </div>
