@@ -1765,6 +1765,14 @@ export function trackList(mood: PlaylistMood, playlistName: string) {
   return `${playlistName} — ${mood.name}\n${mood.tracks.map((track, index) => `${index + 1}. ${track.title} — ${track.artist}`).join('\n')}`
 }
 
+// "Artist - Title" lines — the format playlist converters parse best.
+export function spotifyTrackList(tracks: PlaylistMood['tracks']) {
+  return tracks.map((track) => `${track.artist} - ${track.title}`).join('\n')
+}
+
+// Paste a tracklist here, match, then save straight into Spotify.
+export const SPOTIFY_IMPORT_URL = 'https://spotlistr.com/search'
+
 // ---- Transform Radio ----------------------------------------------------------
 // Free 24/7 live streams played inside YouTube's own embedded player — nothing
 // is re-streamed or hosted here, so licensing stays with YouTube and each

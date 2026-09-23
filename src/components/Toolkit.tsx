@@ -9,7 +9,7 @@ import {
   bookCover, clearSavedBody, dailyNeeds, dietFocuses, gymPlaylistMoods, loadSavedBody, mealBase,
   mealExtras, mealProteins, mealSauces, mealVeg, planNutrition, recipes, routineGoals,
   routineLevels, saveBody, shoppingListSections, dealFresh, shufflePick, smoothieBases, smoothieBoosts, smoothieFruits,
-  spotifySearch, trackList, videos, yogaPlaylistMoods, defaultShowId, radioShows, wwPriceFor, WW_GUIDE_DATE, WW_STORE_NOTE, buildWarmup, warmupActivities, habits, habitStreak, lastNDays,
+  spotifySearch, spotifyTrackList, SPOTIFY_IMPORT_URL, trackList, videos, yogaPlaylistMoods, defaultShowId, radioShows, wwPriceFor, WW_GUIDE_DATE, WW_STORE_NOTE, buildWarmup, warmupActivities, habits, habitStreak, lastNDays,
   type DietFocus, type MealType, type PlaylistMood, type Recipe, type RoutineExercise,
   type RoutineGoal, type RoutineLevel, type SavedBody, type Sex,
 } from '../lib/toolkit'
@@ -62,6 +62,22 @@ function CopyButton({ text, label }: { text: string; label: string }) {
   return (
     <Button variant="outline" size="sm" className="no-print" onClick={() => copy(text)}>
       {copied ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />} {copied ? 'Copied' : label}
+    </Button>
+  )
+}
+
+// Copies the whole pool as "Artist - Title" lines, then opens a free
+// text→Spotify converter — one paste there builds the real playlist.
+function SaveToSpotifyButton({ tracks }: { tracks: PlaylistMood['tracks'] }) {
+  const { copied, copy } = useCopied()
+  const save = () => {
+    copy(spotifyTrackList(tracks))
+    window.open(SPOTIFY_IMPORT_URL, '_blank', 'noopener,noreferrer')
+  }
+  return (
+    <Button variant="outline" size="sm" className="no-print spotify-save" onClick={save}
+      title={`Copies all ${tracks.length} tracks, then opens Spotlistr — paste there to create the playlist in your Spotify`}>
+      {copied ? <Check aria-hidden="true" /> : <ListMusic aria-hidden="true" />} {copied ? 'Copied — paste it in' : `Save all ${tracks.length} to Spotify`}
     </Button>
   )
 }
@@ -779,7 +795,10 @@ function PlaylistBuilder({ moods, playlistName }: { moods: PlaylistMood[]; playl
       <div className="playlist" aria-live="polite">
         <div className="playlist-head">
           <div><h4>{playlistName} · {current.name}</h4><p>{current.hint} — {shown.length} of {current.tracks.length} tracks</p></div>
-          <CopyButton label="Copy track list" text={trackList({ ...current, tracks: shown }, playlistName)} />
+          <div className="playlist-actions">
+            <SaveToSpotifyButton tracks={current.tracks} />
+            <CopyButton label="Copy track list" text={trackList({ ...current, tracks: shown }, playlistName)} />
+          </div>
         </div>
         <ol className="track-list">
           {shown.map((track) => (
@@ -790,7 +809,7 @@ function PlaylistBuilder({ moods, playlistName }: { moods: PlaylistMood[]; playl
             </li>
           ))}
         </ol>
-        <p className="playlist-note">No account needed to preview — each Spotify link opens a search you can listen from. Copy the list to rebuild the playlist in any app.</p>
+        <p className="playlist-note">Save to Spotify copies every track in this mood — paste it into the converter that opens (Spotlistr, free) and it becomes a real playlist in your account. Each Spotify link beside a track opens a search you can listen from right now.</p>
       </div>
     </div>
   )

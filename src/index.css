@@ -709,7 +709,10 @@ select.form-input { text-overflow: ellipsis; padding-right: 25px; }
 .routine-block li strong { display: block; font-weight: 600; color: #424143; }
 .routine-block li em { display: block; font-style: normal; font-size: 10px; color: #6b6873; }
 
-.playlist-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+.playlist-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+.playlist-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.spotify-save { border-color: #1db95466; color: #127a38; }
+.spotify-save:hover { border-color: #1db954; background: #1db95414; color: #0e5f2c; }
 .playlist-head h4 { font-family: 'DM Serif Display', Georgia, serif; font-size: 24px; font-weight: 400; margin: 0 0 4px; }
 .playlist-head p { font-size: 11px; color: #6b6873; margin: 0; }
 .track-list { list-style: none; counter-reset: track; margin: 0; padding: 0; border-top: 1px solid #e3ecea; }

@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright'
 import {
   activityLevels, bmiCategory, bmiFor, books, buildMealPlan, buildRoutine, dailyNeeds,
   dealFresh, defaultShowId, gymPlaylistMoods, planNutrition, radioShows, recipes, restSeconds,
-  shoppingListSections, spotifySearch, videos, yogaPlaylistMoods, buildWarmup, habits, wwPriceFor,
+  shoppingListSections, spotifySearch, spotifyTrackList, SPOTIFY_IMPORT_URL, videos, yogaPlaylistMoods, buildWarmup, habits, wwPriceFor,
 } from '../src/lib/toolkit'
 
 test('the meal planner builds a seven-day plan that respects the chosen focus', () => {
@@ -132,7 +132,11 @@ test('playlists, books and videos are fully populated with real links', () => {
     for (const track of mood.tracks) {
       expect(spotifySearch(track)).toMatch(/^https:\/\/open\.spotify\.com\/search\//)
     }
+    const lines = spotifyTrackList(mood.tracks).split('\n')
+    expect(lines.length).toBe(mood.tracks.length)
+    expect(lines[0]).toBe(`${mood.tracks[0].artist} - ${mood.tracks[0].title}`)
   }
+  expect(SPOTIFY_IMPORT_URL).toMatch(/^https:\/\//)
   expect(books.length).toBeGreaterThanOrEqual(8)
   for (const book of books) expect(book.url).toMatch(/^https:\/\//)
   expect(videos.length).toBeGreaterThanOrEqual(10)
@@ -266,6 +270,10 @@ test.describe('toolkit UI', () => {
     }
     expect(changed).toBe(true)
     await expect(toolkit.locator('.track-list li')).toHaveCount(10)
+    // Save-to-Spotify copies the whole pool and opens the converter in a new tab.
+    const importPage = page.context().waitForEvent('page')
+    await toolkit.getByRole('button', { name: /Save all \d+ to Spotify/ }).click()
+    expect((await importPage).url()).toContain('spotlistr.com')
     // Books deal a different shelf from the wider pool.
     await toolkit.getByRole('button', { name: /Books/ }).click()
     await expect(toolkit.locator('.book-card')).toHaveCount(6)
