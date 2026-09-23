@@ -80,7 +80,6 @@ export function Sauna() {
           <h2 id="sauna-title">The Infrared <em>Sauna</em></h2>
           <p className="sauna-sub">The Sunlighten Signature I — SoloCarbon infrared heat, chromotherapy lighting and a bench built for twenty quiet minutes. Book it like a class, then let the day go.</p>
         </Reveal>
-        <div className="chromo-bar" role="img" aria-label="Chromotherapy spectrum — colour light therapy inside the sauna"><span /><span /><span /><span /><span /><span /></div>
         <div className="sauna-grid">
           <Reveal className="sauna-story">
             <div className="sauna-facts">
