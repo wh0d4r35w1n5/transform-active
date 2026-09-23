@@ -14,7 +14,7 @@ test('the complete page loads with working images and no runtime errors', async 
   page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()) })
   await page.reload()
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Transform.')
-  for (const id of ['gym', 'classes', 'schedule', 'toolkit', 'teachers', 'philosophy', 'membership', 'community']) {
+  for (const id of ['gym', 'classes', 'schedule', 'sauna', 'toolkit', 'teachers', 'programs', 'philosophy', 'membership', 'visit', 'faq', 'community']) {
     await expect(page.locator(`#${id}`)).toBeAttached()
   }
   await expect(page.locator('.practice-card')).toHaveCount(6)
@@ -228,7 +228,8 @@ test('SEO foundations: canonical, robots, sitemap and structured data', async ({
   await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', /gym-1\.webp/)
   const jsonLd = await page.locator('script[type="application/ld+json"]').textContent()
   const graph = JSON.parse(jsonLd!)['@graph'] as { '@type': string }[]
-  expect(graph.map((node) => node['@type'])).toEqual(['HealthClub', 'WebSite'])
+  expect(graph.map((node) => node['@type'])).toEqual(['HealthClub', 'WebSite', 'FAQPage'])
+  await expect(page.locator('link[rel="manifest"]')).toHaveAttribute('href', /manifest\.webmanifest/)
   const robots = await request.get('/robots.txt')
   expect(robots.ok()).toBe(true)
   expect(await robots.text()).toContain('Sitemap:')
@@ -238,4 +239,19 @@ test('SEO foundations: canonical, robots, sitemap and structured data', async ({
   for (const image of await page.locator('img').all()) {
     expect(await image.getAttribute('alt')).not.toBeNull()
   }
+})
+
+test('the programs, visit and FAQ sections render real studio content', async ({ page }) => {
+  await expect(page.locator('#programs .program-card')).toHaveCount(3)
+  await expect(page.locator('#programs .trainer-card')).toHaveCount(3)
+  await expect(page.locator('#programs')).toContainText('Eliana')
+  const visit = page.locator('#visit')
+  await expect(visit.locator('.visit-step')).toHaveCount(3)
+  await expect(visit.locator('.visit-map iframe')).toHaveAttribute('src', /google\.com\/maps/)
+  await expect(visit.getByRole('link', { name: /Get directions/ })).toHaveAttribute('href', /google\.com\/maps\/dir/)
+  const faq = page.locator('#faq')
+  await expect(faq.locator('.faq-item')).toHaveCount(12)
+  const first = faq.locator('.faq-item').first()
+  await first.locator('summary').click()
+  await expect(first).toHaveAttribute('open', '')
 })

@@ -279,6 +279,258 @@ export const recipes: Recipe[] = [
     method: ['Mix zucchini, corn, eggs, flour and feta into a batter.', 'Fry spoonfuls 3 min each side until golden.', 'Serve over rocket with a yoghurt dollop.'],
     tags: ['Vegetarian', 'Freezer friendly'],
   },
+  {
+    id: 'baked-oats', name: 'Baked Oats & Banana', type: 'Breakfast',
+    focus: ['balanced', 'light'], minutes: 25, serves: 2, kcal: 310, protein: 11,
+    ingredients: ['1 cup rolled oats', '1 banana, mashed', '1 egg', '1/2 cup milk', '1 tsp cinnamon', '1 tsp honey', '1/2 cup blueberries'],
+    method: ['Mix everything, pour into a lined dish.', 'Bake at 180°C for 18–20 min until set.', 'Serve warm with extra berries.'],
+    tags: ['Vegetarian', 'Meal prep friendly'],
+  },
+  {
+    id: 'omelette-veg', name: 'Three-Egg Garden Omelette', type: 'Breakfast',
+    focus: ['protein', 'balanced', 'light'], minutes: 10, serves: 1, kcal: 340, protein: 24,
+    ingredients: ['3 eggs', '1/2 capsicum, diced', '1 handful baby spinach', '30g tasty cheese', '1 tbsp milk', 'Butter for the pan'],
+    method: ['Whisk eggs and milk with a pinch of salt.', 'Soften capsicum in butter.', 'Add eggs, fold in spinach and cheese, cook until just set.'],
+    tags: ['Vegetarian', 'High protein', 'Quick'],
+  },
+  {
+    id: 'overnight-bircher', name: 'Apple Cinnamon Bircher', type: 'Breakfast',
+    focus: ['balanced', 'plant', 'light'], minutes: 5, serves: 2, kcal: 340, protein: 10,
+    ingredients: ['1 cup rolled oats', '1 apple, grated', '3/4 cup apple juice', '1/2 cup Greek yoghurt', '1 tsp cinnamon', '10 almonds, chopped'],
+    method: ['Combine oats, apple and juice; refrigerate overnight.', 'Fold in yoghurt, top with almonds and cinnamon.'],
+    tags: ['Vegetarian', 'Make ahead', 'No cooking'],
+  },
+  {
+    id: 'beans-toast', name: 'BBQ Beans & Eggs on Toast', type: 'Breakfast',
+    focus: ['balanced', 'protein'], minutes: 12, serves: 1, kcal: 430, protein: 22,
+    ingredients: ['1/2 tin baked beans', '2 eggs', '2 slices wholegrain toast', '1 tsp butter', 'Chopped parsley'],
+    method: ['Heat beans in a small pan.', 'Fry eggs to your liking.', 'Serve beans and eggs over toast with parsley.'],
+    tags: ['Vegetarian', 'Pantry staples'],
+  },
+  {
+    id: 'green-breakfast-bowl', name: 'Savoury Greens & Egg Bowl', type: 'Breakfast',
+    focus: ['protein', 'light', 'balanced'], minutes: 12, serves: 1, kcal: 350, protein: 21,
+    ingredients: ['2 eggs', '1 cup steamed greens', '1/2 avocado', '1 tbsp hummus', '1 tsp seeds', 'Lemon wedge'],
+    method: ['Poach or boil eggs.', 'Build bowl: greens, hummus, avocado.', 'Top with eggs, seeds and lemon.'],
+    tags: ['High protein', 'Gluten-free', 'Quick'],
+  },
+  {
+    id: 'banana-weatbix', name: 'Wheat Biscuit Berry Stack', type: 'Breakfast',
+    focus: ['light', 'balanced', 'plant'], minutes: 3, serves: 1, kcal: 290, protein: 9,
+    ingredients: ['2 wheat biscuits', '1/2 cup milk or soy milk', '1/2 banana, sliced', '1/2 cup strawberries', '1 tsp honey'],
+    method: ['Layer biscuits with milk in a bowl.', 'Top with banana, strawberries and honey.'],
+    tags: ['Vegetarian', 'Kid friendly', 'No cooking'],
+  },
+  {
+    id: 'corn-fritter-brekky', name: 'Cheesy Corn Scramble', type: 'Breakfast',
+    focus: ['balanced', 'protein'], minutes: 10, serves: 1, kcal: 410, protein: 23,
+    ingredients: ['3 eggs', '1/3 cup corn kernels', '30g tasty cheese, grated', '1 spring onion', '1 slice sourdough'],
+    method: ['Scramble eggs with corn over medium heat.', 'Fold in cheese and spring onion at the end.', 'Serve on toast.'],
+    tags: ['Vegetarian', 'High protein', 'Quick'],
+  },
+  {
+    id: 'mango-coconut-oats', name: 'Mango Coconut Overnight Oats', type: 'Breakfast',
+    focus: ['plant', 'balanced'], minutes: 5, serves: 1, kcal: 390, protein: 11,
+    ingredients: ['1/2 cup rolled oats', '1/2 cup coconut milk (light)', '1/2 cup mango', '1 tbsp coconut flakes', '1 tsp chia seeds', 'Lime zest'],
+    method: ['Combine oats, coconut milk and chia; refrigerate overnight.', 'Top with mango, coconut flakes and lime zest.'],
+    tags: ['Vegan option', 'Make ahead', 'No cooking'],
+  },
+  {
+    id: 'ricotta-toast', name: 'Ricotta, Tomato & Basil Toast', type: 'Breakfast',
+    focus: ['light', 'balanced'], minutes: 8, serves: 1, kcal: 320, protein: 15,
+    ingredients: ['1/3 cup ricotta', '2 slices sourdough', '6 cherry tomatoes, halved', 'Basil leaves', 'Balsamic glaze', 'Olive oil'],
+    method: ['Toast sourdough.', 'Spread ricotta, top with tomatoes and basil.', 'Drizzle balsamic and olive oil.'],
+    tags: ['Vegetarian', 'Café-style'],
+  },
+  {
+    id: 'chicken-soup', name: 'Chicken & Veggie Soup', type: 'Lunch',
+    focus: ['protein', 'balanced', 'light'], minutes: 30, serves: 4, kcal: 320, protein: 28,
+    ingredients: ['300g chicken breast', '1.5L chicken stock', '2 carrots, sliced', '2 celery stalks', '1 onion', '1 cup pearl barley', 'Parsley'],
+    method: ['Simmer barley in stock 20 min.', 'Add chicken and veg, simmer 15 min until chicken is cooked.', 'Shred chicken, return to pot, season and top with parsley.'],
+    tags: ['High protein', 'Meal prep friendly', 'Feeds four'],
+  },
+  {
+    id: 'pumpkin-soup', name: 'Roast Pumpkin Soup', type: 'Lunch',
+    focus: ['plant', 'light'], minutes: 35, serves: 4, kcal: 240, protein: 6,
+    ingredients: ['1kg pumpkin, cubed', '1 onion', '2 cloves garlic', '1L vegetable stock', '1 tsp cumin', 'Greek yoghurt to serve', 'Pepitas'],
+    method: ['Roast pumpkin at 200°C for 20 min.', 'Soften onion and garlic, add pumpkin, stock and cumin.', 'Simmer 10 min, blend until smooth.', 'Serve with yoghurt and pepitas.'],
+    tags: ['Vegetarian', 'Freezer friendly', 'Feeds four'],
+  },
+  {
+    id: 'nourish-bowl', name: 'Rainbow Nourish Bowl', type: 'Lunch',
+    focus: ['plant', 'balanced'], minutes: 20, serves: 1, kcal: 460, protein: 16,
+    ingredients: ['1 cup cooked brown rice', '1/2 cup chickpeas', '1/2 cup roast pumpkin', '1 handful spinach', '1/4 avocado', '1 tbsp tahini', 'Lemon juice'],
+    method: ['Whisk tahini with lemon and warm water.', 'Arrange rice, chickpeas, pumpkin, spinach and avocado.', 'Drizzle dressing over the top.'],
+    tags: ['Vegan', 'Gluten-free'],
+  },
+  {
+    id: 'egg-fried-wrap', name: 'Crispy Egg & Veg Wrap', type: 'Lunch',
+    focus: ['balanced', 'light'], minutes: 10, serves: 1, kcal: 390, protein: 17,
+    ingredients: ['1 wholegrain wrap', '2 eggs', '1 handful spinach', '1/4 capsicum, sliced', '1 tbsp hummus', '30g tasty cheese'],
+    method: ['Scramble eggs with capsicum.', 'Spread hummus on wrap, add eggs, spinach and cheese.', 'Toast seam-side down in a dry pan 2 min per side.'],
+    tags: ['Vegetarian', 'Quick'],
+  },
+  {
+    id: 'salmon-rice-plate', name: 'Salmon, Rice & Greens Plate', type: 'Lunch',
+    focus: ['protein', 'balanced'], minutes: 20, serves: 1, kcal: 540, protein: 34,
+    ingredients: ['1 salmon fillet', '1 cup cooked rice', '1 cup steamed greens', '1 tbsp soy sauce', '1 tsp sesame oil', 'Lemon'],
+    method: ['Pan-fry salmon 4 min each side.', 'Dress rice with soy and sesame.', 'Plate with greens and a lemon wedge.'],
+    tags: ['High protein', 'Gluten-free'],
+  },
+  {
+    id: 'bean-nachos', name: 'Loaded Bean Nachos', type: 'Lunch',
+    focus: ['plant', 'balanced'], minutes: 20, serves: 2, kcal: 560, protein: 19,
+    ingredients: ['1 tin black beans', '1 tin chopped tomatoes', '1 cup corn kernels', '100g corn chips', '50g tasty cheese', '1/2 avocado', 'Greek yoghurt'],
+    method: ['Simmer beans with tomatoes and spices 10 min.', 'Layer corn chips, beans and cheese; grill until melted.', 'Top with avocado and yoghurt.'],
+    tags: ['Vegetarian', 'Crowd pleaser'],
+  },
+  {
+    id: 'tuna-pasta-salad', name: 'Tuna & Corn Pasta Salad', type: 'Lunch',
+    focus: ['protein', 'balanced'], minutes: 20, serves: 2, kcal: 490, protein: 32,
+    ingredients: ['180g pasta spirals', '1 tin tuna in springwater', '1 cup corn kernels', '1/4 cucumber', '1/4 cup Greek yoghurt', '1 tsp dijon', 'Lemon juice'],
+    method: ['Cook pasta, rinse under cold water.', 'Whisk yoghurt, dijon and lemon.', 'Toss everything together, season well.'],
+    tags: ['High protein', 'Meal prep friendly'],
+  },
+  {
+    id: 'veggie-slice', name: 'Baked Veggie & Egg Slice', type: 'Lunch',
+    focus: ['protein', 'balanced'], minutes: 35, serves: 6, kcal: 210, protein: 14,
+    ingredients: ['8 eggs', '1 zucchini, grated', '1 carrot, grated', '1/2 cup peas', '60g tasty cheese', '1 onion, diced'],
+    method: ['Whisk eggs with grated veg, peas, cheese and onion.', 'Pour into a lined tin, bake at 180°C for 25 min.', 'Slice into six — great cold for lunchboxes.'],
+    tags: ['Vegetarian', 'Meal prep friendly', 'Freezer friendly'],
+  },
+  {
+    id: 'chicken-noodle-soup', name: 'Ginger Chicken Noodle Soup', type: 'Dinner',
+    focus: ['protein', 'balanced', 'light'], minutes: 25, serves: 2, kcal: 420, protein: 33,
+    ingredients: ['250g chicken breast, sliced', '1L chicken stock', '180g rice noodles', '1 tbsp grated ginger', '2 handfuls baby spinach', '2 spring onions', '1 tbsp soy sauce'],
+    method: ['Simmer stock with ginger and soy.', 'Add chicken, poach 6–8 min.', 'Add noodles and spinach until just wilted.', 'Top with spring onions.'],
+    tags: ['High protein', 'Comfort food', 'Dairy-free'],
+  },
+  {
+    id: 'lamb-pita', name: 'Lamb & Hummus Flatbread Plate', type: 'Dinner',
+    focus: ['protein', 'balanced'], minutes: 20, serves: 2, kcal: 590, protein: 36,
+    ingredients: ['300g lamb strips', '2 pita breads', '4 tbsp hummus', '1 tomato, diced', '1/4 red onion', '1 handful rocket', 'Yoghurt drizzle'],
+    method: ['Sear lamb in a hot pan with cumin and salt.', 'Warm pita, spread with hummus.', 'Pile on lamb, tomato, onion and rocket; drizzle yoghurt.'],
+    tags: ['High protein', 'Weeknight fast'],
+  },
+  {
+    id: 'veggie-laksa', name: 'Veggie Laksa-Style Noodle Soup', type: 'Dinner',
+    focus: ['plant', 'balanced'], minutes: 25, serves: 2, kcal: 480, protein: 14,
+    ingredients: ['1 tin coconut milk (light)', '2 tbsp red curry paste', '1L vegetable stock', '180g rice noodles', '1 cup broccoli florets', '150g tofu, cubed', 'Lime, coriander'],
+    method: ['Fry curry paste 1 min, add coconut milk and stock.', 'Add broccoli and tofu, simmer 6 min.', 'Add noodles until soft, finish with lime and coriander.'],
+    tags: ['Vegan', 'Comfort food'],
+  },
+  {
+    id: 'pork-stirfry', name: 'Sticky Pork & Broccoli Stir-Fry', type: 'Dinner',
+    focus: ['protein', 'balanced'], minutes: 20, serves: 2, kcal: 530, protein: 38,
+    ingredients: ['300g pork loin, sliced', '1 cup broccoli florets', '1 carrot, julienned', '2 tbsp honey', '2 tbsp soy sauce', '1 tsp grated ginger', '1.5 cups cooked rice'],
+    method: ['Sear pork until golden, set aside.', 'Stir-fry broccoli and carrot 3–4 min.', 'Return pork with honey, soy and ginger; glaze 1 min.', 'Serve over rice.'],
+    tags: ['High protein', 'Quick'],
+  },
+  {
+    id: 'crispy-tofu-bowl', name: 'Crispy Tofu & Sesame Bowl', type: 'Dinner',
+    focus: ['plant', 'protein'], minutes: 25, serves: 2, kcal: 510, protein: 26,
+    ingredients: ['300g firm tofu, cubed', '2 tbsp cornflour', '1 cup broccoli florets', '1 carrot, ribboned', '2 tbsp soy sauce', '1 tbsp sesame seeds', '1.5 cups cooked rice'],
+    method: ['Toss tofu in cornflour, shallow-fry until crisp.', 'Steam broccoli.', 'Glaze tofu with soy, pile over rice with veg and sesame.'],
+    tags: ['Vegan', 'High protein'],
+  },
+  {
+    id: 'barramundi-tray', name: 'Herb Fish & Veggie Tray Bake', type: 'Dinner',
+    focus: ['protein', 'light', 'balanced'], minutes: 30, serves: 2, kcal: 450, protein: 34,
+    ingredients: ['2 white fish fillets', '2 potatoes, sliced thin', '1 zucchini, sliced', '1 lemon', '2 tbsp olive oil', '1 tsp dried herbs', 'Cherry tomatoes'],
+    method: ['Layer potato on a tray, drizzle oil, roast 15 min.', 'Add fish, zucchini, tomatoes, herbs and lemon.', 'Bake 12–15 min until fish flakes.'],
+    tags: ['High protein', 'One tray', 'Gluten-free'],
+  },
+  {
+    id: 'shepherds-pie', name: 'Lentil Shepherd\'s Pie', type: 'Dinner',
+    focus: ['plant', 'balanced'], minutes: 45, serves: 4, kcal: 460, protein: 19,
+    ingredients: ['1 tin lentils, rinsed', '1 tin chopped tomatoes', '1 onion', '2 carrots, diced', '4 potatoes', '20g butter', 'Splash of milk', '1 cup peas'],
+    method: ['Simmer lentils with tomato, onion, carrot and peas 15 min.', 'Boil and mash potatoes with butter and milk.', 'Layer lentil mix, top with mash, bake at 200°C for 20 min.'],
+    tags: ['Vegetarian', 'Comfort food', 'Feeds four', 'Freezer friendly'],
+  },
+  {
+    id: 'chicken-parmigiana-bowl', name: 'Chicken Parmi Bowl (Lighter)', type: 'Dinner',
+    focus: ['protein', 'balanced'], minutes: 30, serves: 2, kcal: 560, protein: 45,
+    ingredients: ['2 chicken breast schnitzels', '1 cup passata', '40g mozzarella', '2 cups steamed greens', '1 potato, cubed', 'Italian herbs'],
+    method: ['Bake chicken at 200°C for 15 min.', 'Top with passata and mozzarella, grill until bubbling.', 'Serve over greens and roast potato.'],
+    tags: ['High protein', 'Pub classic, lightened'],
+  },
+  {
+    id: 'capsicum-stuffed', name: 'Stuffed Capsicums', type: 'Dinner',
+    focus: ['balanced', 'plant'], minutes: 40, serves: 4, kcal: 380, protein: 14,
+    ingredients: ['4 capsicums, halved', '1.5 cups cooked rice', '1 tin lentils', '1 cup corn kernels', '1 tin chopped tomatoes', '60g tasty cheese', '1 tsp smoked paprika'],
+    method: ['Roast capsicum halves 10 min.', 'Mix rice, lentils, corn and tomato; season with paprika.', 'Fill capsicums, top with cheese, bake 15 min.'],
+    tags: ['Vegetarian', 'Meal prep friendly'],
+  },
+  {
+    id: 'salmon-cakes', name: 'Salmon & Potato Patties', type: 'Dinner',
+    focus: ['protein', 'balanced'], minutes: 30, serves: 2, kcal: 470, protein: 31,
+    ingredients: ['1 tin salmon', '2 potatoes, boiled & mashed', '1 egg', '2 spring onions', '1 tbsp flour', '1 handful rocket', 'Yoghurt tartare: yoghurt + capers + lemon'],
+    method: ['Mix salmon, mash, egg and onion; form patties.', 'Chill 10 min, dust in flour.', 'Fry 3–4 min each side; serve with rocket and yoghurt tartare.'],
+    tags: ['High protein', 'Budget friendly'],
+  },
+  {
+    id: 'protein-balls-choc', name: 'Choc Peanut Protein Balls', type: 'Snack',
+    focus: ['protein', 'balanced'], minutes: 15, serves: 8, kcal: 140, protein: 6,
+    ingredients: ['1 cup rolled oats', '1/2 cup peanut butter', '2 tbsp honey', '2 tbsp cocoa', '2 tbsp protein powder', '1 tbsp chia seeds'],
+    method: ['Mix everything until it holds together.', 'Roll into 8 balls, chill 30 min.'],
+    tags: ['Vegetarian', 'Make ahead', 'No cooking'],
+  },
+  {
+    id: 'roast-chickpeas-paprika', name: 'Smoky Roasted Chickpeas', type: 'Snack',
+    focus: ['plant', 'light'], minutes: 30, serves: 4, kcal: 160, protein: 7,
+    ingredients: ['1 tin chickpeas, rinsed & dried', '1 tbsp olive oil', '1 tsp smoked paprika', '1/2 tsp garlic powder', 'Sea salt'],
+    method: ['Toss chickpeas in oil and spices.', 'Roast at 200°C for 25 min until crisp.'],
+    tags: ['Vegan', 'Crunchy'],
+  },
+  {
+    id: 'apple-sandwich', name: 'Apple & Cheese Sandwich Rounds', type: 'Snack',
+    focus: ['light', 'balanced'], minutes: 3, serves: 1, kcal: 180, protein: 7,
+    ingredients: ['1 apple, sliced into rounds', '30g cheddar', '1 tsp peanut butter'],
+    method: ['Spread peanut butter on apple rounds.', 'Add cheddar slices, sandwich together.'],
+    tags: ['Vegetarian', 'No cooking', 'Kid friendly'],
+  },
+  {
+    id: 'banana-sushi', name: 'Banana Sushi', type: 'Snack',
+    focus: ['balanced', 'light'], minutes: 5, serves: 1, kcal: 210, protein: 6,
+    ingredients: ['1 banana', '1 tbsp peanut butter', '1 tbsp desiccated coconut', '1 tbsp crushed peanuts'],
+    method: ['Coat banana in peanut butter.', 'Roll in coconut and peanuts, slice into rounds.'],
+    tags: ['Vegetarian', 'Kid friendly', 'No cooking'],
+  },
+  {
+    id: 'veggie-muffins', name: 'Savoury Zucchini Muffins', type: 'Snack',
+    focus: ['balanced', 'light'], minutes: 30, serves: 8, kcal: 150, protein: 6,
+    ingredients: ['1 zucchini, grated', '1 carrot, grated', '2 eggs', '1 cup self-raising flour', '50g tasty cheese', '2 tbsp olive oil'],
+    method: ['Mix everything into a batter.', 'Divide into a muffin tin.', 'Bake at 180°C for 20 min.'],
+    tags: ['Vegetarian', 'Freezer friendly', 'Lunchbox'],
+  },
+  {
+    id: 'coconut-rice-pudding', name: 'Coconut Rice Pudding Cups', type: 'Snack',
+    focus: ['balanced', 'plant'], minutes: 25, serves: 4, kcal: 220, protein: 4,
+    ingredients: ['1 cup cooked rice', '1 cup coconut milk (light)', '1 tbsp honey', '1/2 tsp vanilla', 'Cinnamon', 'Mango to top'],
+    method: ['Simmer rice in coconut milk 15 min until creamy.', 'Stir in honey and vanilla.', 'Serve warm or chilled with mango and cinnamon.'],
+    tags: ['Vegetarian', 'Gluten-free'],
+  },
+  {
+    id: 'tuna-crackers', name: 'Tuna & Avo Crackers', type: 'Snack',
+    focus: ['protein', 'light'], minutes: 5, serves: 1, kcal: 190, protein: 16,
+    ingredients: ['1/2 tin tuna', '1/4 avocado', '4 rice crackers', 'Lemon juice', 'Black pepper'],
+    method: ['Mash avocado with lemon.', 'Top crackers with avo, tuna and pepper.'],
+    tags: ['High protein', 'No cooking'],
+  },
+  {
+    id: 'frozen-banana-bites', name: 'Choc-Dipped Banana Bites', type: 'Snack',
+    focus: ['light', 'plant'], minutes: 10, serves: 4, kcal: 130, protein: 2,
+    ingredients: ['2 bananas', '50g dark chocolate', '1 tsp coconut oil', 'Crushed nuts or coconut'],
+    method: ['Slice bananas, freeze 1 h.', 'Melt chocolate with coconut oil.', 'Dip banana rounds, sprinkle, re-freeze 20 min.'],
+    tags: ['Vegetarian', 'Make ahead', 'Kid friendly'],
+  },
+  {
+    id: 'veggie-soup-mug', name: 'Cup-a-Soup Veggie Pot', type: 'Snack',
+    focus: ['light', 'plant'], minutes: 8, serves: 1, kcal: 120, protein: 4,
+    ingredients: ['1/2 cup frozen veg', '1/2 tin chickpeas', '300ml vegetable stock', '1 tsp miso', 'Soy sauce'],
+    method: ['Simmer veg and chickpeas in stock 5 min.', 'Stir in miso off the heat, splash of soy.'],
+    tags: ['Vegan', 'Quick', 'Pantry staples'],
+  },
 ]
 
 export interface PlannedDay {
@@ -349,7 +601,146 @@ const HANDFUL_GRAMS = 30
 
 const NAME_ALIASES: Record<string, string> = { 'baby spinach': 'spinach' }
 
-export interface ShopSection { name: string; items: { text: string; detail?: string }[] }
+export interface ShopSection { name: string; items: { text: string; detail?: string; name?: string }[] }
+
+// ---- Woolworths guide ------------------------------------------------------
+// Every ingredient used across the toolkit is a standard Woolworths line —
+// the Mullumbimby store stocks them all. Live shelf pricing isn't publicly
+// available, so these are typical Woolworths guide prices (AUD) to sanity-
+// check the basket; confirm in store or in the Woolworths app.
+
+export const WW_GUIDE_DATE = 'September 2026'
+export const WW_STORE_NOTE = 'Every item below is a standard line at Woolworths Mullumbimby.'
+
+export interface WwPrice { product: string; price: number }
+
+const WW_PRICES: [RegExp, string, number][] = [
+  // Produce
+  [/rolled oats|^oats$/, 'Woolworths Rolled Oats 750g', 2.4],
+  [/banana/, 'Bananas, per kg', 4.5],
+  [/apple(?! juice)/, 'Pink Lady apples, per kg', 4.9],
+  [/apple juice/, 'Woolworths Apple Juice 2L', 2.8],
+  [/strawberries|berries|blueberr/, 'Frozen Mixed Berries 500g', 5.0],
+  [/mango/, 'Frozen Mango Chunks 500g', 4.6],
+  [/avocado/, 'Hass avocado, each', 2.5],
+  [/lemon/, 'Lemons, each', 1.0],
+  [/lime/, 'Limes, each', 1.0],
+  [/cherry tomato/, 'Cherry tomatoes 250g punnet', 4.0],
+  [/tomato/, 'Tomatoes, per kg', 5.9],
+  [/cucumber/, 'Continental cucumber, each', 3.5],
+  [/capsicum/, 'Capsicums, each', 2.5],
+  [/carrot/, 'Carrots, per kg', 2.2],
+  [/zucchini/, 'Zucchini, per kg', 6.9],
+  [/pumpkin/, 'Jap pumpkin, per kg', 3.5],
+  [/potato/, 'Washed potatoes 2kg bag', 4.0],
+  [/sweet potato/, 'Sweet potatoes, per kg', 4.9],
+  [/broccoli|broccolini/, 'Broccoli, each', 3.9],
+  [/green beans/, 'Green beans, per kg', 6.9],
+  [/mushroom/, 'Mushrooms 375g', 4.5],
+  [/spinach|rocket|mixed leaves|kale|greens|slaw|lettuce/, 'Baby leaf mix 120g', 3.5],
+  [/corn kernels/, 'Frozen corn kernels 500g', 2.8],
+  [/peas|frozen veg/, 'Frozen peas 500g', 2.4],
+  [/edamame/, 'Frozen edamame 400g', 6.0],
+  [/corn on|charred corn/, 'Corn cobs 4pk', 4.5],
+  [/beetroot/, 'Beetroot, per kg', 4.5],
+  [/onion|spring onion/, 'Brown onions, per kg', 3.0],
+  [/garlic/, 'Garlic bulbs, each', 0.8],
+  [/ginger|turmeric/, 'Fresh ginger, per kg', 25.0],
+  [/cauliflower/, 'Cauliflower, each', 4.9],
+  [/pear|peach|kiwi/, 'Seasonal fruit, per kg', 4.9],
+  [/basil|coriander|parsley|herb/, 'Fresh herb bunch', 3.0],
+  [/celery/, 'Celery half bunch', 3.5],
+  [/nori/, 'Nori sheets 10pk', 4.0],
+  // Meat & seafood
+  [/chicken breast schnitzel|chicken schnitzel/, 'Chicken schnitzels 4pk', 8.5],
+  [/chicken/, 'RSPCA chicken breast, per kg', 12.0],
+  [/salmon fillet|salmon/, 'Salmon fillets, per kg', 29.0],
+  [/tuna/, 'Canned tuna in springwater 95g', 1.3],
+  [/fish|barramundi/, 'Frozen white fish fillets 500g', 8.0],
+  [/prawn/, 'Frozen cooked prawns 500g', 15.0],
+  [/beef|mince/, 'Beef mince 500g', 7.0],
+  [/lamb/, 'Lamb strips/stir-fry, per kg', 16.0],
+  [/pork/, 'Pork loin, per kg', 12.0],
+  // Dairy & eggs
+  [/egg/, 'Woolworths eggs 12pk', 6.5],
+  [/greek yoghurt|yoghurt/, 'Greek yoghurt 1kg', 5.5],
+  [/milk(?!.*(soy|almond|oat|coconut))/, 'Woolworths full cream milk 3L', 4.5],
+  [/soy milk/, 'Vitasoy soy milk 1L', 2.7],
+  [/almond milk/, 'Almond milk 1L', 2.5],
+  [/oat milk/, 'Oat milk 1L', 2.5],
+  [/coconut water/, 'Coconut water 1L', 3.5],
+  [/coconut milk/, 'Light coconut milk 400ml', 1.6],
+  [/kefir/, 'Kefir 500ml', 4.5],
+  [/orange juice/, 'Orange juice 2L', 5.0],
+  [/tasty cheese|cheddar|cheese/, 'Tasty cheese block 500g', 7.5],
+  [/mozzarella/, 'Mozzarella 500g', 7.0],
+  [/feta/, 'Danish feta 200g', 5.5],
+  [/haloumi/, 'Haloumi 180g', 7.5],
+  [/ricotta/, 'Ricotta 375g', 4.5],
+  [/cottage cheese/, 'Cottage cheese 500g', 4.5],
+  [/butter/, 'Salted butter 250g', 5.5],
+  [/parmesan/, 'Parmesan 200g', 6.5],
+  [/tofu/, 'Firm tofu 300g', 4.5],
+  [/tempeh/, 'Tempeh 300g', 6.5],
+  // Bakery & wraps
+  [/sourdough|bread|toast/, 'Sourdough loaf', 4.5],
+  [/wrap|tortilla|pita/, 'Wholegrain wraps 8pk', 4.0],
+  [/rice cracker/, 'Rice crackers 100g', 2.5],
+  // Frozen & pantry
+  [/rice noodles/, 'Rice noodles 200g', 2.5],
+  [/soba/, 'Soba noodles 270g', 4.0],
+  [/pasta|spaghetti/, 'Pasta 500g', 1.3],
+  [/sushi rice|^rice|cooked rice/, 'Long-grain rice 1kg', 2.0],
+  [/quinoa/, 'Quinoa 500g', 5.5],
+  [/couscous/, 'Couscous 500g', 2.5],
+  [/pearl barley/, 'Pearl barley 500g', 2.0],
+  [/flour|cornflour|self-raising/, 'Plain flour 1kg', 1.8],
+  [/lentil/, 'Canned lentils 400g', 1.2],
+  [/chickpea/, 'Canned chickpeas 400g', 1.1],
+  [/black beans/, 'Canned black beans 400g', 1.2],
+  [/cannellini|baked beans|beans/, 'Canned beans 400g', 1.1],
+  [/chopped tomatoes|crushed tomatoes/, 'Canned diced tomatoes 400g', 1.1],
+  [/passata/, 'Passata 700g', 3.0],
+  [/stock/, 'Liquid stock 1L', 2.5],
+  [/olive oil/, 'Extra virgin olive oil 750ml', 12.0],
+  [/sesame oil/, 'Sesame oil 250ml', 4.5],
+  [/soy sauce/, 'Soy sauce 250ml', 3.5],
+  [/teriyaki/, 'Teriyaki sauce 250ml', 3.5],
+  [/vinegar|balsamic/, 'Vinegar 500ml', 3.0],
+  [/dijon/, 'Dijon mustard 200g', 3.5],
+  [/honey/, 'Woolworths honey 500g', 5.5],
+  [/peanut butter/, 'Peanut butter 375g', 3.5],
+  [/tahini/, 'Tahini 350g', 5.5],
+  [/miso/, 'Miso paste 100g', 5.0],
+  [/curry paste/, 'Red curry paste 200g', 2.5],
+  [/hummus/, 'Hummus 200g', 4.0],
+  [/salsa/, 'Salsa 300g', 4.0],
+  [/pesto/, 'Basil pesto 190g', 4.5],
+  [/corn chips/, 'Corn chips 230g', 3.5],
+  [/granola/, 'Granola 500g', 6.0],
+  [/wheat biscuit/, 'Wheat biscuits 575g', 5.0],
+  [/cocoa/, 'Cocoa powder 250g', 4.5],
+  [/dark chocolate/, 'Dark chocolate 180g block', 4.0],
+  [/protein powder/, 'Macro protein powder 500g', 22.0],
+  [/chia/, 'Chia seeds 200g', 5.0],
+  [/pepitas|seeds|sunflower/, 'Pepita/seed mix 200g', 5.0],
+  [/almond/, 'Raw almonds 350g', 8.0],
+  [/walnut|nuts|peanut/, 'Mixed nuts 200g', 5.5],
+  [/coconut flakes|desiccated coconut/, 'Desiccated coconut 250g', 2.5],
+  [/coconut oil/, 'Coconut oil 300ml', 5.5],
+  [/cinnamon|cumin|paprika|oregano|herbs|garlic powder|smoked/, 'Dried herbs & spices', 2.5],
+  [/vanilla/, 'Vanilla extract 50ml', 5.0],
+  [/dates/, 'Pitted dates 250g', 4.5],
+  [/salt|pepper/, 'Salt & pepper pantry staples', 2.0],
+]
+
+export function wwPriceFor(itemName: string): WwPrice | null {
+  const name = itemName.toLowerCase()
+  for (const [match, product, price] of WW_PRICES) {
+    if (match.test(name)) return { product, price }
+  }
+  return null
+}
 
 function fmtQty(qty: number): string {
   const whole = Math.floor(qty)
@@ -381,7 +772,7 @@ export function shoppingListSections(plan: PlannedDay[]): ShopSection[] {
       }
     }
   }
-  const grouped = new Map<string, { text: string; detail?: string }[]>()
+  const grouped = new Map<string, { text: string; detail?: string; name?: string }[]>()
   for (const item of merged.values()) {
     const name = item.name.toLowerCase()
     const section = PANTRY_FIRST.test(name) ? 'Tins, jars & pantry' : (SECTIONS.find((s) => s.match.test(name))?.name ?? 'Tins, jars & pantry')
@@ -395,7 +786,7 @@ export function shoppingListSections(plan: PlannedDay[]): ShopSection[] {
     } else if (item.recipes > 1) {
       detail = `used in ${item.recipes} recipes`
     }
-    grouped.set(section, [...(grouped.get(section) ?? []), { text, detail }])
+    grouped.set(section, [...(grouped.get(section) ?? []), { text, detail, name: item.name }])
   }
   const order = ['Produce', 'Meat & seafood', 'Dairy & eggs', 'Bakery & wraps', 'Frozen', 'Tins, jars & pantry']
   return order
@@ -433,7 +824,7 @@ export const mealBase: MealComponent[] = [
   { name: 'Roast potato', kcal: 160, protein: 4 },
   { name: 'Sourdough (2 slices)', kcal: 180, protein: 7 },
   { name: 'Cauliflower rice', kcal: 25, protein: 2 },
-  { name: 'Freekeh', kcal: 170, protein: 7 },
+  { name: 'Pearl barley', kcal: 175, protein: 5 },
   { name: 'Corn tortillas (3)', kcal: 150, protein: 4 },
 ]
 
@@ -516,7 +907,7 @@ export const smoothieFruits: MealComponent[] = [
   { name: 'Peach', kcal: 60, protein: 1 },
   { name: 'Kiwi', kcal: 45, protein: 1 },
   { name: 'Frozen cherries', kcal: 90, protein: 2 },
-  { name: 'Dragonfruit', kcal: 60, protein: 1 },
+  { name: 'Pear', kcal: 85, protein: 0 },
 ]
 
 export const smoothieBoosts: MealComponent[] = [
@@ -906,6 +1297,47 @@ export const gymPlaylistMoods: PlaylistMood[] = [
       { title: 'Radioactive', artist: 'Imagine Dragons' },
       { title: 'Centuries', artist: 'Fall Out Boy' },
       { title: 'Till I Collapse (Nate Dogg)', artist: 'Eminem' },
+      { title: 'Sail', artist: 'AWOLNATION' },
+      { title: 'Way Down We Go', artist: 'Kaleo' },
+      { title: 'Believer', artist: 'Imagine Dragons' },
+      { title: 'Thunder', artist: 'Imagine Dragons' },
+      { title: 'Whatever It Takes', artist: 'Imagine Dragons' },
+      { title: 'Numb', artist: 'Linkin Park' },
+      { title: 'Faint', artist: 'Linkin Park' },
+      { title: 'In the End', artist: 'Linkin Park' },
+      { title: 'Given Up', artist: 'Linkin Park' },
+      { title: 'Basket Case', artist: 'Green Day' },
+      { title: 'American Idiot', artist: 'Green Day' },
+      { title: 'Holiday', artist: 'Green Day' },
+      { title: 'Aerials', artist: 'System of a Down' },
+      { title: 'Toxicity', artist: 'System of a Down' },
+      { title: 'The Only', artist: 'Static-X' },
+      { title: 'Prayer of the Refugee', artist: 'Rise Against' },
+      { title: 'Savior', artist: 'Rise Against' },
+      { title: 'Satellite', artist: 'Rise Against' },
+      { title: 'Gold on the Ceiling', artist: 'The Black Keys' },
+      { title: 'Lonely Boy', artist: 'The Black Keys' },
+      { title: 'Howlin\' for You', artist: 'The Black Keys' },
+      { title: 'Renegade', artist: 'Styx' },
+      { title: 'The Stroke', artist: 'Billy Squier' },
+      { title: 'Barracuda', artist: 'Heart' },
+      { title: 'Crazy Train', artist: 'Ozzy Osbourne' },
+      { title: 'Holy Diver', artist: 'Dio' },
+      { title: 'Painkiller', artist: 'Judas Priest' },
+      { title: 'The Trooper', artist: 'Iron Maiden' },
+      { title: 'Run to the Hills', artist: 'Iron Maiden' },
+      { title: 'For Whom the Bell Tolls', artist: 'Metallica' },
+      { title: 'Seek & Destroy', artist: 'Metallica' },
+      { title: 'Master of Puppets', artist: 'Metallica' },
+      { title: 'Smooth Criminal', artist: 'Alien Ant Farm' },
+      { title: 'Last Resort', artist: 'Papa Roach' },
+      { title: 'Move Along', artist: 'The All-American Rejects' },
+      { title: 'Bleed American', artist: 'Jimmy Eat World' },
+      { title: 'The Middle', artist: 'Jimmy Eat World' },
+      { title: 'My Own Worst Enemy', artist: 'Lit' },
+      { title: 'All the Small Things', artist: 'blink-182' },
+      { title: 'What\'s My Age Again?', artist: 'blink-182' },
+      { title: 'Anthem Part Two', artist: 'blink-182' },
     ],
   },
   {
@@ -951,6 +1383,47 @@ export const gymPlaylistMoods: PlaylistMood[] = [
       { title: 'Scream & Shout', artist: 'will.i.am ft. Britney Spears' },
       { title: 'Hey Mama', artist: 'David Guetta ft. Nicki Minaj' },
       { title: 'Bang Bang', artist: 'Jessie J, Ariana Grande & Nicki Minaj' },
+      { title: 'Till the World Ends', artist: 'Britney Spears' },
+      { title: 'Work Bitch', artist: 'Britney Spears' },
+      { title: 'Stronger (What Doesn\'t Kill You)', artist: 'Kelly Clarkson' },
+      { title: 'Since U Been Gone', artist: 'Kelly Clarkson' },
+      { title: 'Confident', artist: 'Demi Lovato' },
+      { title: 'Cool for the Summer', artist: 'Demi Lovato' },
+      { title: 'New Rules', artist: 'Dua Lipa' },
+      { title: 'Houdini', artist: 'Dua Lipa' },
+      { title: 'Training Season', artist: 'Dua Lipa' },
+      { title: 'Espresso', artist: 'Sabrina Carpenter' },
+      { title: 'Please Please Please', artist: 'Sabrina Carpenter' },
+      { title: 'greedy', artist: 'Tate McRae' },
+      { title: 'exes', artist: 'Tate McRae' },
+      { title: 'Paint the Town Red', artist: 'Doja Cat' },
+      { title: 'Woman', artist: 'Doja Cat' },
+      { title: 'Say So', artist: 'Doja Cat' },
+      { title: 'About Damn Time', artist: 'Lizzo' },
+      { title: 'Juice', artist: 'Lizzo' },
+      { title: 'Good as Hell', artist: 'Lizzo' },
+      { title: 'Truth Hurts', artist: 'Lizzo' },
+      { title: 'Flowers', artist: 'Miley Cyrus' },
+      { title: 'Midnight Sky', artist: 'Miley Cyrus' },
+      { title: 'Wrecking Ball', artist: 'Miley Cyrus' },
+      { title: 'Bad Romance', artist: 'Lady Gaga' },
+      { title: 'Just Dance', artist: 'Lady Gaga' },
+      { title: 'Born This Way', artist: 'Lady Gaga' },
+      { title: 'Poker Face', artist: 'Lady Gaga' },
+      { title: 'Judas', artist: 'Lady Gaga' },
+      { title: 'Stupid Love', artist: 'Lady Gaga' },
+      { title: 'Firework', artist: 'Katy Perry' },
+      { title: 'Roar', artist: 'Katy Perry' },
+      { title: 'Dark Horse', artist: 'Katy Perry' },
+      { title: 'California Gurls', artist: 'Katy Perry ft. Snoop Dogg' },
+      { title: 'Last Friday Night', artist: 'Katy Perry' },
+      { title: 'Teenage Dream', artist: 'Katy Perry' },
+      { title: 'Wide Awake', artist: 'Katy Perry' },
+      { title: 'Hot N Cold', artist: 'Katy Perry' },
+      { title: 'Chained to the Rhythm', artist: 'Katy Perry ft. Skip Marley' },
+      { title: 'When I Grow Up', artist: 'The Pussycat Dolls' },
+      { title: 'Don\'t Cha', artist: 'The Pussycat Dolls' },
+      { title: 'Buttons', artist: 'The Pussycat Dolls' },
     ],
   },
   {
@@ -996,6 +1469,39 @@ export const gymPlaylistMoods: PlaylistMood[] = [
       { title: 'Epoch', artist: 'Tycho' },
       { title: 'Awake', artist: 'Tycho' },
       { title: 'Dive', artist: 'Tycho' },
+      { title: 'Crystalised', artist: 'The xx' },
+      { title: 'A Moment Apart', artist: 'ODESZA' },
+      { title: 'Wide Awake', artist: 'ODESZA ft. Bettye LaVette' },
+      { title: 'Nightingale', artist: 'Bonobo' },
+      { title: 'Black Sands', artist: 'Bonobo' },
+      { title: 'First Fires', artist: 'Bonobo ft. Erykah Badu' },
+      { title: 'Bambro Koyo Ganda', artist: 'Bonobo ft. Innov Gnawa' },
+      { title: 'Otter Creek', artist: 'Of Porches' },
+      { title: 'Flashed Junk Mind', artist: 'Milky Chance' },
+      { title: 'Stolen Dance', artist: 'Milky Chance' },
+      { title: 'Down by the River', artist: 'Milky Chance' },
+      { title: 'Troubled Thoughts', artist: 'Wens' },
+      { title: 'Trojans', artist: 'Atlas Genius' },
+      { title: 'If So', artist: 'Atlas Genius' },
+      { title: 'Young Blood', artist: 'The Naked and Famous' },
+      { title: 'Punching in a Dream', artist: 'The Naked and Famous' },
+      { title: 'Gold', artist: 'Chet Faker' },
+      { title: 'Talk Is Cheap', artist: 'Chet Faker' },
+      { title: '1998', artist: 'Chet Faker' },
+      { title: 'Drop the Game', artist: 'Flume & Chet Faker' },
+      { title: 'The Buzz', artist: 'Hermitude ft. Mataya & Young Tapz' },
+      { title: 'HyperParadise', artist: 'Hermitude' },
+      { title: 'Through the Roof', artist: 'Hermitude ft. Young Tapz' },
+      { title: 'Innerbloom', artist: 'Rüfüs Du Sol' },
+      { title: 'Underwater', artist: 'Rüfüs Du Sol' },
+      { title: 'You Were Right', artist: 'Rüfüs Du Sol' },
+      { title: 'Treat You Better', artist: 'Rüfüs Du Sol' },
+      { title: 'On My Knees', artist: 'Rüfüs Du Sol' },
+      { title: 'Bloom', artist: 'ODESZA' },
+      { title: 'It\'s Only', artist: 'ODESZA ft. Zyra' },
+      { title: 'Falls', artist: 'ODESZA ft. Sasha Sloan' },
+      { title: 'Divide', artist: 'ODESZA ft. Kelsey Bulkin' },
+      { title: 'Across the Room', artist: 'ODESZA ft. Leon Bridges' },
     ],
   },
 ]
@@ -1044,6 +1550,45 @@ export const yogaPlaylistMoods: PlaylistMood[] = [
       { title: 'Cosby Sweater', artist: 'Hilltop Hoods' },
       { title: 'Good Day Sunshine', artist: 'The Beatles' },
       { title: 'Beautiful Day', artist: 'U2' },
+      { title: 'Sitting, Waiting, Wishing', artist: 'Jack Johnson' },
+      { title: 'Upside Down', artist: 'Jack Johnson' },
+      { title: 'Bubble Toes', artist: 'Jack Johnson' },
+      { title: 'Talk of the Town', artist: 'Jack Johnson' },
+      { title: 'Wasting Time', artist: 'Jack Johnson' },
+      { title: 'The News', artist: 'Jack Johnson' },
+      { title: 'I Got You', artist: 'Jack Johnson' },
+      { title: 'You and Your Heart', artist: 'Jack Johnson' },
+      { title: 'From the Clouds', artist: 'Jack Johnson' },
+      { title: 'Fragments', artist: 'Jack Johnson' },
+      { title: 'Shotgun', artist: 'George Ezra' },
+      { title: 'Paradise', artist: 'George Ezra' },
+      { title: 'Blame It on Me', artist: 'George Ezra' },
+      { title: 'Listen to the Man', artist: 'George Ezra' },
+      { title: 'Green Green Grass', artist: 'George Ezra' },
+      { title: 'Anyone for You', artist: 'George Ezra' },
+      { title: 'Mess Around', artist: 'Cage the Elephant' },
+      { title: 'Ain\'t No Rest for the Wicked', artist: 'Cage the Elephant' },
+      { title: 'Come a Little Closer', artist: 'Cage the Elephant' },
+      { title: 'Trouble', artist: 'Cage the Elephant' },
+      { title: 'Ready to Let Go', artist: 'Cage the Elephant' },
+      { title: 'Take It or Leave It', artist: 'Cage the Elephant' },
+      { title: 'Sit Next to Me', artist: 'Foster the People' },
+      { title: 'Pumped Up Kicks', artist: 'Foster the People' },
+      { title: 'Houdini', artist: 'Foster the People' },
+      { title: 'Don\'t Stop', artist: 'Foster the People' },
+      { title: 'Are You What You Want to Be?', artist: 'Foster the People' },
+      { title: 'Coming of Age', artist: 'Foster the People' },
+      { title: 'Tightrope', artist: 'Janelle Monáe ft. Big Boi' },
+      { title: 'Make Me Feel', artist: 'Janelle Monáe' },
+      { title: 'Q.U.E.E.N.', artist: 'Janelle Monáe ft. Erykah Badu' },
+      { title: 'Yoga', artist: 'Janelle Monáe ft. Jidenna' },
+      { title: 'Electric Lady', artist: 'Janelle Monáe' },
+      { title: 'Primetime', artist: 'Janelle Monáe ft. Miguel' },
+      { title: 'Happy', artist: 'Pharrell Williams' },
+      { title: 'Freedom', artist: 'Pharrell Williams' },
+      { title: 'Feels', artist: 'Calvin Harris ft. Pharrell, Katy Perry & Big Sean' },
+      { title: 'Cash Out', artist: 'Calvin Harris ft. ScHoolboy Q' },
+      { title: 'Slide', artist: 'Calvin Harris ft. Frank Ocean & Migos' },
     ],
   },
   {
@@ -1089,6 +1634,43 @@ export const yogaPlaylistMoods: PlaylistMood[] = [
       { title: 'Free Fallin\'', artist: 'John Mayer' },
       { title: 'Realiti', artist: 'Grimes' },
       { title: 'Apocalypse', artist: 'Cigarettes After Sex' },
+      { title: 'Sunsetz', artist: 'Cigarettes After Sex' },
+      { title: 'Sweet', artist: 'Cigarettes After Sex' },
+      { title: 'K.', artist: 'Cigarettes After Sex' },
+      { title: 'Nothing\'s Gonna Hurt You Baby', artist: 'Cigarettes After Sex' },
+      { title: 'Smoke Signals', artist: 'Phoebe Bridgers' },
+      { title: 'I Know the End', artist: 'Phoebe Bridgers' },
+      { title: 'Chinese Satellite', artist: 'Phoebe Bridgers' },
+      { title: 'Kyoto', artist: 'Phoebe Bridgers' },
+      { title: 'Nights', artist: 'Frank Ocean' },
+      { title: 'Thinkin Bout You', artist: 'Frank Ocean' },
+      { title: 'Lost', artist: 'Frank Ocean' },
+      { title: 'Sweet Life', artist: 'Frank Ocean' },
+      { title: 'Solo', artist: 'Frank Ocean' },
+      { title: 'Pyramids', artist: 'Frank Ocean' },
+      { title: 'Redbone', artist: 'Childish Gambino' },
+      { title: 'Feels Like Summer', artist: 'Childish Gambino' },
+      { title: 'Summertime Magic', artist: 'Childish Gambino' },
+      { title: 'Location', artist: 'Khalid' },
+      { title: 'Better', artist: 'Khalid' },
+      { title: 'Talk', artist: 'Khalid' },
+      { title: 'Vertigo', artist: 'Khalid' },
+      { title: 'Come Through and Chill', artist: 'Miguel ft. J. Cole & Salaam Remi' },
+      { title: 'Sky Walker', artist: 'Miguel ft. Travis Scott' },
+      { title: 'Coffee', artist: 'Miguel' },
+      { title: 'Adorn', artist: 'Miguel' },
+      { title: 'How Many Drinks?', artist: 'Miguel ft. Kendrick Lamar' },
+      { title: 'Girl with the Tattoo Enter.lewd', artist: 'Miguel' },
+      { title: 'The Weekend', artist: 'SZA' },
+      { title: 'Love Galore', artist: 'SZA ft. Travis Scott' },
+      { title: 'Broken Clocks', artist: 'SZA' },
+      { title: 'Normal Girl', artist: 'SZA' },
+      { title: 'Garden (Say It Like Dat)', artist: 'SZA' },
+      { title: 'Supermodel', artist: 'SZA' },
+      { title: 'Cranes in the Sky', artist: 'Solange' },
+      { title: 'Don\'t Touch My Hair', artist: 'Solange ft. Sampha' },
+      { title: 'Binz', artist: 'Solange' },
+      { title: 'Stay Flo', artist: 'Solange' },
     ],
   },
   {
@@ -1134,6 +1716,43 @@ export const yogaPlaylistMoods: PlaylistMood[] = [
       { title: 'Spring 1', artist: 'Max Richter' },
       { title: 'A Catalogue of Afternoons', artist: 'Max Richter' },
       { title: 'Sleepwalking', artist: 'This Will Destroy You' },
+      { title: 'They Move on Tracks of Never-Ending Light', artist: 'This Will Destroy You' },
+      { title: 'The Mighty Rio Grande', artist: 'This Will Destroy You' },
+      { title: 'Quiet', artist: 'This Will Destroy You' },
+      { title: 'S/T', artist: 'This Will Destroy You' },
+      { title: 'Your Hand in Mine', artist: 'Explosions in the Sky' },
+      { title: 'First Breath After Coma', artist: 'Explosions in the Sky' },
+      { title: 'The Birth and Death of the Day', artist: 'Explosions in the Sky' },
+      { title: 'So Long, Lonesome', artist: 'Explosions in the Sky' },
+      { title: 'An Ending (Ascent)', artist: 'Brian Eno' },
+      { title: 'Ambient 1: Music for Airports', artist: 'Brian Eno' },
+      { title: 'Deep Blue Day', artist: 'Brian Eno' },
+      { title: 'Thursday Afternoon', artist: 'Brian Eno' },
+      { title: 'By This River', artist: 'Brian Eno' },
+      { title: 'Emerald and Stone', artist: 'Brian Eno, Jon Hopkins & Leo Abrahams' },
+      { title: 'Abandon Window', artist: 'Jon Hopkins' },
+      { title: 'Immunity', artist: 'Jon Hopkins' },
+      { title: 'Cold Out There', artist: 'Jon Hopkins' },
+      { title: 'Breathe This Air', artist: 'Jon Hopkins ft. Purity Ring' },
+      { title: 'Vessel', artist: 'Jon Hopkins' },
+      { title: 'Everloving', artist: 'Moby' },
+      { title: 'Natural Blues', artist: 'Moby' },
+      { title: 'Why Does My Heart Feel So Bad?', artist: 'Moby' },
+      { title: 'In This World', artist: 'Moby' },
+      { title: 'God Moving Over the Face of the Waters', artist: 'Moby' },
+      { title: 'Teardrop', artist: 'Massive Attack' },
+      { title: 'Angel', artist: 'Massive Attack' },
+      { title: 'Paradise Circus', artist: 'Massive Attack' },
+      { title: 'Unfinished Sympathy', artist: 'Massive Attack' },
+      { title: 'Protection', artist: 'Massive Attack & Tracey Thorn' },
+      { title: 'Roads', artist: 'Portishead' },
+      { title: 'Glory Box', artist: 'Portishead' },
+      { title: 'Sour Times', artist: 'Portishead' },
+      { title: 'Wandering Star', artist: 'Portishead' },
+      { title: 'Into Dust', artist: 'Mazzy Star' },
+      { title: 'Fade into You', artist: 'Mazzy Star' },
+      { title: 'Halah', artist: 'Mazzy Star' },
+      { title: 'Sea Green, See Blue', artist: 'Jaymay' },
     ],
   },
 ]
@@ -1166,6 +1785,10 @@ export const radioShows: RadioShow[] = [
   { id: 'essentials', name: 'Essentials', hint: 'Chillhop seasonal beats — mellow movement', videoId: 'jiua2V9q9V0' },
   { id: 'cafe', name: 'Studio Café', hint: 'Live jazz café — smoothie-bar energy', videoId: 'jRfwYdHDvEw' },
   { id: 'cloud', name: 'Cloud Rest', hint: 'White noise for sleep & breathwork', videoId: 'm7AFT-dCmTE' },
+  { id: 'piano', name: 'Piano Drift', hint: 'Beautiful piano radio — study & sleep', videoId: 'w9S5ID3nfOc' },
+  { id: 'deepsleep', name: 'Deep Sleep', hint: 'Slow ambient for real wind-down', videoId: '60Xwh_EAxrg' },
+  { id: 'melodic', name: 'Melodic House', hint: 'Monstercat Silk — smooth deep house 24/7', videoId: 'WsDyRAPFBC8' },
+  { id: 'rain', name: 'Tokyo Rain', hint: 'Sleepy lofi with rain on the window', videoId: 'qC7Kry-sWxo' },
 ]
 
 export function defaultShowId(date = new Date()): string {
@@ -1181,7 +1804,7 @@ export function defaultShowId(date = new Date()): string {
 
 export interface Book { title: string; author: string; year: number; category: string; blurb: string; url: string; isbn: string }
 
-export const bookCover = (isbn: string) => `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg`
+export const bookCover = (isbn: string) => `${import.meta.env.BASE_URL}books/${isbn}.webp`
 
 export const books: Book[] = [
   {
@@ -1263,6 +1886,141 @@ export const books: Book[] = [
     title: 'Exercised', author: 'Daniel Lieberman', year: 2020, category: 'Movement',
     blurb: 'An evolutionary biologist explains why exercise is weird, wonderful and worth rethinking.',
     url: 'https://www.penguinrandomhouse.com/books/206675/exercised-by-daniel-e-lieberman/', isbn: '9780141986364',
+  },
+  {
+    title: 'Can\'t Hurt Me', author: 'David Goggins', year: 2018, category: 'Mindset',
+    blurb: 'Navy SEAL to ultrarunner — the accountability-mirror playbook for outworking your own limits.',
+    url: 'https://openlibrary.org/isbn/9781471703904', isbn: '9781471703904',
+  },
+  {
+    title: 'The Talent Code', author: 'Daniel Coyle', year: 2009, category: 'Skill',
+    blurb: 'Deep practice and myelin — why reps done slowly and properly beat reps done fast.',
+    url: 'https://openlibrary.org/isbn/9780553806847', isbn: '9780553806847',
+  },
+  {
+    title: 'Peak', author: 'Anders Ericsson', year: 2016, category: 'Skill',
+    blurb: 'The deliberate-practice bible from the researcher behind the "10,000 hours" idea.',
+    url: 'https://openlibrary.org/isbn/9780544947221', isbn: '9780544947221',
+  },
+  {
+    title: 'The Champion\'s Mind', author: 'Jim Afremow, PhD', year: 2014, category: 'Mindset',
+    blurb: 'Sports psychology for mortals — routines, self-talk and confidence that transfer to the gym floor.',
+    url: 'https://openlibrary.org/isbn/9781623365622', isbn: '9781623365622',
+  },
+  {
+    title: 'Becoming a Supple Leopard', author: 'Kelly Starrett', year: 2013, category: 'Mobility',
+    blurb: 'The movement-and-maintenance manual — fix positions before you load them.',
+    url: 'https://openlibrary.org/isbn/9781628600834', isbn: '9781628600834',
+  },
+  {
+    title: 'Roar', author: 'Stacy Sims, PhD', year: 2016, category: 'Nutrition',
+    blurb: 'Training, fuelling and recovery written for women\'s physiology — not shrunk-down men\'s advice.',
+    url: 'https://openlibrary.org/isbn/9781623366865', isbn: '9781623366865',
+  },
+  {
+    title: 'In Defense of Food', author: 'Michael Pollan', year: 2008, category: 'Nutrition',
+    blurb: '"Eat food. Not too much. Mostly plants." — the seven-word diet that outlived a thousand fads.',
+    url: 'https://openlibrary.org/isbn/9781594201455', isbn: '9781594201455',
+  },
+  {
+    title: 'Food Rules', author: 'Michael Pollan', year: 2009, category: 'Nutrition',
+    blurb: 'Sixty-four one-line rules for eating well — the easiest nutrition book you\'ll ever finish.',
+    url: 'https://openlibrary.org/isbn/9780143116387', isbn: '9780143116387',
+  },
+  {
+    title: 'The Blue Zones', author: 'Dan Buettner', year: 2008, category: 'Longevity',
+    blurb: 'What the world\'s longest-lived communities actually do — movement baked into ordinary days.',
+    url: 'https://openlibrary.org/isbn/9781426203411', isbn: '9781426203411',
+  },
+  {
+    title: 'Ikigai', author: 'Héctor García & Francesc Miralles', year: 2016, category: 'Mind',
+    blurb: 'The Japanese art of purpose — small daily reasons to get up and move.',
+    url: 'https://openlibrary.org/isbn/9780143130727', isbn: '9780143130727',
+  },
+  {
+    title: 'Man\'s Search for Meaning', author: 'Viktor E. Frankl', year: 1946, category: 'Mind',
+    blurb: 'Logotherapy from a Holocaust survivor — why meaning outlasts comfort.',
+    url: 'https://openlibrary.org/isbn/9788425411014', isbn: '9788425411014',
+  },
+  {
+    title: 'Meditations', author: 'Marcus Aurelius (Gregory Hays trans.)', year: 2002, category: 'Mind',
+    blurb: 'A Roman emperor\'s private notes on discipline — still the best stoic starting point.',
+    url: 'https://openlibrary.org/isbn/9780812968255', isbn: '9780812968255',
+  },
+  {
+    title: 'The Daily Stoic', author: 'Ryan Holiday', year: 2016, category: 'Mind',
+    blurb: 'One page a day of ancient wisdom — pairs well with a morning stretch.',
+    url: 'https://openlibrary.org/isbn/9780735211735', isbn: '9780735211735',
+  },
+  {
+    title: 'Stillness Is the Key', author: 'Ryan Holiday', year: 2019, category: 'Mind',
+    blurb: 'The case for slowing down — recovery as a skill, not a reward.',
+    url: 'https://openlibrary.org/isbn/9780525538585', isbn: '9780525538585',
+  },
+  {
+    title: 'Dopamine Nation', author: 'Anna Lembke, MD', year: 2021, category: 'Mind',
+    blurb: 'Pain-pleasure balance explained — why hard effort resets a burnt-out reward system.',
+    url: 'https://openlibrary.org/isbn/9791387662455', isbn: '9791387662455',
+  },
+  {
+    title: 'Move Your DNA', author: 'Katy Bowman', year: 2017, category: 'Movement',
+    blurb: 'Biomechanics of everyday movement — beyond exercise into how you live in your body.',
+    url: 'https://openlibrary.org/isbn/9781943370108', isbn: '9781943370108',
+  },
+  {
+    title: 'The Practice of Groundedness', author: 'Brad Stulberg', year: 2021, category: 'Mindset',
+    blurb: 'Sustainable striving — how to chase goals without burning out on them.',
+    url: 'https://openlibrary.org/isbn/9780593329894', isbn: '9780593329894',
+  },
+  {
+    title: 'Peak Performance', author: 'Brad Stulberg & Steve Magness', year: 2017, category: 'Performance',
+    blurb: 'Stress + rest = growth — the growth equation applied to training and work.',
+    url: 'https://openlibrary.org/isbn/9781536675092', isbn: '9781536675092',
+  },
+  {
+    title: 'Endure', author: 'Alex Hutchinson', year: 2018, category: 'Endurance',
+    blurb: 'The science of limits — mind vs muscle in the last kilometre.',
+    url: 'https://openlibrary.org/isbn/9781538502020', isbn: '9781538502020',
+  },
+  {
+    title: 'Ultramarathon Man', author: 'Dean Karnazes', year: 2005, category: 'Endurance',
+    blurb: 'Running 200 miles and other unreasonable things — pure inspiration fuel.',
+    url: 'https://openlibrary.org/isbn/9781585422784', isbn: '9781585422784',
+  },
+  {
+    title: 'Finding Ultra', author: 'Rich Roll', year: 2012, category: 'Endurance',
+    blurb: 'Overweight at 40 to ultraman — the plant-fuelled comeback story.',
+    url: 'https://openlibrary.org/isbn/9781538554623', isbn: '9781538554623',
+  },
+  {
+    title: 'What I Talk About When I Talk About Running', author: 'Haruki Murakami', year: 2007, category: 'Movement',
+    blurb: 'A novelist\'s quiet meditation on kilometres and craft — for the contemplative runner.',
+    url: 'https://openlibrary.org/isbn/9782714445087', isbn: '9782714445087',
+  },
+  {
+    title: 'Yoga Anatomy', author: 'Leslie Kaminoff & Amy Matthews', year: 2011, category: 'Yoga',
+    blurb: 'The pose-by-pose anatomy reference every serious practitioner owns.',
+    url: 'https://openlibrary.org/isbn/9780736062787', isbn: '9780736062787',
+  },
+  {
+    title: 'The Heart of Yoga', author: 'T.K.V. Desikachar', year: 1995, category: 'Yoga',
+    blurb: 'Viniyoga from the source — adapting practice to the person, not the reverse.',
+    url: 'https://openlibrary.org/isbn/9780892815937', isbn: '9780892815937',
+  },
+  {
+    title: 'Meditations from the Mat', author: 'Rolf Gates & Katrina Kenison', year: 2002, category: 'Yoga',
+    blurb: '365 short reflections linking the mat to the rest of your life.',
+    url: 'https://openlibrary.org/isbn/9781504632287', isbn: '9781504632287',
+  },
+  {
+    title: 'Natural Born Heroes', author: 'Christopher McDougall', year: 2015, category: 'Movement',
+    blurb: 'Parkour, natural movement and Greek resistance fighters — fitness as survival skill.',
+    url: 'https://openlibrary.org/isbn/9780307594969', isbn: '9780307594969',
+  },
+  {
+    title: 'The Wim Hof Method', author: 'Wim Hof', year: 2020, category: 'Breath',
+    blurb: 'Cold, breath and commitment — the Iceman\'s protocol in his own words.',
+    url: 'https://openlibrary.org/isbn/9781683646105', isbn: '9781683646105',
   },
 ]
 
@@ -1363,4 +2121,262 @@ export const videos: Video[] = [
     title: 'Flexibility & Stretching Guide', source: 'NHS', minutes: 15, level: 'All levels', category: 'Mobility',
     url: 'https://www.nhs.uk/live-well/exercise/flexibility-exercises/',
   },
+  {
+    title: '20-Minute Full Body Stretch for Stress Relief', source: 'MadFit', minutes: 20, level: 'All levels', category: 'Mobility',
+    url: 'https://www.youtube.com/watch?v=sTANio_2E0Q',
+  },
+  {
+    title: 'Morning Yoga Workout — Better Than the Gym', source: 'Boho Beautiful Yoga', minutes: 15, level: 'Intermediate', category: 'Yoga',
+    url: 'https://www.youtube.com/watch?v=oX6I6vs1EFs',
+  },
+  {
+    title: 'Abs Workout Challenge', source: 'Chloe Ting', minutes: 11, level: 'Intermediate', category: 'Strength',
+    url: 'https://www.youtube.com/watch?v=2pLT-olgUJs',
+  },
+  {
+    title: '6-Pack Abs for Beginners', source: 'THENX', minutes: 10, level: 'Beginner', category: 'Strength',
+    url: 'https://www.youtube.com/watch?v=3p8EBPVZ2Iw',
+  },
+  {
+    title: '15-Minute Full Body Stretch — Daily Routine', source: 'Mady Morrison', minutes: 15, level: 'All levels', category: 'Mobility',
+    url: 'https://www.youtube.com/watch?v=g_tea8ZNk5A',
+  },
+  {
+    title: '10-Minute Beginner Ab Workout — No Equipment', source: 'Pamela Reif', minutes: 10, level: 'Beginner', category: 'Strength',
+    url: 'https://www.youtube.com/watch?v=1f8yoFFdkcY',
+  },
+  {
+    title: '15-Minute HIIT — No Equipment', source: 'FitnessBlender', minutes: 15, level: 'Intermediate', category: 'Cardio',
+    url: 'https://www.youtube.com/watch?v=0DSrudz6IVY',
+  },
+  {
+    title: 'The Minimalist Workout Plan (Science-Based)', source: 'Jeff Nippard', minutes: 14, level: 'All levels', category: 'Strength',
+    url: 'https://www.youtube.com/watch?v=eMjyvIQbn9M',
+  },
+  {
+    title: 'Balance Exercises', source: 'NHS', minutes: 10, level: 'Beginner', category: 'Mobility',
+    url: 'https://www.nhs.uk/live-well/exercise/balance-exercises/',
+  },
+  {
+    title: 'Gym-Free Home Workouts', source: 'NHS', minutes: 20, level: 'Beginner', category: 'Strength',
+    url: 'https://www.nhs.uk/live-well/exercise/gym-free-workouts/',
+  },
+  {
+    title: 'Walking for Health', source: 'NHS', minutes: 10, level: 'All levels', category: 'Cardio',
+    url: 'https://www.nhs.uk/live-well/exercise/walking-for-health/',
+  },
+  {
+    title: 'Sitting Exercises', source: 'NHS', minutes: 10, level: 'Beginner', category: 'Mobility',
+    url: 'https://www.nhs.uk/live-well/exercise/sitting-exercises/',
+  },
+  {
+    title: 'Body Blast Legs', source: 'NHS Fitness Studio', minutes: 10, level: 'Beginner+', category: 'Strength',
+    url: 'https://www.nhs.uk/live-well/exercise/strength-and-resistance/body-blast-legs/',
+  },
+  {
+    title: 'Body Blast Abs', source: 'NHS Fitness Studio', minutes: 10, level: 'Beginner+', category: 'Strength',
+    url: 'https://www.nhs.uk/live-well/exercise/strength-and-resistance/body-blast-abs/',
+  },
 ]
+
+// ---- Warm-up Builder --------------------------------------------------------
+// Procedural: every build samples fresh picks per phase, so warm-ups rarely repeat.
+
+export interface WarmupActivity { id: string; name: string; hint: string }
+
+export const warmupActivities: WarmupActivity[] = [
+  { id: 'strength', name: 'Weights session', hint: 'Barbell, dumbbell or machine work' },
+  { id: 'cardio', name: 'Cardio session', hint: 'Intervals, circuits or a hard effort' },
+  { id: 'run', name: 'Run or walk', hint: 'Road, trail or treadmill' },
+  { id: 'class', name: 'Group class', hint: 'Primal Flow, Lift, Sculpt and friends' },
+  { id: 'yoga', name: 'Yoga practice', hint: 'Flow, yin or mobility work' },
+  { id: 'sport', name: 'Sport & surf', hint: 'Ball sport, surf, swim or ride' },
+]
+
+export interface WarmupStep { phase: string; move: string; dose: string }
+
+const pulseRaisers = [
+  { move: 'Easy bike', dose: 'steady spin' },
+  { move: 'Brisk treadmill walk', dose: 'incline optional' },
+  { move: 'Rowing machine', dose: 'easy pressure' },
+  { move: 'Marching on the spot', dose: 'tall posture' },
+  { move: 'Skipping rope', dose: 'light bounces' },
+  { move: 'Star jumps — low impact option: step jacks', dose: 'comfortable pace' },
+  { move: 'Shadow boxing', dose: 'loose shoulders' },
+  { move: 'Dance it out', dose: 'pick a track and move' },
+  { move: 'Step-ups on a low box', dose: 'alternate feet' },
+  { move: 'Cross-trainer', dose: 'easy-moderate' },
+]
+
+const jointPrep = [
+  { move: 'Neck half-circles', dose: '5 each way — slow' },
+  { move: 'Shoulder rolls', dose: '10 back, 10 forward' },
+  { move: 'Arm circles', dose: '10 small to big' },
+  { move: 'Wrist circles', dose: '8 each way' },
+  { move: 'Hip circles', dose: '8 each way — hands on hips' },
+  { move: 'Standing hip openers', dose: '6 each side' },
+  { move: 'Knee hugs to chest', dose: '6 each side' },
+  { move: 'Leg swings — front to back', dose: '10 each leg' },
+  { move: 'Leg swings — side to side', dose: '10 each leg' },
+  { move: 'Ankle rolls', dose: '8 each way, each foot' },
+  { move: 'Cat-cow', dose: '8 slow breaths' },
+  { move: 'Thoracic rotations on all fours', dose: '6 each side' },
+  { move: 'World\'s greatest stretch', dose: '4 each side' },
+  { move: 'Deep squat hold with reaches', dose: '30 seconds' },
+]
+
+const activators: Record<string, { move: string; dose: string }[]> = {
+  strength: [
+    { move: 'Glute bridges', dose: '12 reps — squeeze at the top' },
+    { move: 'Band pull-aparts', dose: '15 reps' },
+    { move: 'Bodyweight squats', dose: '10 reps' },
+    { move: 'Inchworms', dose: '5 reps' },
+    { move: 'Dead hangs or scap pulls', dose: '20 seconds' },
+    { move: 'Push-up plus', dose: '8 reps' },
+    { move: 'Empty-bar reps of your first lift', dose: '2 sets of 8' },
+    { move: 'Side-lying clam shells', dose: '12 each side' },
+    { move: 'Bird-dogs', dose: '6 each side' },
+    { move: 'Banded lateral walks', dose: '10 steps each way' },
+  ],
+  cardio: [
+    { move: 'High knees', dose: '20 seconds' },
+    { move: 'Butt kicks', dose: '20 seconds' },
+    { move: 'Skater hops', dose: '8 each side' },
+    { move: 'Mountain climbers', dose: '20 seconds' },
+    { move: 'Jumping jacks', dose: '30 seconds' },
+    { move: 'Lunge with rotation', dose: '5 each side' },
+    { move: 'Bear crawls', dose: '10 metres' },
+    { move: 'Fast feet', dose: '3 × 10 seconds' },
+    { move: 'Skipping — single bounce', dose: '30 seconds' },
+    { move: 'A-skips', dose: '2 × 10 metres' },
+  ],
+  run: [
+    { move: 'Walking lunges', dose: '8 each side' },
+    { move: 'Calf raises', dose: '15 reps' },
+    { move: 'Leg swings — front to back', dose: '10 each leg' },
+    { move: 'Ankle hops', dose: '20 seconds' },
+    { move: 'A-skips', dose: '2 × 15 metres' },
+    { move: 'Strides — build to 80%', dose: '3 × 60 metres' },
+    { move: 'Single-leg balance', dose: '20 seconds each side' },
+    { move: 'Side shuffles', dose: '10 metres each way' },
+    { move: 'Donkey kicks', dose: '8 each side' },
+    { move: 'Easy jog', dose: 'first 3–5 min of the run' },
+  ],
+  class: [
+    { move: 'Easy jog on the spot', dose: '60 seconds' },
+    { move: 'Squat to reach', dose: '10 reps' },
+    { move: 'Reverse lunges', dose: '6 each side' },
+    { move: 'Torso rotations', dose: '10 slow' },
+    { move: 'Jumping jacks', dose: '20 seconds' },
+    { move: 'Band rows', dose: '12 reps' },
+    { move: 'Hip hinges with a dowel', dose: '10 reps' },
+    { move: 'Plank shoulder taps', dose: '10 each side' },
+    { move: 'Side lunges', dose: '6 each side' },
+    { move: 'Wall slides', dose: '8 reps' },
+  ],
+  yoga: [
+    { move: 'Cat-cow', dose: '8 breaths' },
+    { move: 'Downward dog pedal', dose: '10 slow pedals' },
+    { move: 'Low lunge sway', dose: '30 seconds each side' },
+    { move: 'Seated side bends', dose: '3 breaths each side' },
+    { move: 'Thread the needle', dose: '5 each side' },
+    { move: 'Sun salutation A — half pace', dose: '2 rounds' },
+    { move: 'Child\'s pose with side reach', dose: '3 breaths each side' },
+    { move: 'Supine twist', dose: '3 breaths each side' },
+    { move: 'Wrist and finger stretches', dose: '30 seconds' },
+    { move: 'Standing forward fold sway', dose: '30 seconds' },
+  ],
+  sport: [
+    { move: 'Carioca steps', dose: '10 metres each way' },
+    { move: 'Side shuffles', dose: '10 metres each way' },
+    { move: 'Backpedal to jog', dose: '4 × 10 metres' },
+    { move: 'Arm swings and throws motion', dose: '10 reps' },
+    { move: 'Lunge with reach overhead', dose: '6 each side' },
+    { move: 'Pogo hops', dose: '2 × 10' },
+    { move: 'Shoulder pass-throughs with a band or towel', dose: '10 reps' },
+    { move: 'Rotational med-ball throws or shadow throws', dose: '6 each side' },
+    { move: 'Pop-ups on the sand or mat', dose: '8 reps' },
+    { move: 'Build-up sprints', dose: '3 × 40 metres at 60/70/80%' },
+  ],
+}
+
+const ramps: Record<string, { move: string; dose: string }[]> = {
+  strength: [
+    { move: 'First lift at ~50% working weight', dose: '1 × 5' },
+    { move: 'First lift at ~70% working weight', dose: '1 × 3' },
+    { move: 'Practise your first movement pattern unloaded', dose: '8 reps' },
+  ],
+  cardio: [
+    { move: '60 seconds at target pace', dose: 'then easy 60s' },
+    { move: '2 short pickups at session pace', dose: '15 seconds each' },
+  ],
+  run: [
+    { move: 'Strides — build to 85%', dose: '2 × 60 metres' },
+    { move: 'Easy jog into pace', dose: '2 minutes' },
+  ],
+  class: [
+    { move: 'Rehearse the class\'s main move slowly', dose: '8 reps' },
+    { move: 'One round of the circuit at half speed', dose: 'as preview' },
+  ],
+  yoga: [
+    { move: 'Three slow breaths in stillness', dose: 'set your intention' },
+    { move: 'One full sun salutation', dose: 'at practice pace' },
+  ],
+  sport: [
+    { move: 'Sport-specific drill at half speed', dose: '2 × 30 seconds' },
+    { move: 'Build-up effort', dose: '1 × 20 metres at 90%' },
+  ],
+}
+
+export function buildWarmup(activityId: string, minutes: number): WarmupStep[] {
+  const steps: WarmupStep[] = []
+  const pulse = minutes >= 10 ? 2 : 1
+  const prep = minutes >= 15 ? 4 : minutes >= 10 ? 3 : 2
+  const act = minutes >= 15 ? 3 : minutes >= 10 ? 2 : 1
+  shufflePick(pulseRaisers, pulse).forEach((p) => steps.push({ phase: 'Raise', move: p.move, dose: p.dose }))
+  shufflePick(jointPrep, prep).forEach((p) => steps.push({ phase: 'Mobilise', move: p.move, dose: p.dose }))
+  shufflePick(activators[activityId] ?? activators.strength, act).forEach((p) => steps.push({ phase: 'Activate', move: p.move, dose: p.dose }))
+  shufflePick(ramps[activityId] ?? ramps.strength, 1).forEach((p) => steps.push({ phase: 'Ramp up', move: p.move, dose: p.dose }))
+  return steps
+}
+
+// ---- Habit Tracker ----------------------------------------------------------
+// Opt-in only: completion data is stored on-device solely after the user
+// chooses "Keep my habits on this device" (same pattern as Body Metrics).
+
+export interface Habit { id: string; name: string; hint: string }
+
+export const habits: Habit[] = [
+  { id: 'move', name: 'Moved for 20+ minutes', hint: 'Any movement counts — a walk does' },
+  { id: 'protein', name: 'Protein at each meal', hint: 'Palm-size serve, three times' },
+  { id: 'plants', name: '5+ serves of plants', hint: 'Fruit and veg across the day' },
+  { id: 'water', name: 'Drank mostly water', hint: 'Around 2 litres' },
+  { id: 'sleep', name: 'In bed by a set time', hint: 'Protect the wind-down' },
+  { id: 'screens', name: 'Screens off 30 min before bed', hint: 'Book or stretch instead' },
+  { id: 'steps', name: '7,000+ steps', hint: 'Everyday steps count double' },
+  { id: 'moment', name: 'One quiet moment', hint: 'Breathwork, stretch or sit' },
+]
+
+export function dayKey(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+}
+
+export function lastNDays(n: number): { key: string; label: string; weekday: string; isToday: boolean }[] {
+  const out: { key: string; label: string; weekday: string; isToday: boolean }[] = []
+  const today = new Date()
+  for (let i = n - 1; i >= 0; i--) {
+    const d = new Date(today)
+    d.setDate(today.getDate() - i)
+    out.push({ key: dayKey(d), label: `${d.getDate()}`, weekday: d.toLocaleDateString('en-AU', { weekday: 'narrow' }), isToday: i === 0 })
+  }
+  return out
+}
+
+export function habitStreak(done: Record<string, boolean>, habitId: string): number {
+  let streak = 0
+  const d = new Date()
+  for (;;) {
+    if (done[`${habitId}:${dayKey(d)}`]) { streak++; d.setDate(d.getDate() - 1) } else break
+  }
+  return streak
+}

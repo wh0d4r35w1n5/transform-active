@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright'
 import {
   activityLevels, bmiCategory, bmiFor, books, buildMealPlan, buildRoutine, dailyNeeds,
   dealFresh, defaultShowId, gymPlaylistMoods, planNutrition, radioShows, recipes, restSeconds,
-  shoppingListSections, spotifySearch, videos, yogaPlaylistMoods,
+  shoppingListSections, spotifySearch, videos, yogaPlaylistMoods, buildWarmup, habits, wwPriceFor,
 } from '../src/lib/toolkit'
 
 test('the meal planner builds a seven-day plan that respects the chosen focus', () => {
@@ -139,6 +139,29 @@ test('playlists, books and videos are fully populated with real links', () => {
   expect(recipes.length).toBeGreaterThanOrEqual(12)
 })
 
+test('the warm-up builder composes phased sequences and varies', () => {
+  const short = buildWarmup('strength', 5)
+  expect(short.length).toBeGreaterThanOrEqual(4)
+  expect(short[0].phase).toBe('Raise')
+  expect(short[short.length - 1].phase).toBe('Ramp up')
+  const long = buildWarmup('yoga', 15)
+  expect(long.length).toBeGreaterThan(short.length)
+  const seen = new Set(Array.from({ length: 8 }, () => buildWarmup('run', 10).map((step) => step.move).join('|')))
+  expect(seen.size).toBeGreaterThan(1)
+})
+
+test('woolworths guide prices resolve for common basket items', () => {
+  expect(wwPriceFor('chicken breast')?.price).toBeGreaterThan(0)
+  expect(wwPriceFor('rolled oats')?.price).toBeGreaterThan(0)
+  expect(wwPriceFor('baby spinach')?.price).toBeGreaterThan(0)
+  expect(wwPriceFor('greek yoghurt')?.price).toBeGreaterThan(0)
+  // Every planned week's shopping list should be mostly priceable.
+  const plan = buildMealPlan('balanced', true)
+  const names = shoppingListSections(plan).flatMap((section) => section.items.map((item) => item.name ?? ''))
+  const priced = names.filter((name) => wwPriceFor(name) !== null)
+  expect(priced.length / names.length).toBeGreaterThan(0.7)
+})
+
 test.describe('toolkit UI', () => {
   test.beforeEach(async ({ page }) => {
     await page.clock.setFixedTime(new Date('2026-09-21T05:00:00Z'))
@@ -146,14 +169,18 @@ test.describe('toolkit UI', () => {
     await page.locator('#toolkit').scrollIntoViewIfNeeded()
   })
 
-  test('all eleven public tools are listed and switchable', async ({ page }) => {
+  test('all thirteen public tools are listed and switchable', async ({ page }) => {
     const toolkit = page.locator('#toolkit')
     await expect(toolkit.getByRole('heading', { name: /Active Life/ })).toBeVisible()
     const picker = toolkit.getByRole('group', { name: 'Choose a tool' })
-    await expect(picker.getByRole('button')).toHaveCount(11)
+    await expect(picker.getByRole('button')).toHaveCount(13)
     await expect(toolkit.locator('.planner-day')).toHaveCount(8) // 7 days + shopping list
     await picker.getByRole('button', { name: /Body Metrics/ }).click()
     await expect(toolkit.locator('.bmi-tool')).toBeVisible()
+    await picker.getByRole('button', { name: /Warm-up Builder/ }).click()
+    await expect(toolkit.locator('.warmup-list li').first()).toBeVisible()
+    await picker.getByRole('button', { name: /Habit Tracker/ }).click()
+    await expect(toolkit.locator('.habit-row')).toHaveCount(habits.length + 1)
     await picker.getByRole('button', { name: /Books/ }).click()
     await expect(toolkit.locator('.book-card')).toHaveCount(6)
   })
@@ -229,7 +256,7 @@ test.describe('toolkit UI', () => {
     await expect(toolkit.locator('.builder-result h4')).toContainText('smoothie')
     // Playlists draw a fresh cut of ten from deeper pools.
     await toolkit.getByRole('button', { name: /Gym Playlist/ }).click()
-    await expect(toolkit.locator('.playlist-head')).toContainText('of 40 tracks')
+    await expect(toolkit.locator('.playlist-head')).toContainText(`of ${gymPlaylistMoods[0].tracks.length} tracks`)
     let changed = false
     for (let attempt = 0; attempt < 6 && !changed; attempt += 1) {
       const before = await toolkit.locator('.track-list li').allTextContents()
@@ -319,6 +346,31 @@ test.describe('toolkit UI', () => {
     await expect(timer).toBeHidden()
     await session.getByRole('button', { name: 'Finish session' }).click()
     await expect(toolkit.locator('.done-badge').first()).toBeVisible()
+  })
+
+  test('the warm-up builder and habit tracker work — habits only persist on opt-in', async ({ page }) => {
+    const toolkit = page.locator('#toolkit')
+    await toolkit.getByRole('button', { name: /Warm-up Builder/ }).click()
+    await expect(toolkit.locator('.warmup-list li').first()).toBeVisible()
+    const firstSteps = await toolkit.locator('.warmup-list li strong').allTextContents()
+    let changed = false
+    for (let attempt = 0; attempt < 6 && !changed; attempt += 1) {
+      await toolkit.getByRole('button', { name: 'Reshuffle' }).click()
+      changed = (await toolkit.locator('.warmup-list li strong').allTextContents()).join() !== firstSteps.join()
+    }
+    expect(changed).toBe(true)
+    // Habit ticks work immediately but nothing persists until the opt-in.
+    await toolkit.getByRole('button', { name: /Habit Tracker/ }).click()
+    const firstCheck = toolkit.locator('.habit-check').first()
+    await firstCheck.click()
+    await expect(firstCheck).toHaveClass(/is-done/)
+    expect(await page.evaluate(() => localStorage.getItem('ta-habits'))).toBeNull()
+    await toolkit.getByRole('checkbox').check()
+    await page.waitForFunction(() => localStorage.getItem('ta-habits') !== null)
+    await page.reload()
+    await page.locator('#toolkit').scrollIntoViewIfNeeded()
+    await page.locator('#toolkit').getByRole('button', { name: /Habit Tracker/ }).click()
+    await expect(page.locator('#toolkit .habit-check').first()).toHaveClass(/is-done/)
   })
 
   test('the toolkit passes automated accessibility checks', async ({ page }) => {

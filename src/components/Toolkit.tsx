@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type ReactNode, type SetStateAction } from 'react'
-import { ArrowUpRight, Blend, BookOpen, Calculator, CalendarRange, Check, CheckCircle2, ChefHat, Circle, Copy, CupSoda, Dices, Dumbbell, ListMusic, MonitorPlay, Music2, Pause, Play, Printer, Radio, RefreshCw, RotateCcw, Salad, ShieldCheck, Shuffle, Sparkles, Timer, X } from 'lucide-react'
+import { ArrowUpRight, Blend, BookOpen, Calculator, CalendarRange, Check, CheckCircle2, ChefHat, Circle, Copy, CupSoda, Dices, Dumbbell, Flame, ListMusic, MonitorPlay, Music2, Pause, Play, Printer, Radio, RefreshCw, RotateCcw, Salad, ShieldCheck, ShoppingBasket, Shuffle, Sparkles, Timer, X } from 'lucide-react'
 import { Reveal, SectionHeading } from './brand'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
@@ -9,12 +9,12 @@ import {
   bookCover, clearSavedBody, dailyNeeds, dietFocuses, gymPlaylistMoods, loadSavedBody, mealBase,
   mealExtras, mealProteins, mealSauces, mealVeg, planNutrition, recipes, routineGoals,
   routineLevels, saveBody, shoppingListSections, dealFresh, shufflePick, smoothieBases, smoothieBoosts, smoothieFruits,
-  spotifySearch, trackList, videos, yogaPlaylistMoods, defaultShowId, radioShows,
+  spotifySearch, trackList, videos, yogaPlaylistMoods, defaultShowId, radioShows, wwPriceFor, WW_GUIDE_DATE, WW_STORE_NOTE, buildWarmup, warmupActivities, habits, habitStreak, lastNDays,
   type DietFocus, type MealType, type PlaylistMood, type Recipe, type RoutineExercise,
   type RoutineGoal, type RoutineLevel, type SavedBody, type Sex,
 } from '../lib/toolkit'
 
-type ToolId = 'planner' | 'recipes' | 'meal' | 'smoothie' | 'bmi' | 'routine' | 'radio' | 'gym-music' | 'yoga-music' | 'books' | 'videos'
+type ToolId = 'planner' | 'recipes' | 'meal' | 'smoothie' | 'bmi' | 'routine' | 'warmup' | 'habits' | 'radio' | 'gym-music' | 'yoga-music' | 'books' | 'videos'
 
 const tools: { id: ToolId; name: string; icon: typeof Salad; hint: string }[] = [
   { id: 'planner', name: 'Meal Planner', icon: CalendarRange, hint: 'A full week, mapped out' },
@@ -23,6 +23,8 @@ const tools: { id: ToolId; name: string; icon: typeof Salad; hint: string }[] = 
   { id: 'smoothie', name: 'Smoothie Creator', icon: CupSoda, hint: 'Blend your own' },
   { id: 'bmi', name: 'Body Metrics', icon: Calculator, hint: 'BMI + daily energy needs' },
   { id: 'routine', name: 'Gym Routine', icon: Dumbbell, hint: 'A plan for the floor' },
+  { id: 'warmup', name: 'Warm-up Builder', icon: Flame, hint: 'Prime your body right' },
+  { id: 'habits', name: 'Habit Tracker', icon: CheckCircle2, hint: 'Small wins, every day' },
   { id: 'radio', name: 'Transform Radio', icon: Radio, hint: 'Free 24/7 live channels' },
   { id: 'gym-music', name: 'Gym Playlist', icon: ListMusic, hint: 'Session soundtracks' },
   { id: 'yoga-music', name: 'Yoga Playlist', icon: Music2, hint: 'Practice soundscapes' },
@@ -221,6 +223,7 @@ function MealPlanner() {
               </div>
               {day.meals.map((meal) => (
                 <div key={meal.type} className="planner-meal">
+                  <img className="planner-thumb" src={recipeImg(meal.recipe)} alt="" width="36" height="36" loading="lazy" decoding="async" />
                   <span className="planner-slot">{meal.type}</span>
                   <span className="planner-name">{meal.recipe.name}</span>
                   <button type="button" className="meal-swap no-print" onClick={() => swap(day.day, meal.type)} title="Swap for another recipe" aria-label={`Swap ${meal.type} on ${day.day}`}><RotateCcw size={12} aria-hidden="true" /></button>
@@ -232,14 +235,22 @@ function MealPlanner() {
         })}
         <div className="planner-day planner-shop">
           <h4>Shopping list</h4>
+          <p className="ww-note"><ShoppingBasket size={12} aria-hidden="true" /> {WW_STORE_NOTE} Prices are typical guide prices ({WW_GUIDE_DATE}) — confirm in store.</p>
           <div className="shop-list">
             {list.map((section) => (
               <div key={section.name} className="shop-section">
                 <h5>{section.name}</h5>
-                <ul>{section.items.map((item) => <li key={item.text}>{item.text}{item.detail && <span> · {item.detail}</span>}</li>)}</ul>
+                <ul>{section.items.map((item) => {
+                  const ww = item.name ? wwPriceFor(item.name) : null
+                  return <li key={item.text}>{item.text}{item.detail && <span> · {item.detail}</span>}{ww && <span className="shop-price" title={ww.product}> ≈${ww.price.toFixed(2)}</span>}</li>
+                })}</ul>
               </div>
             ))}
           </div>
+          {(() => {
+            const total = list.flatMap((section) => section.items).reduce((sum, item) => sum + (item.name ? wwPriceFor(item.name)?.price ?? 0 : 0), 0)
+            return total > 0 ? <p className="shop-total">Guide basket ≈ ${total.toFixed(2)} at Woolworths</p> : null
+          })()}
         </div>
       </div>
       <EstimateNote />
@@ -251,9 +262,12 @@ function MealPlanner() {
 
 const mealTypes: (MealType | 'All')[] = ['All', 'Breakfast', 'Lunch', 'Dinner', 'Snack']
 
+const recipeImg = (recipe: Recipe) => `${import.meta.env.BASE_URL}recipes/${recipe.id}.webp`
+
 function RecipeCard({ recipe }: { recipe: Recipe }) {
   return (
     <article className="recipe-card">
+      <img className="recipe-photo" src={recipeImg(recipe)} alt={`${recipe.name} — plated and ready`} width="640" height="427" loading="lazy" decoding="async" />
       <div className="recipe-top">
         <div>
           <h4>{recipe.name}</h4>
@@ -286,6 +300,7 @@ function RecipeCatalogue() {
         <Button variant="outline" size="sm" onClick={() => setOrdered(shufflePick(filtered))} title="Deal the cards again"><Shuffle aria-hidden="true" /> Shuffle recipes</Button>
       </div>
       <div className="recipe-grid">{shown.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} />)}</div>
+      <p className="tool-estimate"><ShoppingBasket size={13} aria-hidden="true" /> {WW_STORE_NOTE} Swap anything you like — seasonal produce is usually cheapest.</p>
       <EstimateNote />
     </div>
   )
@@ -839,6 +854,108 @@ function VideoLibrary() {
   )
 }
 
+// ---- Warm-up builder --------------------------------------------------------
+
+function WarmupBuilder() {
+  const [activity, setActivity] = useState('strength')
+  const [minutes, setMinutes] = useState(10)
+  const [variant, setVariant] = useState(0)
+  const steps = useMemo(() => buildWarmup(activity, minutes), [activity, minutes, variant])
+  void variant
+
+  return (
+    <div>
+      <div className="tool-controls tool-controls-stacked">
+        <div className="control-row" role="group" aria-label="What are you warming up for">
+          <span className="control-label">Session</span>
+          {warmupActivities.map((option) => (
+            <button key={option.id} type="button" className={cn('filter-pill', activity === option.id && 'is-active')} aria-pressed={activity === option.id} onClick={() => setActivity(option.id)} title={option.hint}>{option.name}</button>
+          ))}
+        </div>
+        <div className="control-row" role="group" aria-label="How long to warm up">
+          <span className="control-label">Time</span>
+          {[5, 10, 15].map((count) => (
+            <button key={count} type="button" className={cn('filter-pill', minutes === count && 'is-active')} aria-pressed={minutes === count} onClick={() => setMinutes(count)}>{count} min</button>
+          ))}
+          <button type="button" className="filter-pill filter-action" onClick={() => setVariant((value) => value + 1)}><RefreshCw size={12} aria-hidden="true" /> Reshuffle</button>
+        </div>
+      </div>
+      <ol className="warmup-list">
+        {steps.map((step, index) => (
+          <li key={`${index}-${step.move}`}>
+            <span className="warmup-phase">{step.phase}</span>
+            <strong>{step.move}</strong>
+            <span className="warmup-dose">{step.dose}</span>
+          </li>
+        ))}
+      </ol>
+      <p className="tool-estimate"><Sparkles size={13} aria-hidden="true" /> A warm-up should leave you warmer and moving better, not tired. If something hurts — not effort, pain — swap it out or scale it down.</p>
+    </div>
+  )
+}
+
+// ---- Habit tracker ----------------------------------------------------------
+
+function HabitTracker() {
+  const [remember, setRemember] = useState(() => localStorage.getItem('ta-habits-optin') === 'yes')
+  const [done, setDone] = useState<Record<string, boolean>>(() => {
+    if (localStorage.getItem('ta-habits-optin') !== 'yes') return {}
+    try { return JSON.parse(localStorage.getItem('ta-habits') ?? '{}') } catch { return {} }
+  })
+  const days = useMemo(() => lastNDays(7), [])
+
+  useEffect(() => {
+    if (!remember) {
+      localStorage.removeItem('ta-habits')
+      localStorage.removeItem('ta-habits-optin')
+      return
+    }
+    localStorage.setItem('ta-habits-optin', 'yes')
+    localStorage.setItem('ta-habits', JSON.stringify(done))
+  }, [remember, done])
+
+  const toggle = (habitId: string, key: string) => {
+    const cell = `${habitId}:${key}`
+    setDone((prev) => ({ ...prev, [cell]: !prev[cell] }))
+  }
+  const todayCount = habits.filter((habit) => done[`${habit.id}:${days[days.length - 1].key}`]).length
+
+  return (
+    <div className="habit-tool">
+      <div className="habit-grid" role="table" aria-label="Habit tracker, last 7 days">
+        <div className="habit-row habit-head" role="row">
+          <span role="columnheader">Habit</span>
+          {days.map((day) => <span key={day.key} role="columnheader" className={cn(day.isToday && 'is-today')}><em>{day.weekday}</em>{day.label}</span>)}
+        </div>
+        {habits.map((habit) => {
+          const streak = habitStreak(done, habit.id)
+          return (
+            <div key={habit.id} className="habit-row" role="row">
+              <span role="rowheader"><strong>{habit.name}</strong><em>{habit.hint}{streak > 1 ? ` · ${streak}-day streak` : ''}</em></span>
+              {days.map((day) => {
+                const cell = `${habit.id}:${day.key}`
+                return (
+                  <button key={day.key} type="button" role="cell" className={cn('habit-check', done[cell] && 'is-done', day.isToday && 'is-today')} aria-pressed={!!done[cell]} aria-label={`${habit.name}, ${day.weekday} ${day.label}`} onClick={() => toggle(habit.id, day.key)}>
+                    {done[cell] && <Check size={13} aria-hidden="true" />}
+                  </button>
+                )
+              })}
+            </div>
+          )
+        })}
+      </div>
+      <div className="habit-foot">
+        <p className="habit-today" aria-live="polite"><CheckCircle2 size={14} aria-hidden="true" /> {todayCount} of {habits.length} today</p>
+        <label className="remember-row">
+          <input type="checkbox" checked={remember} onChange={(event) => { setRemember(event.target.checked); if (!event.target.checked) setDone({}) }} />
+          <span><strong>Keep my habits on this device</strong> — untick and the whole grid is erased.</span>
+        </label>
+      </div>
+      <p className="tool-estimate"><Sparkles size={13} aria-hidden="true" /> Streaks are for momentum, not guilt — a missed day is data, not a failure. Ticks work straight away; tick the box below and we&apos;ll remember them on this device.</p>
+    </div>
+  )
+}
+
 // ---- Toolkit section --------------------------------------------------------
 
 export function Toolkit() {
@@ -849,7 +966,7 @@ export function Toolkit() {
     <section id="toolkit" className="section toolkit-section">
       <div className="container">
         <SectionHeading eyebrow="Free for everyone" title={<>The Active Life<br className="desktop-break" /> Toolkit</>}>
-          Eleven free tools to back up your training — meal planning, recipes, routines, playlists and more. No account, no sign-up, and nothing you enter leaves this page.
+          Thirteen free tools to back up your training — meal planning, recipes, routines, playlists and more. No account, no sign-up, and nothing you enter leaves this page.
         </SectionHeading>
         <Reveal>
           <div className="tool-picker" role="group" aria-label="Choose a tool">
@@ -869,6 +986,8 @@ export function Toolkit() {
             {tool === 'smoothie' && <SmoothieCreator />}
             {tool === 'bmi' && <BodyMetrics />}
             {tool === 'routine' && <RoutineCreator />}
+            {tool === 'warmup' && <WarmupBuilder />}
+            {tool === 'habits' && <HabitTracker />}
             {tool === 'radio' && <RadioStation />}
             {tool === 'gym-music' && <PlaylistBuilder moods={gymPlaylistMoods} playlistName="Transform Active Gym" />}
             {tool === 'yoga-music' && <PlaylistBuilder moods={yogaPlaylistMoods} playlistName="Transform Active Yoga" />}

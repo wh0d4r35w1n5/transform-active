@@ -227,3 +227,110 @@ const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
 export function formatSession(session: Session) {
   return `${weekdays[session.day].slice(0, 3)} ${session.startsAt.getDate()} ${shortMonths[session.startsAt.getMonth()]} · ${formatTime(session.time)} · ${session.name} with ${session.teacher}`
 }
+
+// ---- Studio content ---------------------------------------------------------
+// Facts verified against the studio's public website (transformactive.com.au).
+
+export const faqItems = [
+  {
+    q: 'Do I need to be a member to use the gym?',
+    a: 'Yes — the gym is members-only for 24/7 access. Casual visits and class passes aren’t offered, but memberships start from A$24.95/week and there’s a free trial so you can try everything first.',
+  },
+  {
+    q: 'How do I get in outside staffed hours?',
+    a: 'Members get a key tag that opens the door 24/7. There’s a one-off tag fee when you join, and the studio is monitored for safety around the clock.',
+  },
+  {
+    q: 'Is there parking?',
+    a: 'Yes — free on-site parking right at the door on Towers Drive, plus easy street parking nearby. No meters, no time limits.',
+  },
+  {
+    q: 'What should I bring to my first session?',
+    a: 'Workout gear, enclosed shoes, a towel and a water bottle. There’s a filtered water station — bring a bottle, no glass please. Towel use is part of gym etiquette.',
+  },
+  {
+    q: 'Can I freeze my membership?',
+    a: 'Yes — memberships can be suspended for holidays, injury or life stuff. Email the studio and they’ll sort it.',
+  },
+  {
+    q: 'Do you offer personal training?',
+    a: 'Yes — the studio’s trainers offer one-on-one PT. Bookings and pricing are arranged directly with the trainers; ask at reception or via the contact details below.',
+  },
+  {
+    q: 'Is the sauna included in my membership?',
+    a: 'The Sunlighten infrared sauna is included with Ongoing Plus and 12 Months Lifestyle memberships. Sessions are booked through the MyClub Fitness app.',
+  },
+  {
+    q: 'Do you accept Fitness Passport?',
+    a: 'Yes — Fitness Passport members are welcome. Bring your card on your first visit so the team can set up your access.',
+  },
+  {
+    q: 'Is there a minimum age?',
+    a: 'Members need to be 16+ for 24/7 unsupervised access. Younger teens can train during staffed hours with a parent or guardian’s sign-off — check with the team for the current policy.',
+  },
+  {
+    q: 'Can I bring a friend?',
+    a: 'Guests can visit during staffed hours for a casual visit fee. Your friend signs a waiver at reception before training.',
+  },
+  {
+    q: 'What if I’ve never trained before?',
+    a: 'You’ll fit right in. Every membership starts with an induction so you know the equipment, and trainers are on the floor during staffed hours to help. Classes are scaled for beginners.',
+  },
+  {
+    q: 'How do I cancel?',
+    a: 'Email the studio with 30 days’ written notice. On the 12-month plan an early-exit fee applies before the term ends; ongoing memberships are flexible.',
+  },
+] as const
+
+export const visitSteps = [
+  {
+    title: 'Say hello',
+    text: 'Come during staffed hours and the team will show you around — no pressure, no sales pitch. Bring photo ID if you’re joining.',
+  },
+  {
+    title: 'Get set up',
+    text: 'Your induction covers the equipment, your key tag for 24/7 access, and the MyClub Fitness app for classes, sauna bookings and your membership.',
+  },
+  {
+    title: 'Start small',
+    text: 'Pick one class or one gym session this week. The toolkit below has routines, warm-ups and meal ideas if you want a plan to follow.',
+  },
+] as const
+
+export const parking = {
+  title: 'Getting here',
+  text: 'We’re at 4/4 Towers Drive, Mullumbimby — in the industrial estate off the main road, two minutes from town. Free on-site parking at the door, easy bike access, and a quick walk from Mullumbimby’s centre.',
+} as const
+
+export const programs = [
+  {
+    name: 'New Member Kickstart',
+    tag: 'First 4 weeks',
+    text: 'A guided start: induction, goal chat with a trainer, two coached sessions and a simple plan. Included with every new membership.',
+  },
+  {
+    name: 'Strength Foundations',
+    tag: '8-week block',
+    text: 'Learn to lift properly — squat, hinge, push, pull and carry — with coached progression each week. Runs in small groups on the gym floor.',
+  },
+  {
+    name: 'Move Well, Feel Well',
+    tag: 'Ongoing',
+    text: 'Mobility, balance and strength for the long game — popular with members coming back from injury or starting after 50.',
+  },
+] as const
+
+export const trainers = [
+  {
+    name: 'Eliana Alvarez',
+    role: 'Personal Trainer & Strength Coach',
+    focus: 'Strength training, female-focused sessions, building confidence on the gym floor',
+    bio: 'Eliana coaches strength in a way that meets you where you are — whether that’s your first barbell or your first comp prep. She also leads the Female Focused Circuit classes.',
+  },
+  {
+    name: 'Anthony',
+    role: 'Personal Trainer',
+    focus: 'Functional training, conditioning and everyday strength',
+    bio: 'Anthony keeps sessions practical and progress-focused — train what matters, recover well, and build habits that last beyond the program.',
+  },
+] as const

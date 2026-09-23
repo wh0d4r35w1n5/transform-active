@@ -1,0 +1,16 @@
+{
+  "name": "Transform Active Mullumbimby",
+  "short_name": "Transform Active",
+  "description": "Mullumbimby's 24-hour community gym — classes, sauna, personal training and the free Active Life Toolkit.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2f7f6",
+  "theme_color": "#0b7a6f",
+  "lang": "en-AU",
+  "categories": ["health", "fitness", "lifestyle"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

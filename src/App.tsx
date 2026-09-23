@@ -1,18 +1,21 @@
-import { useEffect, useRef, useState, type FormEvent, type PointerEvent } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState, type FormEvent, type PointerEvent } from 'react'
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react'
-import { Anchor, ArrowDown, ArrowRight, Check, Clock3, Facebook, History, Instagram, Leaf, Mail, MapPin, Menu, Pause, Play, Sprout, Sun, TrendingUp, UsersRound, Waves, Wind } from 'lucide-react'
+import { Anchor, ArrowDown, ArrowRight, ArrowUpRight, Check, Clock3, Facebook, History, Instagram, Leaf, Mail, MapPin, Menu, Pause, Play, Sprout, Sun, TrendingUp, UsersRound, Waves, Wind } from 'lucide-react'
 import { BreathingCircles, GrainOverlay, Logo, Reveal, RoundSeal, SectionHeading } from './components/brand'
 import { GymShot, Magnetic } from './components/fx'
 import { BookingDialog, type BookingIntent } from './components/BookingDialog'
 import { Schedule } from './components/Schedule'
 import { Sauna } from './components/Sauna'
-import { Toolkit } from './components/Toolkit'
+
+// The toolkit carries the full content dataset — lazy-load it so the initial
+// bundle stays lean; it mounts before anyone scrolls that far.
+const Toolkit = lazy(() => import('./components/Toolkit').then((module) => ({ default: module.Toolkit })))
 import { Button } from './components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from './components/ui/dialog'
 import { Input } from './components/ui/input'
 import { pricing, STUDIO } from './lib/catalog'
 import { asset } from './lib/assets'
-import { practices, teachers, testimonials, type PracticeName, type Session } from './lib/studio'
+import { faqItems, parking, practices, programs, teachers, testimonials, trainers, visitSteps, type PracticeName, type Session } from './lib/studio'
 import { cn, useReducedMotion } from './lib/utils'
 
 const navigation = [
@@ -22,8 +25,10 @@ const navigation = [
   { label: 'Sauna', id: 'sauna' },
   { label: 'Toolkit', id: 'toolkit' },
   { label: 'Teachers', id: 'teachers' },
+  { label: 'Programs', id: 'programs' },
   { label: 'Membership', id: 'membership' },
-  { label: 'Community', id: 'community' },
+  { label: 'Visit', id: 'visit' },
+  { label: 'FAQ', id: 'faq' },
 ]
 
 const values = [
@@ -233,6 +238,57 @@ function Instructors({ onInfo }: { onInfo: (page: InfoPage) => void }) {
   )
 }
 
+function ProgramsPt() {
+  return (
+    <section id="programs" className="section programs-section">
+      <div className="container">
+        <SectionHeading eyebrow="Programs & personal training" title={<>A Little More <em>Structure</em></>}>For when you want more than a timetable — coached blocks and one-on-one training that turn showing up into real progress.</SectionHeading>
+        <div className="program-grid">{programs.map((program, index) => <Reveal key={program.name} delay={index * 0.1}><article className="program-card spotlight"><span className="program-tag">{program.tag}</span><h3>{program.name}</h3><p>{program.text}</p></article></Reveal>)}</div>
+        <div className="trainer-grid">{trainers.map((trainer, index) => <Reveal key={trainer.name} delay={index * 0.1}><article className="trainer-card spotlight"><span className="tiny-label">{trainer.role}</span><h3>{trainer.name}</h3><p className="trainer-focus">{trainer.focus}</p><p>{trainer.bio}</p></article></Reveal>)}
+          <Reveal delay={0.2}><article className="trainer-card trainer-cta spotlight"><h3>Train with them</h3><p>PT pricing and bookings are arranged directly — chat to the team at reception, call <a className="text-link" href={STUDIO.telephone}>{STUDIO.phone}</a> or email <a className="text-link" href={STUDIO.mailto}>{STUDIO.email}</a>.</p></article></Reveal>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Visit() {
+  return (
+    <section id="visit" className="section visit-section">
+      <div className="container">
+        <SectionHeading eyebrow="First visit" title={<>Come Say <em>Hello</em></>}>No pressure and no sales pitch — here&apos;s exactly how your first visit works, and how to find us.</SectionHeading>
+        <div className="visit-grid">
+          <div className="visit-steps">{visitSteps.map((step, index) => <Reveal key={step.title} delay={index * 0.1}><article className="visit-step"><span className="visit-step-num">{String(index + 1).padStart(2, '0')}</span><h3>{step.title}</h3><p>{step.text}</p></article></Reveal>)}</div>
+          <Reveal className="visit-map-card" delay={0.15}>
+            <div className="visit-map">
+              <iframe title="Map to Transform Active, 4/4 Towers Drive Mullumbimby" src="https://www.google.com/maps?q=Transform+Active+4%2F4+Towers+Dr+Mullumbimby+NSW+2482&output=embed" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
+            </div>
+            <div className="visit-map-info">
+              <p><MapPin size={14} aria-hidden="true" /> {STUDIO.address}</p>
+              <p><Clock3 size={14} aria-hidden="true" /> Staffed Mon–Thu 7:30am–5:30pm · Fri til 4pm · Sat til 10:30am · Members 24/7</p>
+              <p>{parking.text}</p>
+              <a className="text-link" href="https://www.google.com/maps/dir/?api=1&destination=Transform+Active+4%2F4+Towers+Dr+Mullumbimby+NSW+2482" target="_blank" rel="noopener noreferrer">Get directions <ArrowUpRight size={13} aria-hidden="true" /></a>
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Faq() {
+  return (
+    <section id="faq" className="section faq-section">
+      <div className="container">
+        <SectionHeading eyebrow="Questions, answered" title={<>The Honest <em>FAQ</em></>}>The stuff people actually ask before joining — answered straight. Still unsure? Call <a className="text-link" href={STUDIO.telephone}>{STUDIO.phone}</a>.</SectionHeading>
+        <div className="faq-list">
+          {faqItems.map((item) => <Reveal key={item.q}><details className="faq-item"><summary><span>{item.q}</span><ArrowDown className="faq-chevron" size={16} aria-hidden="true" /></summary><p>{item.a}</p></details></Reveal>)}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function Philosophy() {
   const reducedMotion = useReducedMotion()
   return (
@@ -375,7 +431,7 @@ export default function App() {
       <a href="#main-content" className="skip-link">Skip to content</a>
       <GrainOverlay />
       <Header onTrial={openTrial} />
-      <main id="main-content"><Hero onTrial={openTrial} /><Facilities /><Practices onBook={setBooking} /><Schedule onBook={bookSession} /><Sauna /><Toolkit /><Instructors onInfo={setInfo} /><Philosophy /><Membership onBook={setBooking} /><Testimonials /><Community onTrial={openTrial} /></main>
+      <main id="main-content"><Hero onTrial={openTrial} /><Facilities /><Practices onBook={setBooking} /><Schedule onBook={bookSession} /><Sauna /><Suspense fallback={<section className="section toolkit-section toolkit-loading" aria-label="Loading the Active Life Toolkit" />}><Toolkit /></Suspense><Instructors onInfo={setInfo} /><ProgramsPt /><Philosophy /><Membership onBook={setBooking} /><Visit /><Testimonials /><Faq /><Community onTrial={openTrial} /></main>
       <Footer onBook={setBooking} onInfo={setInfo} />
       <BookingDialog intent={booking} onClose={() => setBooking(null)} />
       <InfoDialog page={info} onClose={() => setInfo(null)} />
