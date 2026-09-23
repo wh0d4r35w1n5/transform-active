@@ -287,6 +287,51 @@ export const bmiLabels: Record<BmiCategory, { name: string; range: string; note:
   obese: { name: 'Obese', range: '30 and above', note: 'This is a screening estimate only. A GP can give a much fuller picture than any calculator.' },
 }
 
+// ---- Daily energy needs (Mifflin–St Jeor) ----------------------------------
+
+export type Sex = 'female' | 'male'
+
+export const activityLevels: { id: string; name: string; factor: number; hint: string }[] = [
+  { id: 'desk', name: 'Mostly sitting', factor: 1.4, hint: 'Desk work, little structured exercise' },
+  { id: 'light', name: 'On your feet', factor: 1.55, hint: 'Walking, classes or training 1–3× a week' },
+  { id: 'active', name: 'Training regular', factor: 1.7, hint: 'Gym or sport 3–5× a week' },
+  { id: 'very', name: 'Physical days', factor: 1.9, hint: 'Physical job or training most days' },
+]
+
+export interface DailyNeeds { bmr: number; kcal: number; proteinMin: number; proteinMax: number }
+
+export function dailyNeeds(sex: Sex, age: number, heightCm: number, weightKg: number, activityFactor: number): DailyNeeds {
+  const bmr = Math.round(10 * weightKg + 6.25 * heightCm - 5 * age + (sex === 'male' ? 5 : -161))
+  return {
+    bmr,
+    kcal: Math.round(bmr * activityFactor / 10) * 10,
+    proteinMin: Math.round(1.2 * weightKg),
+    proteinMax: Math.round(1.6 * weightKg),
+  }
+}
+
+// ---- On-device saved profile -------------------------------------------------
+// Only written when the visitor explicitly asks to keep their numbers.
+
+export interface SavedBody extends DailyNeeds { height: number; weight: number; age: number; sex: Sex; activity: string }
+
+const BODY_KEY = 'ta-body'
+
+export function loadSavedBody(): SavedBody | null {
+  try {
+    const raw = window.localStorage.getItem(BODY_KEY)
+    return raw ? (JSON.parse(raw) as SavedBody) : null
+  } catch { return null }
+}
+
+export function saveBody(body: SavedBody) {
+  try { window.localStorage.setItem(BODY_KEY, JSON.stringify(body)) } catch { /* storage unavailable */ }
+}
+
+export function clearSavedBody() {
+  try { window.localStorage.removeItem(BODY_KEY) } catch { /* storage unavailable */ }
+}
+
 // ---- Gym routine creator --------------------------------------------------
 
 export type RoutineGoal = 'strength' | 'fitness' | 'foundations'
@@ -304,7 +349,7 @@ export const routineLevels: { id: RoutineLevel; name: string }[] = [
   { id: 'regular', name: 'Training regularly' },
 ]
 
-export interface RoutineExercise { name: string; dose: string }
+export interface RoutineExercise { name: string; dose: string; sets: number; restSec: number }
 export interface RoutineDay { name: string; focus: string; warmup: string[]; exercises: RoutineExercise[]; cooldown: string[] }
 export interface RoutinePlan { title: string; note: string; days: RoutineDay[] }
 
@@ -326,8 +371,14 @@ const setsReps: Record<RoutineLevel, { sets: number; rest: string }> = {
   regular: { sets: 4, rest: '60–90s' },
 }
 
+export function restSeconds(rest: string): number {
+  const match = rest.match(/(\d+)(?:\s*[–-]\s*(\d+))?\s*s/)
+  if (!match) return 90
+  return Number(match[2] ?? match[1])
+}
+
 function ex(name: string, sets: number, reps: string, rest: string, extra = ''): RoutineExercise {
-  return { name, dose: `${sets} × ${reps}${rest ? ` · rest ${rest}` : ''}${extra ? ` · ${extra}` : ''}` }
+  return { name, dose: `${sets} × ${reps}${rest ? ` · rest ${rest}` : ''}${extra ? ` · ${extra}` : ''}`, sets, restSec: restSeconds(rest) }
 }
 
 export function buildRoutine(goal: RoutineGoal, level: RoutineLevel, daysPerWeek: 2 | 3 | 4): RoutinePlan {

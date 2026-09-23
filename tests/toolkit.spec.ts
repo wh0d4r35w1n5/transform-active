@@ -1,8 +1,9 @@
 import { expect, test } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import {
-  bmiCategory, bmiFor, books, buildMealPlan, buildRoutine, gymPlaylistMoods,
-  planNutrition, recipes, shoppingList, spotifySearch, videos, yogaPlaylistMoods,
+  activityLevels, bmiCategory, bmiFor, books, buildMealPlan, buildRoutine, dailyNeeds,
+  gymPlaylistMoods, planNutrition, recipes, restSeconds, shoppingList, spotifySearch,
+  videos, yogaPlaylistMoods,
 } from '../src/lib/toolkit'
 
 test('the meal planner builds a seven-day plan that respects the chosen focus', () => {
@@ -29,6 +30,26 @@ test('BMI maths and categories match the standard adult bands', () => {
   expect(bmiCategory(22)).toBe('healthy')
   expect(bmiCategory(27)).toBe('overweight')
   expect(bmiCategory(33)).toBe('obese')
+})
+
+test('daily energy needs follow Mifflin–St Jeor with activity scaling', () => {
+  const active = activityLevels.find((level) => level.id === 'active')!
+  const needs = dailyNeeds('male', 30, 180, 80, active.factor)
+  expect(needs.bmr).toBe(1780)
+  expect(needs.kcal).toBe(3030)
+  expect(needs.proteinMin).toBe(96)
+  expect(needs.proteinMax).toBe(128)
+  const female = dailyNeeds('female', 45, 165, 65, 1.4)
+  expect(female.bmr).toBe(Math.round(10 * 65 + 6.25 * 165 - 5 * 45 - 161))
+  expect(female.kcal).toBeLessThan(needs.kcal)
+})
+
+test('rest parsing pulls the upper bound in seconds for the timer', () => {
+  expect(restSeconds('90s')).toBe(90)
+  expect(restSeconds('75–90s')).toBe(90)
+  expect(restSeconds('60s between rounds')).toBe(60)
+  expect(restSeconds('as needed')).toBe(90)
+  expect(restSeconds('')).toBe(90)
 })
 
 test('routine builder returns the requested days with real exercises', () => {
@@ -71,7 +92,7 @@ test.describe('toolkit UI', () => {
     const picker = toolkit.getByRole('group', { name: 'Choose a tool' })
     await expect(picker.getByRole('button')).toHaveCount(10)
     await expect(toolkit.locator('.planner-day')).toHaveCount(8) // 7 days + shopping list
-    await picker.getByRole('button', { name: /BMI Calculator/ }).click()
+    await picker.getByRole('button', { name: /Body Metrics/ }).click()
     await expect(toolkit.locator('.bmi-tool')).toBeVisible()
     await picker.getByRole('button', { name: /Books/ }).click()
     await expect(toolkit.locator('.book-card')).toHaveCount(6)
@@ -87,16 +108,30 @@ test.describe('toolkit UI', () => {
     expect(await toolkit.locator('.planner-day').first().textContent()).not.toBeNull()
   })
 
-  test('the BMI calculator validates input and shows an honest result', async ({ page }) => {
+  test('the body metrics tool shows BMI, energy needs and saves only on request', async ({ page }) => {
     const toolkit = page.locator('#toolkit')
-    await toolkit.getByRole('button', { name: /BMI Calculator/ }).click()
+    await toolkit.getByRole('button', { name: /Body Metrics/ }).click()
     await toolkit.getByLabel('Height cm').fill('172')
     await toolkit.getByLabel('Weight kg').fill('68')
     await expect(toolkit.locator('.bmi-result')).toContainText('23.0')
     await expect(toolkit.locator('.bmi-result')).toContainText('Healthy range')
     await expect(toolkit.locator('.tool-disclaimer')).toContainText('screening tool')
     await toolkit.getByLabel('Weight kg').fill('0')
-    await expect(toolkit.locator('.bmi-result')).toContainText('never leaves this page')
+    await expect(toolkit.locator('.bmi-result')).toContainText('never leave this page')
+    // Age unlocks the energy needs panel; nothing is stored until the visitor asks.
+    await toolkit.getByLabel('Weight kg').fill('68')
+    await toolkit.getByLabel('Age years').fill('34')
+    await expect(toolkit.locator('.needs-block')).toContainText('kcal / day')
+    await expect(toolkit.locator('.needs-block')).toContainText('protein / day')
+    expect(await page.evaluate(() => localStorage.getItem('ta-body'))).toBeNull()
+    await toolkit.getByRole('checkbox').check()
+    await page.waitForFunction(() => localStorage.getItem('ta-body') !== null)
+    await page.reload()
+    await page.locator('#toolkit').scrollIntoViewIfNeeded()
+    await page.locator('#toolkit').getByRole('button', { name: /Body Metrics/ }).click()
+    await expect(page.locator('#toolkit').getByLabel('Height cm')).toHaveValue('172')
+    await page.locator('#toolkit').getByRole('button', { name: /Meal Planner/ }).click()
+    await expect(page.locator('#toolkit').locator('.target-chip')).toContainText('kcal')
   })
 
   test('the meal and smoothie creators produce estimates and copyable output', async ({ page }) => {
@@ -129,6 +164,39 @@ test.describe('toolkit UI', () => {
     await toolkit.getByRole('button', { name: /Video Library/ }).click()
     await expect(toolkit.locator('.video-card')).toHaveCount(6)
     await expect(toolkit.getByRole('link', { name: /Pilates for Beginners/ })).toHaveAttribute('href', /nhs\.uk/)
+  })
+
+  test('the meal planner swaps individual meals and remembers the pick', async ({ page }) => {
+    const toolkit = page.locator('#toolkit')
+    await expect(toolkit.getByRole('button', { name: 'Print' })).toBeVisible()
+    const monday = toolkit.locator('.planner-day').first()
+    const firstMeal = monday.locator('.planner-meal').first()
+    const original = await firstMeal.locator('.planner-name').textContent()
+    await monday.getByRole('button', { name: 'Swap Breakfast on Monday' }).click()
+    const swapped = await firstMeal.locator('.planner-name').textContent()
+    expect(swapped).not.toBe(original)
+    await page.reload()
+    await page.locator('#toolkit').scrollIntoViewIfNeeded()
+    await expect(page.locator('#toolkit .planner-day').first().locator('.planner-meal').first().locator('.planner-name')).toHaveText(swapped!)
+  })
+
+  test('session mode tracks sets and drives the rest timer', async ({ page }) => {
+    const toolkit = page.locator('#toolkit')
+    await toolkit.getByRole('button', { name: /Gym Routine/ }).click()
+    await toolkit.getByRole('button', { name: 'Start session' }).first().click()
+    const session = toolkit.locator('.session-view')
+    await expect(session).toBeVisible()
+    await expect(session.locator('.session-count')).toContainText('of')
+    const firstSet = session.getByRole('button', { name: 'Goblet squat set 1' })
+    await firstSet.click()
+    await expect(firstSet).toHaveClass(/is-done/)
+    const timer = toolkit.locator('.rest-timer')
+    await expect(timer).toBeVisible()
+    await expect(timer).toContainText('Goblet squat')
+    await timer.getByRole('button', { name: 'Skip rest' }).click()
+    await expect(timer).toBeHidden()
+    await session.getByRole('button', { name: 'Finish session' }).click()
+    await expect(toolkit.locator('.done-badge').first()).toBeVisible()
   })
 
   test('the toolkit passes automated accessibility checks', async ({ page }) => {
