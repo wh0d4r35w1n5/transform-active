@@ -202,6 +202,13 @@ const PANTRY_FIRST = /peanut butter|almond butter|coconut milk|rice|oats|pasta|n
 
 const OES_PLURALS = /(potato|tomato)$/
 
+// A handful of leafy greens ≈ 30g — converts to grams so leaves merge into
+// buyable bag/bunch quantities instead of "7 handfuls spinach".
+const LEAFY = /spinach|rocket|leaves|lettuce|kale|greens|herb|watercress/
+const HANDFUL_GRAMS = 30
+
+const NAME_ALIASES: Record<string, string> = { 'baby spinach': 'spinach' }
+
 export interface ShopSection { name: string; items: { text: string; detail?: string }[] }
 
 function fmtQty(qty: number): string {
@@ -217,7 +224,12 @@ export function shoppingListSections(plan: PlannedDay[]): ShopSection[] {
   for (const day of plan) {
     for (const meal of day.meals) {
       for (const ingredient of meal.recipe.ingredients) {
-        const { qty, unit, name } = parseIngredient(ingredient)
+        let { qty, unit, name } = parseIngredient(ingredient)
+        name = NAME_ALIASES[name.toLowerCase()] ?? name
+        if (unit === 'handful' && qty !== null && LEAFY.test(name)) {
+          qty *= HANDFUL_GRAMS
+          unit = 'g'
+        }
         const key = `${name.toLowerCase()}|${unit ?? ''}`
         const existing = merged.get(key)
         if (existing) {

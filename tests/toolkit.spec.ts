@@ -33,6 +33,14 @@ test('the meal planner builds a seven-day plan that respects the chosen focus', 
   expect(sections.every((section) => section.items.length > 0)).toBe(true)
 })
 
+test('handfuls of leafy greens convert to grams for buying', () => {
+  const leafy = recipes.find((recipe) => recipe.ingredients.some((i) => i.includes('handful spinach')))!
+  const sections = shoppingListSections([{ day: 'Monday', meals: [{ type: 'Lunch' as const, recipe: leafy }] }])
+  const items = sections.flatMap((section) => section.items.map((item) => item.text))
+  expect(items).toContain('30 g spinach')
+  expect(items.every((item) => !item.includes('handful'))).toBe(true)
+})
+
 test('BMI maths and categories match the standard adult bands', () => {
   expect(bmiFor(172, 68)).toBeCloseTo(23.0, 1)
   expect(bmiCategory(17)).toBe('underweight')
