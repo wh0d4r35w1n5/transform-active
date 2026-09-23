@@ -139,6 +139,62 @@ export const recipes: Recipe[] = [
     method: ['Chop, dip, crunch.'],
     tags: ['Vegan', 'No cooking'],
   },
+  {
+    id: 'breakfast-burrito', name: 'Big Breakfast Burrito', type: 'Breakfast',
+    focus: ['balanced', 'protein'], minutes: 12, serves: 1, kcal: 480, protein: 28,
+    ingredients: ['2 eggs', '1 wholegrain wrap', '1/3 cup black beans', '30g cheese, grated', '2 tbsp salsa', '1 handful spinach'],
+    method: ['Scramble eggs softly.', 'Warm beans and wrap.', 'Fill with eggs, beans, cheese, salsa and spinach. Toast seam-side down 2 min.'],
+    tags: ['Vegetarian', 'High protein', 'Post-workout'],
+  },
+  {
+    id: 'protein-pancakes', name: 'Banana Protein Pancakes', type: 'Breakfast',
+    focus: ['protein', 'balanced'], minutes: 15, serves: 1, kcal: 450, protein: 30,
+    ingredients: ['1 banana, mashed', '2 eggs', '1/2 cup oats', '1 scoop protein powder', '1/2 cup berries', '1 tsp honey'],
+    method: ['Whisk banana, eggs, oats and protein powder into a batter.', 'Cook 2–3 min a side in a lightly oiled pan.', 'Stack and top with berries and honey.'],
+    tags: ['High protein', 'Weekend win'],
+  },
+  {
+    id: 'salmon-soba', name: 'Salmon & Soba Noodle Bowl', type: 'Lunch',
+    focus: ['balanced', 'protein', 'light'], minutes: 20, serves: 1, kcal: 510, protein: 34,
+    ingredients: ['1 salmon fillet', '90g soba noodles', '1/2 cup edamame', '1/4 cucumber, ribboned', '1 tbsp soy sauce', '1 tsp sesame seeds'],
+    method: ['Pan-sear salmon 4 min a side.', 'Cook soba, rinse under cold water.', 'Bowl it up with edamame and cucumber, drizzle soy, scatter sesame.'],
+    tags: ['High protein', 'Omega-3'],
+  },
+  {
+    id: 'chicken-pesto-wrap', name: 'Chicken Pesto Wrap', type: 'Lunch',
+    focus: ['balanced', 'protein'], minutes: 15, serves: 1, kcal: 490, protein: 38,
+    ingredients: ['150g cooked chicken breast, sliced', '1 wholegrain wrap', '1 tbsp basil pesto', '1 tomato, sliced', '1 handful rocket', '30g mozzarella'],
+    method: ['Spread pesto over the wrap.', 'Layer chicken, tomato, rocket and mozzarella.', 'Fold and toast 2 min a side until golden.'],
+    tags: ['High protein', 'Uses leftovers'],
+  },
+  {
+    id: 'teriyaki-salmon', name: 'Teriyaki Salmon Tray Bake', type: 'Dinner',
+    focus: ['balanced', 'protein', 'light'], minutes: 25, serves: 2, kcal: 520, protein: 36,
+    ingredients: ['2 salmon fillets', '1 bunch broccolini', '1 capsicum, in strips', '2 tbsp teriyaki sauce', '1.5 cups cooked rice', '1 tsp sesame seeds'],
+    method: ['Bake salmon and veg at 200°C for 12–14 min, brushing teriyaki halfway.', 'Serve over rice, scatter sesame.'],
+    tags: ['High protein', 'One tray'],
+  },
+  {
+    id: 'lean-bolognese', name: 'Lean Beef Bolognese', type: 'Dinner',
+    focus: ['balanced', 'protein'], minutes: 30, serves: 4, kcal: 540, protein: 38,
+    ingredients: ['500g lean beef mince', '300g wholemeal pasta', '1 tin crushed tomatoes', '1 carrot, grated', '1 zucchini, grated', '2 cloves garlic', 'Parmesan'],
+    method: ['Brown mince, add garlic, carrot and zucchini.', 'Add tomatoes, simmer 15 min.', 'Toss through cooked pasta, top with parmesan.'],
+    tags: ['High protein', 'Meal prep friendly', 'Feeds a crowd'],
+  },
+  {
+    id: 'cottage-plate', name: 'Cottage Cheese Crunch Plate', type: 'Snack',
+    focus: ['protein', 'balanced', 'light'], minutes: 3, serves: 1, kcal: 210, protein: 18,
+    ingredients: ['1/2 cup cottage cheese', '4 rice crackers', '1/2 cucumber, sliced', '6 cherry tomatoes'],
+    method: ['Plate it, dip it, done.'],
+    tags: ['High protein', 'No cooking', 'Vegetarian'],
+  },
+  {
+    id: 'chia-pudding', name: 'Chocolate Chia Pudding', type: 'Snack',
+    focus: ['plant', 'balanced', 'light'], minutes: 5, serves: 2, kcal: 230, protein: 7,
+    ingredients: ['3 tbsp chia seeds', '1 cup milk or soy milk', '1 tbsp cocoa', '1 tsp honey', '1/2 cup berries'],
+    method: ['Whisk chia, milk, cocoa and honey.', 'Rest 10 min (or overnight), stir once mid-way.', 'Top with berries.'],
+    tags: ['Vegetarian', 'Make ahead', 'No cooking'],
+  },
 ]
 
 export interface PlannedDay {
@@ -481,101 +537,159 @@ export function shufflePick<T>(items: T[], count = items.length): T[] {
   return copy.slice(0, count)
 }
 
+// Deals `count` items preferring ones not yet seen; recycles only when the
+// pool runs dry, so reshuffles surface new options for as long as possible.
+export function dealFresh<T>(pool: T[], count: number, seen: T[]): { pick: T[]; seen: T[] } {
+  const fresh = shufflePick(pool.filter((item) => !seen.includes(item)))
+  const pick = fresh.slice(0, count)
+  if (pick.length < count) pick.push(...shufflePick(pool.filter((item) => !pick.includes(item)), count - pick.length))
+  const nextSeen = [...seen, ...pick].slice(-pool.length)
+  return { pick, seen: nextSeen }
+}
+
+// Days are generated from movement-pattern slots, not fixed exercise lists —
+// every build samples fresh picks, so generated programs never repeat.
+type SlotName = 'squat' | 'hinge' | 'push' | 'pull' | 'core' | 'carry' | 'conditioning' | 'machine' | 'gentle' | 'cardio' | 'mobility' | 'accessory'
+
+interface SlotOption { name: string; reps?: string; sets?: number; rest?: string; extra?: string }
+
+const exercisePools: Record<SlotName, SlotOption[]> = {
+  squat: [
+    { name: 'Goblet squat', extra: 'hold a dumbbell or kettlebell' },
+    { name: 'Leg press' },
+    { name: 'Hack squat' },
+    { name: 'Bulgarian split squat', reps: '8–10 each leg', extra: 'rear foot on bench' },
+    { name: 'Front squat', reps: '5–6', extra: 'light bar — elbows high' },
+    { name: 'Belt squat' },
+  ],
+  hinge: [
+    { name: 'Romanian deadlift', reps: '6–8', extra: 'light bar or dumbbells' },
+    { name: 'Trap-bar deadlift', reps: '5', extra: 'deadlift platform — film your form' },
+    { name: 'Hip thrust', reps: '8–10', extra: 'bench + barbell or machine' },
+    { name: 'Kettlebell swings', reps: '12–15' },
+    { name: 'Good mornings', reps: '8–10', extra: 'very light bar' },
+    { name: 'Glute bridge', reps: '10–12' },
+  ],
+  push: [
+    { name: 'Technogym chest press' },
+    { name: 'Push-ups', reps: '8–15' },
+    { name: 'Incline dumbbell press' },
+    { name: 'Flat dumbbell bench press' },
+    { name: 'Dumbbell shoulder press', reps: '8–10' },
+    { name: 'Landmine press', reps: '8–10 each', extra: 'barbell in the corner rig' },
+    { name: 'Assisted dip machine', reps: '8–10' },
+  ],
+  pull: [
+    { name: 'Seated cable row' },
+    { name: 'Lat pulldown' },
+    { name: 'Assisted pull-up' },
+    { name: 'Single-arm dumbbell row', reps: '10–12 each' },
+    { name: 'Face pull', reps: '12–15', extra: 'cable, rope attachment' },
+    { name: 'Chest-supported row' },
+  ],
+  core: [
+    { name: 'Plank', sets: 3, reps: '20–40s', rest: '60s' },
+    { name: 'Dead bug', sets: 3, reps: '8 per side', rest: '60s' },
+    { name: 'Side plank', sets: 3, reps: '15–30s each', rest: '60s' },
+    { name: 'Hollow hold', sets: 3, reps: '15–30s', rest: '60s' },
+    { name: 'Pallof press', sets: 3, reps: '10 each side', rest: '60s', extra: 'band or cable' },
+    { name: 'Hanging knee raise', sets: 3, reps: '8–12', rest: '60s' },
+  ],
+  carry: [
+    { name: 'Farmer carry on the turf', sets: 3, reps: '20–30m', rest: '90s' },
+    { name: 'Suitcase carry', sets: 3, reps: '20m each side', rest: '75s', extra: 'single heavy dumbbell' },
+    { name: 'Sled or prowler push', sets: 4, reps: '15–20m', rest: '75s' },
+    { name: 'Overhead carry', sets: 3, reps: '15–20m', rest: '75s', extra: 'light plates — ribs down' },
+  ],
+  conditioning: [
+    { name: 'Bike or rower intervals', sets: 6, reps: '40s hard / 80s easy', rest: '' },
+    { name: 'Assault bike or ski erg', sets: 5, reps: '30s hard / 60s easy', rest: '' },
+    { name: 'Medicine ball slams', reps: '10', rest: '60s' },
+    { name: 'Incline treadmill walk', sets: 1, reps: '8–10 min steady', rest: '' },
+    { name: 'Battle ropes', sets: 6, reps: '20s hard / 40s easy', rest: '' },
+    { name: 'Rowing steady piece', sets: 1, reps: '6–8 min', rest: '' },
+  ],
+  machine: [
+    { name: 'Leg press', reps: '10–12', extra: 'light and controlled' },
+    { name: 'Chest press', reps: '10–12' },
+    { name: 'Seated row', reps: '10–12' },
+    { name: 'Lat pulldown', reps: '10–12', extra: 'light weight' },
+    { name: 'Machine leg curl', reps: '10–12' },
+    { name: 'Standing shoulder press', reps: '8–10', extra: 'light dumbbells' },
+    { name: 'Seated leg extension', reps: '10–12', extra: 'easy load' },
+    { name: 'Cable or band woodchop', reps: '10 each side', extra: 'slow and controlled' },
+  ],
+  gentle: [
+    { name: 'Sit-to-stand from a bench', reps: '8–10' },
+    { name: 'Wall push-ups', reps: '8–12' },
+    { name: 'Step-ups', reps: '8 each leg' },
+    { name: 'Supported single-leg balance', reps: '20s each side' },
+    { name: 'Goblet squat to a bench', reps: '8–10', extra: 'light dumbbell' },
+    { name: 'Glute bridge', reps: '10–12' },
+    { name: 'Incline push-ups on a bench', reps: '8–12' },
+  ],
+  cardio: [
+    { name: 'Easy treadmill walk', sets: 1, reps: '5–10 min', rest: '' },
+    { name: 'Recumbent bike', sets: 1, reps: '10 min easy', rest: '' },
+    { name: 'Bike or cross-trainer', sets: 1, reps: '8–12 min easy', rest: '' },
+    { name: 'Rower, easy pace', sets: 1, reps: '6–8 min', rest: '' },
+  ],
+  mobility: [
+    { name: 'Gentle stretch circuit', sets: 2, reps: '30s per stretch', rest: '' },
+    { name: 'Cat-cow and child’s pose flow', sets: 2, reps: '6 slow rounds', rest: '' },
+    { name: 'Supported bird-dog', sets: 2, reps: '6 each side' },
+    { name: 'Hip opener sequence', sets: 2, reps: '30s each side', rest: '' },
+    { name: 'Band pull-aparts and thoracic rotations', sets: 2, reps: '10 each', rest: '' },
+  ],
+  accessory: [
+    { name: 'Lateral raises', sets: 3, reps: '12–15', rest: '60s', extra: 'light dumbbells, slow lower' },
+    { name: 'Cable triceps press', sets: 3, reps: '10–12', rest: '60s' },
+    { name: 'Dumbbell curls', sets: 3, reps: '10–12', rest: '60s' },
+    { name: 'Seated calf raise', sets: 3, reps: '12–15', rest: '60s' },
+    { name: 'Rear-delt fly', sets: 3, reps: '12–15', rest: '60s', extra: 'light — feel the back of the shoulders' },
+  ],
+}
+
+const dayTemplates: Record<RoutineGoal, { name: string; focus: string; warmup: string[]; cooldown: string[]; slots: SlotName[] }[]> = {
+  strength: [
+    { name: 'Full-body A', focus: 'Squat + push + pull', warmup: warmups.strength, cooldown: cooldowns.strength, slots: ['squat', 'push', 'pull', 'hinge', 'core'] },
+    { name: 'Full-body B', focus: 'Hinge + vertical pull + press', warmup: warmups.strength, cooldown: cooldowns.strength, slots: ['squat', 'pull', 'push', 'hinge', 'core'] },
+    { name: 'Full-body C', focus: 'Posterior chain + carries', warmup: warmups.strength, cooldown: cooldowns.strength, slots: ['hinge', 'push', 'pull', 'carry', 'core'] },
+    { name: 'Full-body D', focus: 'Volume + accessories', warmup: warmups.strength, cooldown: cooldowns.strength, slots: ['squat', 'push', 'pull', 'accessory', 'core'] },
+  ],
+  fitness: [
+    { name: 'Strength + engine A', focus: 'Lower body + intervals', warmup: warmups.fitness, cooldown: cooldowns.fitness, slots: ['squat', 'hinge', 'conditioning', 'core'] },
+    { name: 'Strength + engine B', focus: 'Upper body + core', warmup: warmups.fitness, cooldown: cooldowns.fitness, slots: ['push', 'pull', 'push', 'core', 'conditioning'] },
+    { name: 'Turf conditioning', focus: 'Cardio capacity', warmup: warmups.fitness, cooldown: cooldowns.fitness, slots: ['conditioning', 'carry', 'conditioning', 'conditioning'] },
+    { name: 'Mixed circuit day', focus: 'Everything at once', warmup: warmups.fitness, cooldown: cooldowns.fitness, slots: ['squat', 'conditioning', 'pull', 'push', 'conditioning'] },
+  ],
+  foundations: [
+    { name: 'Gentle full-body A', focus: 'Learn the machines', warmup: warmups.foundations, cooldown: cooldowns.foundations, slots: ['machine', 'machine', 'machine', 'cardio'] },
+    { name: 'Gentle full-body B', focus: 'Balance + posture', warmup: warmups.foundations, cooldown: cooldowns.foundations, slots: ['gentle', 'machine', 'machine', 'gentle'] },
+    { name: 'Move + mobilise', focus: 'Joints and confidence', warmup: warmups.foundations, cooldown: cooldowns.foundations, slots: ['cardio', 'gentle', 'gentle', 'mobility'] },
+    { name: 'Confidence builder', focus: 'Machines + easy cardio', warmup: warmups.foundations, cooldown: cooldowns.foundations, slots: ['cardio', 'machine', 'machine', 'gentle', 'mobility'] },
+  ],
+}
+
 export function buildRoutine(goal: RoutineGoal, level: RoutineLevel, daysPerWeek: 2 | 3 | 4, variant = 0): RoutinePlan {
-  const { sets, rest } = setsReps[level]
+  const { sets, rest } = goal === 'foundations' ? { sets: 2, rest: 'as needed' } : setsReps[level]
   const reps = goal === 'strength' ? '5–8' : goal === 'fitness' ? '8–12' : '10–12'
-  const push = goal === 'strength' ? 'Technogym chest press' : 'Push-ups or chest press'
-  const plans: Record<RoutineGoal, RoutineDay[]> = {
-    strength: [
-      { name: 'Full-body A', focus: 'Squat + push + pull', warmup: warmups.strength, cooldown: cooldowns.strength, exercises: [
-        ex('Goblet squat', sets, reps, rest, 'hold a dumbbell or kettlebell'),
-        ex(push, sets, reps, rest),
-        ex('Seated cable row', sets, reps, rest),
-        ex('Romanian deadlift', sets, '6–8', rest, 'light bar or dumbbells'),
-        ex('Plank', 3, '20–40s', '60s'),
-      ] },
-      { name: 'Full-body B', focus: 'Hinge + vertical pull + press', warmup: warmups.strength, cooldown: cooldowns.strength, exercises: [
-        ex('Leg press', sets, reps, rest),
-        ex('Lat pulldown', sets, reps, rest),
-        ex('Dumbbell shoulder press', sets, '8–10', rest),
-        ex('Hip thrust', sets, '8–10', rest, 'bench + barbell or machine'),
-        ex('Dead bug', 3, '8 per side', '60s'),
-      ] },
-      { name: 'Full-body C', focus: 'Posterior chain + carries', warmup: warmups.strength, cooldown: cooldowns.strength, exercises: [
-        ex('Trap-bar or conventional deadlift', sets, '5', rest, 'deadlift platform — film your form'),
-        ex('Incline dumbbell press', sets, reps, rest),
-        ex('Assisted pull-up or pulldown', sets, reps, rest),
-        ex('Farmer carry on the turf', 3, '20–30m', '90s'),
-        ex('Side plank', 3, '15–30s each', '60s'),
-      ] },
-      { name: 'Full-body D', focus: 'Volume + accessories', warmup: warmups.strength, cooldown: cooldowns.strength, exercises: [
-        ex('Bulgarian split squat', sets, '8–10 each leg', rest, 'rear foot on bench'),
-        ex('Flat dumbbell bench press', sets, reps, rest),
-        ex('Single-arm cable or dumbbell row', sets, '10–12 each', rest),
-        ex('Lateral raises', 3, '12–15', '60s', 'light dumbbells, slow lower'),
-        ex('Hollow hold', 3, '15–30s', '60s'),
-      ] },
-    ],
-    fitness: [
-      { name: 'Strength + engine A', focus: 'Lower body + intervals', warmup: warmups.fitness, cooldown: cooldowns.fitness, exercises: [
-        ex('Goblet squat', sets, reps, rest),
-        ex('Romanian deadlift', sets, reps, rest),
-        ex('Glute bridge or hip thrust', sets, reps, rest),
-        ex('Bike or rower intervals', 6, '40s hard / 80s easy', ''),
-      ] },
-      { name: 'Strength + engine B', focus: 'Upper body + core', warmup: warmups.fitness, cooldown: cooldowns.fitness, exercises: [
-        ex('Chest press or push-ups', sets, reps, rest),
-        ex('Seated row', sets, reps, rest),
-        ex('Shoulder press', sets, reps, rest),
-        ex('Core circuit: plank, dead bug, bird-dog', 3, '30s each', '60s between rounds'),
-      ] },
-      { name: 'Turf conditioning', focus: 'Cardio capacity', warmup: warmups.fitness, cooldown: cooldowns.fitness, exercises: [
-        ex('Kettlebell swings', sets, '12–15', '60s'),
-        ex('Farmer carries', 4, '20–30m', '75s'),
-        ex('Medicine ball slams', sets, '10', '60s'),
-        ex('Incline treadmill walk', 1, '8–10 min steady', ''),
-      ] },
-      { name: 'Mixed circuit day', focus: 'Everything at once', warmup: warmups.fitness, cooldown: cooldowns.fitness, exercises: [
-        ex('Dumbbell thrusters', sets, '10–12', '60s'),
-        ex('Assault bike or ski erg', 5, '30s hard / 60s easy', ''),
-        ex('Kettlebell goblet reverse lunge', sets, '8 each leg', rest),
-        ex('Turf push-up to row (renegade)', sets, '6–8 each side', '75s'),
-        ex('Sled or prowler push on the turf', 4, '15–20m', '75s'),
-      ] },
-    ],
-    foundations: [
-      { name: 'Gentle full-body A', focus: 'Learn the machines', warmup: warmups.foundations, cooldown: cooldowns.foundations, exercises: [
-        ex('Leg press', 2, '10–12', 'as needed', 'light and controlled'),
-        ex('Chest press', 2, '10–12', 'as needed'),
-        ex('Seated row', 2, '10–12', 'as needed'),
-        ex('Easy treadmill walk', 1, '5–10 min', ''),
-      ] },
-      { name: 'Gentle full-body B', focus: 'Balance + posture', warmup: warmups.foundations, cooldown: cooldowns.foundations, exercises: [
-        ex('Sit-to-stand from a bench', 2, '8–10', 'as needed'),
-        ex('Lat pulldown', 2, '10–12', 'as needed', 'light weight'),
-        ex('Standing shoulder press', 2, '8–10', 'as needed', 'light dumbbells'),
-        ex('Supported single-leg balance', 2, '20s each side', 'as needed'),
-      ] },
-      { name: 'Move + mobilise', focus: 'Joints and confidence', warmup: warmups.foundations, cooldown: cooldowns.foundations, exercises: [
-        ex('Bike or cross-trainer', 1, '8–12 min easy', ''),
-        ex('Step-ups', 2, '8 each leg', 'as needed'),
-        ex('Wall push-ups', 2, '8–12', 'as needed'),
-        ex('Gentle stretch circuit', 2, '30s per stretch', ''),
-      ] },
-      { name: 'Confidence builder', focus: 'Machines + easy cardio', warmup: warmups.foundations, cooldown: cooldowns.foundations, exercises: [
-        ex('Recumbent bike', 1, '10 min easy', ''),
-        ex('Goblet squat to a bench', 2, '8–10', 'as needed', 'light dumbbell'),
-        ex('Cable or band woodchop', 2, '10 each side', 'as needed', 'slow and controlled'),
-        ex('Machine leg curl', 2, '10–12', 'as needed'),
-        ex('Supported bird-dog', 2, '6 each side', 'as needed'),
-      ] },
-    ],
-  }
-  // Each goal holds four day templates; the variant rotates which ones appear
-  // so "Reshuffle plan" surfaces sessions you haven't seen yet.
-  const rotated = [...plans[goal].slice(variant % 4), ...plans[goal].slice(0, variant % 4)]
-  const selected = rotated.slice(0, Math.min(daysPerWeek, 3))
-  if (daysPerWeek === 4) selected.push(rotated[3])
+  const templates = dayTemplates[goal]
+  const rotated = [...templates.slice(variant % templates.length), ...templates.slice(0, variant % templates.length)]
+  const shapes = rotated.slice(0, Math.min(daysPerWeek, 3))
+  if (daysPerWeek === 4) shapes.push(rotated[3])
+  const selected: RoutineDay[] = shapes.map((shape) => {
+    const used = new Set<string>()
+    const exercises = shape.slots.map((slot) => {
+      const pool = exercisePools[slot]
+      const fresh = pool.filter((option) => !used.has(option.name))
+      const source = fresh.length ? fresh : pool
+      const option = source[Math.floor(Math.random() * source.length)]
+      used.add(option.name)
+      return ex(option.name, option.sets ?? sets, option.reps ?? reps, option.rest ?? rest, option.extra)
+    })
+    return { name: shape.name, focus: shape.focus, warmup: shape.warmup, cooldown: shape.cooldown, exercises }
+  })
   return {
     title: `${routineGoals.find((g) => g.id === goal)?.name} — ${daysPerWeek} days a week`,
     note: goal === 'strength'
@@ -609,6 +723,16 @@ export const gymPlaylistMoods: PlaylistMood[] = [
       { title: 'Remember the Name', artist: 'Fort Minor' },
       { title: 'All I Do Is Win', artist: 'DJ Khaled ft. T-Pain' },
       { title: 'Run This Town', artist: 'JAY-Z ft. Rihanna & Kanye West' },
+      { title: 'Smells Like Teen Spirit', artist: 'Nirvana' },
+      { title: 'Killing in the Name', artist: 'Rage Against the Machine' },
+      { title: 'Shoot to Thrill', artist: 'AC/DC' },
+      { title: 'Sicko Mode', artist: 'Travis Scott' },
+      { title: 'HUMBLE.', artist: 'Kendrick Lamar' },
+      { title: 'The Last Resort', artist: 'Papa Roach' },
+      { title: 'Walk', artist: 'Pantera' },
+      { title: 'Eye of the Tiger', artist: 'Survivor' },
+      { title: 'Ace of Spades', artist: 'Motörhead' },
+      { title: 'Monster', artist: 'Skillet' },
     ],
   },
   {
@@ -628,6 +752,16 @@ export const gymPlaylistMoods: PlaylistMood[] = [
       { title: 'I Gotta Feeling', artist: 'Black Eyed Peas' },
       { title: 'Mr. Brightside', artist: 'The Killers' },
       { title: 'Wake Me Up', artist: 'Avicii' },
+      { title: 'Shake It Off', artist: 'Taylor Swift' },
+      { title: 'Can\'t Stop the Feeling!', artist: 'Justin Timberlake' },
+      { title: 'Uptown Funk', artist: 'Mark Ronson ft. Bruno Mars' },
+      { title: 'Rain on Me', artist: 'Lady Gaga & Ariana Grande' },
+      { title: 'Levitating', artist: 'Dua Lipa' },
+      { title: 'Dance Monkey', artist: 'Tones and I' },
+      { title: 'Rather Be', artist: 'Clean Bandit ft. Jess Glynne' },
+      { title: 'Stronger', artist: 'Kanye West' },
+      { title: 'Heat Waves', artist: 'Glass Animals' },
+      { title: 'Blinding Lights', artist: 'The Weeknd' },
     ],
   },
   {
@@ -647,6 +781,16 @@ export const gymPlaylistMoods: PlaylistMood[] = [
       { title: 'Sunset Lover', artist: 'Petit Biscuit' },
       { title: 'Late Night', artist: 'ODESZA' },
       { title: 'Oblivion', artist: 'Grimes' },
+      { title: 'Lost in Yesterday', artist: 'Tame Impala' },
+      { title: 'Retrograde', artist: 'James Blake' },
+      { title: 'Kiara', artist: 'Bonobo' },
+      { title: 'Nights', artist: 'Frank Ocean' },
+      { title: 'Sunset', artist: 'The xx' },
+      { title: 'The Mother We Share', artist: 'CHVRCHES' },
+      { title: 'Ribs', artist: 'Lorde' },
+      { title: 'A Walk', artist: 'Tycho' },
+      { title: 'Gooey', artist: 'Glass Animals' },
+      { title: 'Left Hand Free', artist: 'alt-J' },
     ],
   },
 ]
@@ -669,6 +813,16 @@ export const yogaPlaylistMoods: PlaylistMood[] = [
       { title: 'Sunflower', artist: 'Post Malone & Swae Lee' },
       { title: 'Flightless Bird, American Mouth', artist: 'Iron & Wine' },
       { title: 'Ho Hey', artist: 'The Lumineers' },
+      { title: 'Island in the Sun', artist: 'Weezer' },
+      { title: 'Send Me on My Way', artist: 'Rusted Root' },
+      { title: 'Count on Me', artist: 'Bruno Mars' },
+      { title: 'Ophelia', artist: 'The Lumineers' },
+      { title: 'Rivers and Roads', artist: 'The Head and the Heart' },
+      { title: 'Walking on Sunshine', artist: 'Katrina and the Waves' },
+      { title: 'Accidentally in Love', artist: 'Counting Crows' },
+      { title: 'Steal My Sunshine', artist: 'Len' },
+      { title: 'Flake', artist: 'Jack Johnson' },
+      { title: 'I Lived', artist: 'OneRepublic' },
     ],
   },
   {
@@ -688,6 +842,16 @@ export const yogaPlaylistMoods: PlaylistMood[] = [
       { title: 'Mystery of Love', artist: 'Sufjan Stevens' },
       { title: 'All My Days', artist: 'Alexi Murdoch' },
       { title: 'Heartbeats', artist: 'José González' },
+      { title: 'Cherry Wine', artist: 'Hozier' },
+      { title: 'Sea of Love', artist: 'Cat Power' },
+      { title: 'First Day of My Life', artist: 'Bright Eyes' },
+      { title: 'Naked as We Came', artist: 'Iron & Wine' },
+      { title: 'Breathe Me', artist: 'Sia' },
+      { title: 'Youth', artist: 'Daughter' },
+      { title: 'Anchor', artist: 'Novo Amor' },
+      { title: 'Hallelujah', artist: 'Jeff Buckley' },
+      { title: 'Let It Be', artist: 'The Beatles' },
+      { title: 'Between the Bars', artist: 'Elliott Smith' },
     ],
   },
   {
@@ -707,6 +871,16 @@ export const yogaPlaylistMoods: PlaylistMood[] = [
       { title: 'We Move Lightly', artist: 'Dustin O\'Halloran' },
       { title: 'Nocturne No. 2 in E-flat Major', artist: 'Frédéric Chopin' },
       { title: 'In a Sentimental Mood', artist: 'John Coltrane & Duke Ellington' },
+      { title: 'On the Nature of Daylight', artist: 'Max Richter' },
+      { title: 'Time', artist: 'Hans Zimmer' },
+      { title: 'Comptine d\'un autre été', artist: 'Yann Tiersen' },
+      { title: 'River Flows in You', artist: 'Yiruma' },
+      { title: 'Moonlight Sonata', artist: 'Ludwig van Beethoven' },
+      { title: 'Clair de Lune', artist: 'Claude Debussy' },
+      { title: 'The Blue Notebooks', artist: 'Max Richter' },
+      { title: 'Says', artist: 'Nils Frahm' },
+      { title: 'Avril 14th', artist: 'Aphex Twin' },
+      { title: 'Porcelain', artist: 'Moby' },
     ],
   },
 ]
@@ -734,6 +908,8 @@ export const radioShows: RadioShow[] = [
   { id: 'synth', name: 'Night Drive', hint: 'Synthwave for late-night sessions', videoId: '4xDzrJKXOOY' },
   { id: 'wind', name: 'Wind Down', hint: 'Sleepy lofi for savasana & evenings', videoId: 'rUxyKA_-grg' },
   { id: 'lounge', name: 'Recovery Lounge', hint: 'Coffee-shop jazz for rest days', videoId: 'fEvM-OUbaKs' },
+  { id: 'focus', name: 'Deep Focus', hint: 'The classic lofi study radio', videoId: 'jfKfPfyJRdk' },
+  { id: 'owl', name: 'Night Owl', hint: 'Late-night lofi study session', videoId: 'lTRiuFIWV54' },
 ]
 
 export function defaultShowId(date = new Date()): string {
@@ -820,5 +996,29 @@ export const videos: Video[] = [
   {
     title: 'Toning Arms Workout', source: 'NHS Fitness Studio', minutes: 10, level: 'Beginner+', category: 'Strength',
     url: 'https://www.nhs.uk/live-well/exercise/strength-and-resistance/body-blast-arms/',
+  },
+  {
+    title: 'Fat-Burning Home Workout', source: 'Body Project', minutes: 30, level: 'Beginner', category: 'Cardio',
+    url: 'https://www.youtube.com/watch?v=gC_L9qAHVJ8',
+  },
+  {
+    title: 'Yoga for Anxiety and Stress', source: 'Yoga With Adriene', minutes: 33, level: 'All levels', category: 'Yoga',
+    url: 'https://www.youtube.com/watch?v=hJbRpHZr_d0',
+  },
+  {
+    title: 'Full Body Yoga for Strength & Flexibility', source: 'growingannanas', minutes: 25, level: 'Intermediate', category: 'Mobility',
+    url: 'https://www.youtube.com/watch?v=Eml2xnoLpYE',
+  },
+  {
+    title: 'Full Body Workout — No Equipment', source: 'Pamela Reif', minutes: 20, level: 'Intermediate', category: 'Strength',
+    url: 'https://www.youtube.com/watch?v=UBMk30rjy0o',
+  },
+  {
+    title: 'Full Body Workout for Beginners', source: 'Fit Tuber', minutes: 20, level: 'Beginner', category: 'Strength',
+    url: 'https://www.youtube.com/watch?v=AzV3EA-1-yM',
+  },
+  {
+    title: '5-Minute Meditation You Can Do Anywhere', source: 'Goodful', minutes: 5, level: 'All levels', category: 'Mind',
+    url: 'https://www.youtube.com/watch?v=inpok4MKVLM',
   },
 ]

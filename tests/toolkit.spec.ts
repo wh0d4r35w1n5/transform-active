@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import {
   activityLevels, bmiCategory, bmiFor, books, buildMealPlan, buildRoutine, dailyNeeds,
-  defaultShowId, gymPlaylistMoods, planNutrition, radioShows, recipes, restSeconds,
+  dealFresh, defaultShowId, gymPlaylistMoods, planNutrition, radioShows, recipes, restSeconds,
   shoppingListSections, spotifySearch, videos, yogaPlaylistMoods,
 } from '../src/lib/toolkit'
 
@@ -91,6 +91,28 @@ test('routine reshuffling rotates in different day templates', () => {
   expect(new Set(fourDays.days.map((day) => day.name)).size).toBe(4)
 })
 
+test('routine generation is procedural — consecutive builds deal different exercises', () => {
+  const signature = (plan: ReturnType<typeof buildRoutine>) =>
+    plan.days.map((day) => day.exercises.map((exercise) => exercise.name).join(',')).join('|')
+  const seen = new Set(Array.from({ length: 8 }, (_, variant) => signature(buildRoutine('strength', 'regular', 3, variant))))
+  // Thousands of slot combinations exist; eight builds should not collide.
+  expect(seen.size).toBeGreaterThanOrEqual(7)
+})
+
+test('dealFresh prefers unseen items before recycling the pool', () => {
+  const pool = ['a', 'b', 'c', 'd', 'e', 'f']
+  const first = dealFresh(pool, 4, [])
+  expect(first.pick).toHaveLength(4)
+  const second = dealFresh(pool, 4, first.seen)
+  // Only two items remain unseen, so the next deal must surface both of them.
+  for (const item of pool.filter((entry) => !first.pick.includes(entry))) {
+    expect(second.pick).toContain(item)
+  }
+  const third = dealFresh(pool, 4, second.seen)
+  expect(third.pick).toHaveLength(4)
+  expect(new Set(third.pick).size).toBe(4)
+})
+
 test('transform radio channels are all embeddable live streams', () => {
   expect(radioShows.length).toBeGreaterThanOrEqual(5)
   for (const show of radioShows) {
@@ -112,7 +134,7 @@ test('playlists, books and videos are fully populated with real links', () => {
   }
   expect(books.length).toBeGreaterThanOrEqual(8)
   for (const book of books) expect(book.url).toMatch(/^https:\/\//)
-  expect(videos).toHaveLength(6)
+  expect(videos.length).toBeGreaterThanOrEqual(10)
   for (const video of videos) expect(video.url).toMatch(/^https:\/\//)
   expect(recipes.length).toBeGreaterThanOrEqual(12)
 })
@@ -207,7 +229,7 @@ test.describe('toolkit UI', () => {
     await expect(toolkit.locator('.builder-result h4')).toContainText('smoothie')
     // Playlists draw a fresh cut of ten from deeper pools.
     await toolkit.getByRole('button', { name: /Gym Playlist/ }).click()
-    await expect(toolkit.locator('.playlist-head')).toContainText('of 14 tracks')
+    await expect(toolkit.locator('.playlist-head')).toContainText('of 24 tracks')
     let changed = false
     for (let attempt = 0; attempt < 6 && !changed; attempt += 1) {
       const before = await toolkit.locator('.track-list li').allTextContents()
@@ -287,12 +309,12 @@ test.describe('toolkit UI', () => {
     const session = toolkit.locator('.session-view')
     await expect(session).toBeVisible()
     await expect(session.locator('.session-count')).toContainText('of')
-    const firstSet = session.getByRole('button', { name: 'Goblet squat set 1' })
+    const firstSet = session.locator('.set-check').first()
     await firstSet.click()
     await expect(firstSet).toHaveClass(/is-done/)
     const timer = toolkit.locator('.rest-timer')
     await expect(timer).toBeVisible()
-    await expect(timer).toContainText('Goblet squat')
+    await expect(timer).toContainText(/(\d:\d\d|Go)/)
     await timer.getByRole('button', { name: 'Skip rest' }).click()
     await expect(timer).toBeHidden()
     await session.getByRole('button', { name: 'Finish session' }).click()
