@@ -504,6 +504,8 @@ select.form-input { text-overflow: ellipsis; padding-right: 25px; }
 .sauna-live-head h3 { font-family: 'DM Serif Display', Georgia, serif; font-size: 21px; font-weight: 400; }
 .sauna-live-head p { font-size: 10.5px; color: var(--muted); margin-top: 4px; line-height: 1.6; }
 .sauna-live-dot { width: 9px; height: 9px; border-radius: 50%; background: #c96f2e; margin-top: 8px; flex-shrink: 0; box-shadow: 0 0 0 4px #c96f2e22; }
+.sauna-live-dot.is-offline { background: #9b959e; box-shadow: 0 0 0 4px #9b959e22; animation: none; }
+.sauna-quiet { font-style: normal; font-family: 'DM Sans', sans-serif; font-size: 8.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #a97c55; background: #c96f2e1f; border-radius: 20px; padding: 2.5px 8px; margin-left: 8px; vertical-align: 1.5px; }
 @media (prefers-reduced-motion: no-preference) { .sauna-live-dot { animation: live-pulse 2.4s ease-in-out infinite; } }
 .sauna-live-sub { font-size: 9px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #a97c55; margin: 17px 0 2px; }
 .sauna-live-empty { font-size: 12px; color: var(--muted); padding: 16px 2px 4px; line-height: 1.7; }

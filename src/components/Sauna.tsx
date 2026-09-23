@@ -3,7 +3,7 @@ import { ArrowUpRight, Droplets, Flame, Smartphone, Sparkles, Timer, UsersRound,
 import { Button } from './ui/button'
 import { Reveal } from './brand'
 import { STUDIO } from '../lib/catalog'
-import { fetchLiveClasses, recoveryWindows, type RecoveryWindow } from '../lib/clubfit'
+import { fetchLiveClasses, recoveryWindows, staffedStatus, type RecoveryWindow } from '../lib/clubfit'
 import { cn, useReducedMotion } from '../lib/utils'
 
 const facts = [
@@ -19,14 +19,21 @@ const steps = [
   { icon: Flame, title: 'First visit? Sign the waiver', body: 'Arrive a few minutes early and sign the sauna waiver at reception.' },
 ]
 
+function ago(ms: number) {
+  const seconds = Math.max(0, Math.round(ms / 1000))
+  if (seconds < 8) return 'just now'
+  if (seconds < 90) return `${seconds}s ago`
+  return `${Math.round(seconds / 60)}m ago`
+}
+
 function WindowList({ windows, emptyNote }: { windows: RecoveryWindow[]; emptyNote: string }) {
   if (!windows.length) return <p className="sauna-live-empty">{emptyNote}</p>
   return (
     <ul className="sauna-window-list">
-      {windows.map(({ cls, label }) => (
+      {windows.map(({ cls, label, quiet }) => (
         <li key={`${cls.name}-${cls.startsAt.toISOString()}`}>
           <div className="sauna-window-class">
-            <strong>{cls.name}</strong>
+            <strong>{cls.name}{quiet && <em className="sauna-quiet">quieter pick</em>}</strong>
             <span>{cls.instructor ? `with ${cls.instructor}` : cls.room}</span>
           </div>
           <div className="sauna-window-meta">
@@ -44,15 +51,24 @@ function WindowList({ windows, emptyNote }: { windows: RecoveryWindow[]; emptyNo
 export function Sauna() {
   const reducedMotion = useReducedMotion()
   const [windows, setWindows] = useState<{ today: RecoveryWindow[]; tomorrow: RecoveryWindow[] } | null>(null)
+  const [syncedAt, setSyncedAt] = useState<Date | null>(null)
   const [failed, setFailed] = useState(false)
+  const [tick, setTick] = useState(0)
 
   useEffect(() => {
     let cancelled = false
-    fetchLiveClasses()
-      .then((classes) => { if (!cancelled) setWindows(recoveryWindows(classes)) })
+    const sync = () => fetchLiveClasses()
+      .then((classes) => { if (!cancelled) { setWindows(recoveryWindows(classes)); setSyncedAt(new Date()); setFailed(false) } })
       .catch(() => { if (!cancelled) setFailed(true) })
-    return () => { cancelled = true }
+    sync()
+    const poll = setInterval(sync, 60000)
+    const clock = setInterval(() => setTick((value) => value + 1), 15000)
+    return () => { cancelled = true; clearInterval(poll); clearInterval(clock) }
   }, [])
+
+  const live = windows !== null
+  const staffed = staffedStatus()
+  void tick // re-render keeps the synced stamp fresh
 
   return (
     <section id="sauna" className="section sauna-section" aria-labelledby="sauna-title">
@@ -83,10 +99,14 @@ export function Sauna() {
           </Reveal>
           <Reveal className="sauna-live-card">
             <div className="sauna-live-head">
-              <span className="sauna-live-dot" aria-hidden="true" />
+              <span className={cn('sauna-live-dot', !live && 'is-offline')} aria-hidden="true" />
               <div>
-                <h3>{windows ? 'Today at the studio' : failed ? 'Book your session' : 'Reading the timetable…'}</h3>
-                <p>{windows ? 'Live from the booking system — your post-class sauna windows' : 'Live class feed unavailable right now — booking still works in the app'}</p>
+                <h3>{live ? 'Today at the studio' : failed ? 'Book your session' : 'Reading the timetable…'}</h3>
+                <p>{live
+                  ? failed
+                    ? <>Feed dropped — showing last sync {syncedAt ? ago(Date.now() - syncedAt.getTime()) : ''}</>
+                    : <>Live from the booking system — {staffed.label.toLowerCase()} · synced {syncedAt ? ago(Date.now() - syncedAt.getTime()) : '…'}</>
+                  : 'Live class feed unavailable right now — booking still works in the app'}</p>
               </div>
             </div>
             {windows && (
@@ -107,7 +127,7 @@ export function Sauna() {
           </Reveal>
         </div>
         <Reveal className="sauna-fineprint">
-          <p>Sauna access is for members — book your 15–20 minute session in the MyClub Fitness app. First visit: sign the waiver at reception. Hydrate before, towel on the bench, and keep it to twenty minutes.</p>
+          <p>Sauna access is for members — book your 15–20 minute session in the MyClub Fitness app. Class times and spots refresh live every minute; sauna slots themselves live inside member login. First visit: sign the waiver at reception. Hydrate before, towel on the bench, keep it to twenty minutes.</p>
         </Reveal>
       </div>
     </section>
