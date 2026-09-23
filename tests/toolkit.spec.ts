@@ -82,6 +82,15 @@ test('routine builder returns the requested days with real exercises', () => {
   }
 })
 
+test('routine reshuffling rotates in different day templates', () => {
+  const first = buildRoutine('strength', 'new', 3, 0)
+  const second = buildRoutine('strength', 'new', 3, 1)
+  expect(first.days[0].name).not.toBe(second.days[0].name)
+  const fourDays = buildRoutine('foundations', 'new', 4, 1)
+  expect(fourDays.days).toHaveLength(4)
+  expect(new Set(fourDays.days.map((day) => day.name)).size).toBe(4)
+})
+
 test('transform radio channels are all embeddable live streams', () => {
   expect(radioShows.length).toBeGreaterThanOrEqual(5)
   for (const show of radioShows) {
@@ -101,7 +110,7 @@ test('playlists, books and videos are fully populated with real links', () => {
       expect(spotifySearch(track)).toMatch(/^https:\/\/open\.spotify\.com\/search\//)
     }
   }
-  expect(books).toHaveLength(6)
+  expect(books.length).toBeGreaterThanOrEqual(8)
   for (const book of books) expect(book.url).toMatch(/^https:\/\//)
   expect(videos).toHaveLength(6)
   for (const video of videos) expect(video.url).toMatch(/^https:\/\//)
@@ -131,7 +140,8 @@ test.describe('toolkit UI', () => {
     const toolkit = page.locator('#toolkit')
     await toolkit.getByRole('button', { name: /Transform Radio/ }).click()
     const channels = toolkit.getByRole('group', { name: 'Choose a radio channel' })
-    await expect(channels.getByRole('button')).toHaveCount(radioShows.length)
+    await expect(channels.locator('.filter-pill')).toHaveCount(radioShows.length)
+    await expect(channels.getByRole('button', { name: 'Surprise me' })).toBeVisible()
     const frame = toolkit.locator('.radio-frame iframe')
     await expect(frame).toHaveAttribute('src', /youtube-nocookie\.com\/embed\//)
     await expect(frame).toHaveAttribute('title', /Transform Radio/)
@@ -178,6 +188,50 @@ test.describe('toolkit UI', () => {
     await expect(page.locator('#toolkit').getByLabel('Height cm')).toHaveValue('172')
     await page.locator('#toolkit').getByRole('button', { name: /Meal Planner/ }).click()
     await expect(page.locator('#toolkit').locator('.target-chip')).toContainText('kcal')
+  })
+
+  test('creators, catalogues and routines all reshuffle into fresh picks', async ({ page }) => {
+    const toolkit = page.locator('#toolkit')
+    // Gym Routine — rotating variants surface different session templates.
+    await toolkit.getByRole('button', { name: /Gym Routine/ }).click()
+    const firstDay = await toolkit.locator('.routine-day h5, .routine-day .tiny-label').first().textContent()
+    await toolkit.getByRole('button', { name: 'Reshuffle plan' }).click()
+    expect(await toolkit.locator('.routine-day h5, .routine-day .tiny-label').first().textContent()).not.toBe(firstDay)
+    // Meal Creator — Surprise me picks a full random bowl.
+    await toolkit.getByRole('button', { name: /Meal Creator/ }).click()
+    await toolkit.getByRole('button', { name: 'Surprise me' }).click()
+    await expect(toolkit.locator('.builder-result')).toContainText('est. kcal')
+    // Smoothie Creator — same deal.
+    await toolkit.getByRole('button', { name: /Smoothie Creator/ }).click()
+    await toolkit.getByRole('button', { name: 'Surprise me' }).click()
+    await expect(toolkit.locator('.builder-result h4')).toContainText('smoothie')
+    // Playlists draw a fresh cut of ten from deeper pools.
+    await toolkit.getByRole('button', { name: /Gym Playlist/ }).click()
+    await expect(toolkit.locator('.playlist-head')).toContainText('of 14 tracks')
+    let changed = false
+    for (let attempt = 0; attempt < 6 && !changed; attempt += 1) {
+      const before = await toolkit.locator('.track-list li').allTextContents()
+      await toolkit.getByRole('button', { name: 'Shuffle mix' }).click()
+      changed = (await toolkit.locator('.track-list li').allTextContents()).join() !== before.join()
+    }
+    expect(changed).toBe(true)
+    await expect(toolkit.locator('.track-list li')).toHaveCount(10)
+    // Books deal a different shelf from the wider pool.
+    await toolkit.getByRole('button', { name: /Books/ }).click()
+    await expect(toolkit.locator('.book-card')).toHaveCount(6)
+    changed = false
+    for (let attempt = 0; attempt < 6 && !changed; attempt += 1) {
+      const before = await toolkit.locator('.book-card h4').allTextContents()
+      await toolkit.getByRole('button', { name: 'Shuffle shelf' }).click()
+      changed = (await toolkit.locator('.book-card h4').allTextContents()).join() !== before.join()
+    }
+    expect(changed).toBe(true)
+    // Recipe catalogue + videos reshuffle too.
+    await toolkit.getByRole('button', { name: /^Recipes/ }).click()
+    await expect(toolkit.getByRole('button', { name: 'Shuffle recipes' })).toBeVisible()
+    await toolkit.getByRole('button', { name: /Video Library/ }).click()
+    await toolkit.getByRole('button', { name: 'Shuffle videos' }).click()
+    await expect(toolkit.locator('.video-card')).toHaveCount(6)
   })
 
   test('the meal and smoothie creators produce estimates and copyable output', async ({ page }) => {

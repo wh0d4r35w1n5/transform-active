@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type Dispatch, type ReactNode, type SetStateAction } from 'react'
-import { ArrowUpRight, Blend, BookOpen, Calculator, CalendarRange, Check, CheckCircle2, ChefHat, Circle, Copy, CupSoda, Dumbbell, ListMusic, MonitorPlay, Music2, Pause, Play, Printer, Radio, RefreshCw, RotateCcw, Salad, ShieldCheck, Sparkles, Timer, X } from 'lucide-react'
+import { ArrowUpRight, Blend, BookOpen, Calculator, CalendarRange, Check, CheckCircle2, ChefHat, Circle, Copy, CupSoda, Dices, Dumbbell, ListMusic, MonitorPlay, Music2, Pause, Play, Printer, Radio, RefreshCw, RotateCcw, Salad, ShieldCheck, Shuffle, Sparkles, Timer, X } from 'lucide-react'
 import { Reveal, SectionHeading } from './brand'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
@@ -8,7 +8,7 @@ import {
   activityLevels, bmiCategory, bmiFor, bmiLabels, books, buildMealPlan, buildRoutine,
   clearSavedBody, dailyNeeds, dietFocuses, gymPlaylistMoods, loadSavedBody, mealBase,
   mealExtras, mealProteins, mealSauces, mealVeg, planNutrition, recipes, routineGoals,
-  routineLevels, saveBody, shoppingListSections, smoothieBases, smoothieBoosts, smoothieFruits,
+  routineLevels, saveBody, shoppingListSections, shufflePick, smoothieBases, smoothieBoosts, smoothieFruits,
   spotifySearch, trackList, videos, yogaPlaylistMoods, defaultShowId, radioShows,
   type DietFocus, type MealType, type PlaylistMood, type Recipe, type RoutineExercise,
   type RoutineGoal, type RoutineLevel, type SavedBody, type Sex,
@@ -263,13 +263,16 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
 
 function RecipeCatalogue() {
   const [type, setType] = useState<(typeof mealTypes)[number]>('All')
-  const shown = recipes.filter((recipe) => type === 'All' || recipe.type === type)
+  const [ordered, setOrdered] = useState<Recipe[] | null>(null)
+  const filtered = recipes.filter((recipe) => type === 'All' || recipe.type === type)
+  const shown = ordered ?? filtered
   return (
     <div>
       <div className="tool-controls" role="group" aria-label="Filter recipes">
         {mealTypes.map((name) => (
-          <button key={name} type="button" className={cn('filter-pill', type === name && 'is-active')} aria-pressed={type === name} onClick={() => setType(name)}>{name}</button>
+          <button key={name} type="button" className={cn('filter-pill', type === name && 'is-active')} aria-pressed={type === name} onClick={() => { setType(name); setOrdered(null) }}>{name}</button>
         ))}
+        <Button variant="outline" size="sm" onClick={() => setOrdered(shufflePick(filtered))} title="Deal the cards again"><Shuffle aria-hidden="true" /> Shuffle recipes</Button>
       </div>
       <div className="recipe-grid">{shown.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} />)}</div>
       <EstimateNote />
@@ -286,6 +289,13 @@ function MealCreator() {
   const parts = [mealBase[base], mealProteins[protein], mealVeg[veg], mealSauces[sauce], ...mealExtras.filter((item) => extras.includes(item.name))]
   const kcal = parts.reduce((total, part) => total + part.kcal, 0)
   const proteinTotal = parts.reduce((total, part) => total + part.protein, 0)
+  const surprise = () => setBowl({
+    base: Math.floor(Math.random() * mealBase.length),
+    protein: Math.floor(Math.random() * mealProteins.length),
+    veg: Math.floor(Math.random() * mealVeg.length),
+    sauce: Math.floor(Math.random() * mealSauces.length),
+    extras: shufflePick(mealExtras.map((item) => item.name), Math.floor(Math.random() * 3)),
+  })
 
   const pick = (label: string, options: { name: string }[], value: number, field: 'base' | 'protein' | 'veg' | 'sauce', hint: string) => (
     <fieldset className="builder-field">
@@ -301,6 +311,9 @@ function MealCreator() {
   return (
     <div className="builder">
       <div className="builder-fields">
+        <div className="tool-controls no-print">
+          <Button variant="outline" size="sm" onClick={surprise} title="Random bowl"><Dices aria-hidden="true" /> Surprise me</Button>
+        </div>
         {pick('1 · Pick a base', mealBase, base, 'base', 'Base options')}
         {pick('2 · Add a protein', mealProteins, protein, 'protein', 'Protein options')}
         {pick('3 · Choose veg', mealVeg, veg, 'veg', 'Vegetable options')}
@@ -346,10 +359,18 @@ function SmoothieCreator() {
   const protein = parts.reduce((total, part) => total + part.protein, 0)
   const toggle = (name: string, list: string[], set: (value: string[]) => void) => () =>
     set(list.includes(name) ? list.filter((item) => item !== name) : [...list, name])
+  const surprise = () => setBlend({
+    base: Math.floor(Math.random() * smoothieBases.length),
+    fruits: shufflePick(smoothieFruits.map((item) => item.name), 1 + Math.floor(Math.random() * 3)),
+    boosts: shufflePick(smoothieBoosts.map((item) => item.name), Math.floor(Math.random() * 3)),
+  })
 
   return (
     <div className="builder">
       <div className="builder-fields">
+        <div className="tool-controls no-print">
+          <Button variant="outline" size="sm" onClick={surprise} title="Random blend"><Dices aria-hidden="true" /> Surprise me</Button>
+        </div>
         <fieldset className="builder-field">
           <legend>1 · Liquid base</legend>
           <div className="builder-options" role="group" aria-label="Smoothie base">
@@ -550,9 +571,10 @@ function RoutineCreator() {
   const [sessionDay, setSessionDay] = useState<string | null>(null)
   const [checks, setChecks] = useState<Record<string, boolean>>({})
   const [doneDays, setDoneDays] = usePersistentState<string[]>('ta-routine-done', [])
+  const [variant, setVariant] = useState(0)
   const beep = useBeeper()
   const { rest, start, adjust, togglePause, stop } = useRestTimer(beep)
-  const plan = buildRoutine(goal, level, days)
+  const plan = buildRoutine(goal, level, days, variant)
 
   const reconfigure = () => { setSessionDay(null); setChecks({}) }
   const pickGoal = (id: RoutineGoal) => { setGoal(id); reconfigure() }
@@ -594,6 +616,7 @@ function RoutineCreator() {
           {([2, 3, 4] as const).map((count) => (
             <button key={count} type="button" className={cn('filter-pill', days === count && 'is-active')} aria-pressed={days === count} onClick={() => pickDays(count)}>{count} days</button>
           ))}
+          <Button variant="outline" size="sm" className="no-print" onClick={() => { setVariant((value) => value + 1); reconfigure() }} title="Rotate in different session templates"><RefreshCw aria-hidden="true" /> Reshuffle plan</Button>
           <PrintButton label="Print plan" />
         </div>
       </div>
@@ -657,6 +680,10 @@ function RadioStation() {
             {s.name}
           </button>
         ))}
+        <Button variant="outline" size="sm" onClick={() => {
+          const others = radioShows.filter((s) => s.id !== show.id)
+          setShowId(others[Math.floor(Math.random() * others.length)].id)
+        }} title="Spin the dial"><Dices aria-hidden="true" /> Surprise me</Button>
       </div>
       <div className="radio-player">
         <div className="radio-frame">
@@ -682,21 +709,25 @@ function RadioStation() {
 
 function PlaylistBuilder({ moods, playlistName }: { moods: PlaylistMood[]; playlistName: string }) {
   const [mood, setMood] = usePersistentState(`ta-playlist-${playlistName.replace(/\W+/g, '-').toLowerCase()}`, 0)
+  const [mix, setMix] = useState<PlaylistMood['tracks'] | null>(null)
   const current = moods[mood]
+  // Pools run deeper than the ten shown — shuffling deals a fresh cut.
+  const shown = mix ?? current.tracks.slice(0, 10)
   return (
     <div>
       <div className="tool-controls" role="group" aria-label="Playlist mood">
         {moods.map((option, index) => (
-          <button key={option.id} type="button" className={cn('filter-pill', mood === index && 'is-active')} aria-pressed={mood === index} onClick={() => setMood(index)} title={option.hint}>{option.name}</button>
+          <button key={option.id} type="button" className={cn('filter-pill', mood === index && 'is-active')} aria-pressed={mood === index} onClick={() => { setMood(index); setMix(null) }} title={option.hint}>{option.name}</button>
         ))}
+        <Button variant="outline" size="sm" onClick={() => setMix(shufflePick(current.tracks, 10))} title="Deal a fresh mix from the full pool"><Shuffle aria-hidden="true" /> Shuffle mix</Button>
       </div>
       <div className="playlist" aria-live="polite">
         <div className="playlist-head">
-          <div><h4>{playlistName} · {current.name}</h4><p>{current.hint} — {current.tracks.length} tracks</p></div>
-          <CopyButton label="Copy track list" text={trackList(current, playlistName)} />
+          <div><h4>{playlistName} · {current.name}</h4><p>{current.hint} — {shown.length} of {current.tracks.length} tracks</p></div>
+          <CopyButton label="Copy track list" text={trackList({ ...current, tracks: shown }, playlistName)} />
         </div>
         <ol className="track-list">
-          {current.tracks.map((track) => (
+          {shown.map((track) => (
             <li key={`${track.title}-${track.artist}`}>
               <span className="track-name">{track.title}</span>
               <span className="track-artist">{track.artist}</span>
@@ -713,9 +744,15 @@ function PlaylistBuilder({ moods, playlistName }: { moods: PlaylistMood[]; playl
 // ---- Books & videos ---------------------------------------------------------
 
 function BookShelf() {
+  const [shelf, setShelf] = useState<typeof books | null>(null)
+  const shown = shelf ?? books.slice(0, 6)
   return (
-    <div className="book-grid">
-      {books.map((book) => (
+    <div>
+      <div className="tool-controls no-print">
+        <Button variant="outline" size="sm" onClick={() => setShelf(shufflePick(books, 6))} title="Deal a different shelf"><Shuffle aria-hidden="true" /> Shuffle shelf</Button>
+      </div>
+      <div className="book-grid">
+        {shown.map((book) => (
         <article key={book.title} className="book-card">
           <div className="book-cover" aria-hidden="true"><span>{book.title}</span><em>{book.author}</em></div>
           <div className="book-info">
@@ -727,15 +764,21 @@ function BookShelf() {
           </div>
         </article>
       ))}
+      </div>
     </div>
   )
 }
 
 function VideoLibrary() {
+  const [order, setOrder] = useState<typeof videos | null>(null)
+  const shown = order ?? videos
   return (
     <div>
+      <div className="tool-controls no-print">
+        <Button variant="outline" size="sm" onClick={() => setOrder(shufflePick(videos))} title="Deal a different lineup"><Shuffle aria-hidden="true" /> Shuffle videos</Button>
+      </div>
       <div className="video-grid">
-        {videos.map((video) => (
+        {shown.map((video) => (
           <a key={video.title} className="video-card" href={video.url} target="_blank" rel="noopener noreferrer">
             <span className="video-play" aria-hidden="true"><MonitorPlay size={20} strokeWidth={1.5} /></span>
             <div className="video-info">

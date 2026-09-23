@@ -472,7 +472,16 @@ function ex(name: string, sets: number, reps: string, rest: string, extra = ''):
   return { name, dose: `${sets} × ${reps}${rest ? ` · rest ${rest}` : ''}${extra ? ` · ${extra}` : ''}`, sets, restSec: restSeconds(rest) }
 }
 
-export function buildRoutine(goal: RoutineGoal, level: RoutineLevel, daysPerWeek: 2 | 3 | 4): RoutinePlan {
+export function shufflePick<T>(items: T[], count = items.length): T[] {
+  const copy = [...items]
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[copy[i], copy[j]] = [copy[j], copy[i]]
+  }
+  return copy.slice(0, count)
+}
+
+export function buildRoutine(goal: RoutineGoal, level: RoutineLevel, daysPerWeek: 2 | 3 | 4, variant = 0): RoutinePlan {
   const { sets, rest } = setsReps[level]
   const reps = goal === 'strength' ? '5–8' : goal === 'fitness' ? '8–12' : '10–12'
   const push = goal === 'strength' ? 'Technogym chest press' : 'Push-ups or chest press'
@@ -499,6 +508,13 @@ export function buildRoutine(goal: RoutineGoal, level: RoutineLevel, daysPerWeek
         ex('Farmer carry on the turf', 3, '20–30m', '90s'),
         ex('Side plank', 3, '15–30s each', '60s'),
       ] },
+      { name: 'Full-body D', focus: 'Volume + accessories', warmup: warmups.strength, cooldown: cooldowns.strength, exercises: [
+        ex('Bulgarian split squat', sets, '8–10 each leg', rest, 'rear foot on bench'),
+        ex('Flat dumbbell bench press', sets, reps, rest),
+        ex('Single-arm cable or dumbbell row', sets, '10–12 each', rest),
+        ex('Lateral raises', 3, '12–15', '60s', 'light dumbbells, slow lower'),
+        ex('Hollow hold', 3, '15–30s', '60s'),
+      ] },
     ],
     fitness: [
       { name: 'Strength + engine A', focus: 'Lower body + intervals', warmup: warmups.fitness, cooldown: cooldowns.fitness, exercises: [
@@ -518,6 +534,13 @@ export function buildRoutine(goal: RoutineGoal, level: RoutineLevel, daysPerWeek
         ex('Farmer carries', 4, '20–30m', '75s'),
         ex('Medicine ball slams', sets, '10', '60s'),
         ex('Incline treadmill walk', 1, '8–10 min steady', ''),
+      ] },
+      { name: 'Mixed circuit day', focus: 'Everything at once', warmup: warmups.fitness, cooldown: cooldowns.fitness, exercises: [
+        ex('Dumbbell thrusters', sets, '10–12', '60s'),
+        ex('Assault bike or ski erg', 5, '30s hard / 60s easy', ''),
+        ex('Kettlebell goblet reverse lunge', sets, '8 each leg', rest),
+        ex('Turf push-up to row (renegade)', sets, '6–8 each side', '75s'),
+        ex('Sled or prowler push on the turf', 4, '15–20m', '75s'),
       ] },
     ],
     foundations: [
@@ -539,10 +562,20 @@ export function buildRoutine(goal: RoutineGoal, level: RoutineLevel, daysPerWeek
         ex('Wall push-ups', 2, '8–12', 'as needed'),
         ex('Gentle stretch circuit', 2, '30s per stretch', ''),
       ] },
+      { name: 'Confidence builder', focus: 'Machines + easy cardio', warmup: warmups.foundations, cooldown: cooldowns.foundations, exercises: [
+        ex('Recumbent bike', 1, '10 min easy', ''),
+        ex('Goblet squat to a bench', 2, '8–10', 'as needed', 'light dumbbell'),
+        ex('Cable or band woodchop', 2, '10 each side', 'as needed', 'slow and controlled'),
+        ex('Machine leg curl', 2, '10–12', 'as needed'),
+        ex('Supported bird-dog', 2, '6 each side', 'as needed'),
+      ] },
     ],
   }
-  const selected = plans[goal].slice(0, Math.min(daysPerWeek, 3))
-  if (daysPerWeek === 4) selected.push(plans[goal][0])
+  // Each goal holds four day templates; the variant rotates which ones appear
+  // so "Reshuffle plan" surfaces sessions you haven't seen yet.
+  const rotated = [...plans[goal].slice(variant % 4), ...plans[goal].slice(0, variant % 4)]
+  const selected = rotated.slice(0, Math.min(daysPerWeek, 3))
+  if (daysPerWeek === 4) selected.push(rotated[3])
   return {
     title: `${routineGoals.find((g) => g.id === goal)?.name} — ${daysPerWeek} days a week`,
     note: goal === 'strength'
@@ -572,6 +605,10 @@ export const gymPlaylistMoods: PlaylistMood[] = [
       { title: 'Bulls on Parade', artist: 'Rage Against the Machine' },
       { title: '\'Till I Collapse', artist: 'Eminem' },
       { title: 'Welcome to the Jungle', artist: 'Guns N\' Roses' },
+      { title: 'Bleed It Out', artist: 'Linkin Park' },
+      { title: 'Remember the Name', artist: 'Fort Minor' },
+      { title: 'All I Do Is Win', artist: 'DJ Khaled ft. T-Pain' },
+      { title: 'Run This Town', artist: 'JAY-Z ft. Rihanna & Kanye West' },
     ],
   },
   {
@@ -587,6 +624,10 @@ export const gymPlaylistMoods: PlaylistMood[] = [
       { title: 'Don\'t Stop the Music', artist: 'Rihanna' },
       { title: 'Tongue Tied', artist: 'Grouplove' },
       { title: 'On Top of the World', artist: 'Imagine Dragons' },
+      { title: 'Turn Down for What', artist: 'DJ Snake & Lil Jon' },
+      { title: 'I Gotta Feeling', artist: 'Black Eyed Peas' },
+      { title: 'Mr. Brightside', artist: 'The Killers' },
+      { title: 'Wake Me Up', artist: 'Avicii' },
     ],
   },
   {
@@ -602,6 +643,10 @@ export const gymPlaylistMoods: PlaylistMood[] = [
       { title: 'Say My Name', artist: 'ODESZA ft. Zyra' },
       { title: 'Sweet Disposition', artist: 'The Temper Trap' },
       { title: 'Younger', artist: 'RÜFÜS DU SOL' },
+      { title: 'Something About Us', artist: 'Daft Punk' },
+      { title: 'Sunset Lover', artist: 'Petit Biscuit' },
+      { title: 'Late Night', artist: 'ODESZA' },
+      { title: 'Oblivion', artist: 'Grimes' },
     ],
   },
 ]
@@ -620,6 +665,10 @@ export const yogaPlaylistMoods: PlaylistMood[] = [
       { title: 'Lovely Day', artist: 'Bill Withers' },
       { title: 'Three Little Birds', artist: 'Bob Marley' },
       { title: 'Home', artist: 'Edward Sharpe & The Magnetic Zeros' },
+      { title: 'I\'m Yours', artist: 'Jason Mraz' },
+      { title: 'Sunflower', artist: 'Post Malone & Swae Lee' },
+      { title: 'Flightless Bird, American Mouth', artist: 'Iron & Wine' },
+      { title: 'Ho Hey', artist: 'The Lumineers' },
     ],
   },
   {
@@ -635,6 +684,10 @@ export const yogaPlaylistMoods: PlaylistMood[] = [
       { title: 'Nude', artist: 'Radiohead' },
       { title: 'Open', artist: 'Rhye' },
       { title: 'To Build a Home', artist: 'The Cinematic Orchestra' },
+      { title: 'The Night We Met', artist: 'Lord Huron' },
+      { title: 'Mystery of Love', artist: 'Sufjan Stevens' },
+      { title: 'All My Days', artist: 'Alexi Murdoch' },
+      { title: 'Heartbeats', artist: 'José González' },
     ],
   },
   {
@@ -650,6 +703,10 @@ export const yogaPlaylistMoods: PlaylistMood[] = [
       { title: 'Sleep', artist: 'Max Richter' },
       { title: 'Written on the Sky', artist: 'Max Richter' },
       { title: 'Near Light', artist: 'Ólafur Arnalds' },
+      { title: 'Ambre', artist: 'Nils Frahm' },
+      { title: 'We Move Lightly', artist: 'Dustin O\'Halloran' },
+      { title: 'Nocturne No. 2 in E-flat Major', artist: 'Frédéric Chopin' },
+      { title: 'In a Sentimental Mood', artist: 'John Coltrane & Duke Ellington' },
     ],
   },
 ]
@@ -676,6 +733,7 @@ export const radioShows: RadioShow[] = [
   { id: 'stretch', name: 'Stretch & Flow', hint: 'Jazzy lofi for Pilates and mobility', videoId: '5yx6BWlEVcY' },
   { id: 'synth', name: 'Night Drive', hint: 'Synthwave for late-night sessions', videoId: '4xDzrJKXOOY' },
   { id: 'wind', name: 'Wind Down', hint: 'Sleepy lofi for savasana & evenings', videoId: 'rUxyKA_-grg' },
+  { id: 'lounge', name: 'Recovery Lounge', hint: 'Coffee-shop jazz for rest days', videoId: 'fEvM-OUbaKs' },
 ]
 
 export function defaultShowId(date = new Date()): string {
@@ -721,6 +779,16 @@ export const books: Book[] = [
     title: 'Good to Go', author: 'Christie Aschwanden', year: 2019, category: 'Recovery',
     blurb: 'The strange science of recovery — what works, what doesn\'t, and what to actually do after training.',
     url: 'https://wwnorton.com/books/Good-to-Go',
+  },
+  {
+    title: 'Outlive', author: 'Peter Attia, MD', year: 2023, category: 'Longevity',
+    blurb: 'Strength, stability and zone 2 as the pillars of a long, capable life — the training-case for decades ahead.',
+    url: 'https://peterattiamd.com/outlive/',
+  },
+  {
+    title: 'How Not to Die', author: 'Michael Greger, MD', year: 2015, category: 'Nutrition',
+    blurb: 'Evidence-based eating across the fifteen biggest killers — plus the Daily Dozen checklist worth stealing.',
+    url: 'https://nutritionfacts.org/book/',
   },
 ]
 
