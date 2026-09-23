@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ArrowUpRight, Droplets, Flame, Smartphone, Sparkles, Timer, UsersRound, Waves } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight, Droplets, Flame, Smartphone, Sparkles, Timer, UsersRound, Waves } from 'lucide-react'
 import { Button } from './ui/button'
 import { Reveal } from './brand'
 import { STUDIO } from '../lib/catalog'
@@ -48,11 +48,14 @@ function WindowList({ windows, emptyNote }: { windows: RecoveryWindow[]; emptyNo
   )
 }
 
+const PORTAL_SIGNIN = 'https://myaccount.clubfit.net.au/signin?code=TRANSFORMACTIVE&accountId=1'
+
 export function Sauna() {
   const reducedMotion = useReducedMotion()
   const [windows, setWindows] = useState<{ today: RecoveryWindow[]; tomorrow: RecoveryWindow[] } | null>(null)
   const [syncedAt, setSyncedAt] = useState<Date | null>(null)
   const [failed, setFailed] = useState(false)
+  const [booking, setBooking] = useState(false)
   const [tick, setTick] = useState(0)
 
   useEffect(() => {
@@ -100,29 +103,47 @@ export function Sauna() {
             <div className="sauna-live-head">
               <span className={cn('sauna-live-dot', !live && 'is-offline')} aria-hidden="true" />
               <div>
-                <h3>{live ? 'Today at the studio' : failed ? 'Book your session' : 'Reading the timetable…'}</h3>
-                <p>{live
-                  ? failed
-                    ? <>Feed dropped — showing last sync {syncedAt ? ago(Date.now() - syncedAt.getTime()) : ''}</>
-                    : <>Live from the booking system — {staffed.label.toLowerCase()} · synced {syncedAt ? ago(Date.now() - syncedAt.getTime()) : '…'}</>
-                  : 'Live class feed unavailable right now — booking still works in the app'}</p>
+                <h3>{booking ? 'Member sign-in' : live ? 'Today at the studio' : failed ? 'Book your session' : 'Reading the timetable…'}</h3>
+                <p>{booking
+                  ? <>The studio&rsquo;s own member portal — sign in to book your sauna, classes and more</>
+                  : live
+                    ? failed
+                      ? <>Feed dropped — showing last sync {syncedAt ? ago(Date.now() - syncedAt.getTime()) : ''}</>
+                      : <>Live from the booking system — {staffed.label.toLowerCase()} · synced {syncedAt ? ago(Date.now() - syncedAt.getTime()) : '…'}</>
+                    : 'Live class feed unavailable right now — booking still works in the app'}</p>
               </div>
             </div>
-            {windows && (
+            {booking ? (
+              <div className="sauna-book-pane">
+                <iframe
+                  className="sauna-book-frame"
+                  src={PORTAL_SIGNIN}
+                  title="Transform Active member portal — sign in to book the sauna"
+                />
+                <div className="sauna-book-foot">
+                  <button type="button" className="sauna-book-back" onClick={() => setBooking(false)}><ArrowLeft size={13} aria-hidden="true" /> Back to today&rsquo;s timetable</button>
+                  <a className="text-link-light" href={PORTAL_SIGNIN} target="_blank" rel="noopener noreferrer">Open portal in a new tab <ArrowUpRight size={12} aria-hidden="true" /></a>
+                </div>
+              </div>
+            ) : (
               <>
-                <WindowList windows={windows.today} emptyNote="Classes are done for today — tomorrow's windows are below." />
-                {windows.tomorrow.length > 0 && (
+                {windows && (
                   <>
-                    <p className="sauna-live-sub">Tomorrow</p>
-                    <WindowList windows={windows.tomorrow} emptyNote="" />
+                    <WindowList windows={windows.today} emptyNote="Classes are done for today — tomorrow's windows are below." />
+                    {windows.tomorrow.length > 0 && (
+                      <>
+                        <p className="sauna-live-sub">Tomorrow</p>
+                        <WindowList windows={windows.tomorrow} emptyNote="" />
+                      </>
+                    )}
                   </>
                 )}
+                <div className="sauna-live-actions">
+                  <Button size="lg" variant="light" onClick={() => setBooking(true)}>Sign in &amp; book <ArrowUpRight aria-hidden="true" /></Button>
+                  <p>member login for sauna, classes &amp; memberships — or grab the app: <a className="text-link-light" href={STUDIO.appStore} target="_blank" rel="noopener noreferrer">Apple</a> · <a className="text-link-light" href={STUDIO.playStore} target="_blank" rel="noopener noreferrer">Google Play</a></p>
+                </div>
               </>
             )}
-            <div className="sauna-live-actions">
-              <Button asChild size="lg" variant="light"><a href={STUDIO.bookClasses} target="_blank" rel="noopener noreferrer">Book in the member portal <ArrowUpRight aria-hidden="true" /></a></Button>
-              <p>or grab the app — <a className="text-link-light" href={STUDIO.appStore} target="_blank" rel="noopener noreferrer">Apple</a> · <a className="text-link-light" href={STUDIO.playStore} target="_blank" rel="noopener noreferrer">Google Play</a></p>
-            </div>
           </Reveal>
         </div>
         <Reveal className="sauna-fineprint">

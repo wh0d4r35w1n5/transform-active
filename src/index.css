@@ -501,6 +501,12 @@ select.form-input { text-overflow: ellipsis; padding-right: 25px; }
 .sauna-window-time { font-size: 10.5px; color: #0b7a6f; font-weight: 600; white-space: nowrap; }
 .sauna-spots { font-size: 9px; font-weight: 600; letter-spacing: 0.05em; color: #0b7a6f; background: #0b7a6f14; padding: 4px 9px; border-radius: 20px; white-space: nowrap; }
 .sauna-spots.is-full { color: #a3492f; background: #a3492f14; }
+.sauna-book-pane { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.sauna-book-frame { width: 100%; flex: 1; min-height: 540px; border: 0; border-radius: 14px; background: #fff; }
+.sauna-book-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 12px; }
+.sauna-book-back { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; color: var(--muted); font-family: inherit; font-size: 10.5px; cursor: pointer; padding: 4px 0; }
+.sauna-book-back:hover { color: var(--ink); }
+.sauna-book-foot .text-link-light { color: #0b7a6f; border-bottom-color: #0b7a6f55; font-size: 10.5px; display: inline-flex; align-items: center; gap: 4px; }
 .sauna-live-actions { margin-top: auto; padding-top: 20px; text-align: center; }
 .sauna-live-actions .button { font-size: 11px; height: 44px; }
 .sauna-live-actions p { font-size: 10px; color: var(--muted); margin-top: 11px; }
