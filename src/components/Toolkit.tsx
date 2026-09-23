@@ -6,7 +6,7 @@ import { Input } from './ui/input'
 import { cn } from '../lib/utils'
 import {
   activityLevels, bmiCategory, bmiFor, bmiLabels, books, buildMealPlan, buildRoutine,
-  clearSavedBody, dailyNeeds, dietFocuses, gymPlaylistMoods, loadSavedBody, mealBase,
+  bookCover, clearSavedBody, dailyNeeds, dietFocuses, gymPlaylistMoods, loadSavedBody, mealBase,
   mealExtras, mealProteins, mealSauces, mealVeg, planNutrition, recipes, routineGoals,
   routineLevels, saveBody, shoppingListSections, dealFresh, shufflePick, smoothieBases, smoothieBoosts, smoothieFruits,
   spotifySearch, trackList, videos, yogaPlaylistMoods, defaultShowId, radioShows,
@@ -775,6 +775,18 @@ function PlaylistBuilder({ moods, playlistName }: { moods: PlaylistMood[]; playl
 
 // ---- Books & videos ---------------------------------------------------------
 
+function BookCover({ book }: { book: (typeof books)[number] }) {
+  const [failed, setFailed] = useState(false)
+  if (failed) {
+    return <div className="book-cover book-cover--text" aria-hidden="true"><span>{book.title}</span><em>{book.author}</em></div>
+  }
+  return (
+    <div className="book-cover">
+      <img src={bookCover(book.isbn)} alt="" loading="lazy" decoding="async" onError={() => setFailed(true)} />
+    </div>
+  )
+}
+
 function BookShelf() {
   const [dealt, setDealt] = useState<{ pick: typeof books; seen: typeof books } | null>(null)
   const shown = dealt?.pick ?? books.slice(0, 6)
@@ -786,7 +798,7 @@ function BookShelf() {
       <div className="book-grid">
         {shown.map((book) => (
         <article key={book.title} className="book-card">
-          <div className="book-cover" aria-hidden="true"><span>{book.title}</span><em>{book.author}</em></div>
+          <BookCover book={book} />
           <div className="book-info">
             <span className="tiny-label">{book.category} · {book.year}</span>
             <h4>{book.title}</h4>
@@ -837,7 +849,7 @@ export function Toolkit() {
     <section id="toolkit" className="section toolkit-section">
       <div className="container">
         <SectionHeading eyebrow="Free for everyone" title={<>The Active Life<br className="desktop-break" /> Toolkit</>}>
-          Ten free tools to back up your training — meal planning, recipes, routines, playlists and more. No account, no sign-up, and nothing you enter leaves this page.
+          Eleven free tools to back up your training — meal planning, recipes, routines, playlists and more. No account, no sign-up, and nothing you enter leaves this page.
         </SectionHeading>
         <Reveal>
           <div className="tool-picker" role="group" aria-label="Choose a tool">

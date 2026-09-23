@@ -229,7 +229,7 @@ test.describe('toolkit UI', () => {
     await expect(toolkit.locator('.builder-result h4')).toContainText('smoothie')
     // Playlists draw a fresh cut of ten from deeper pools.
     await toolkit.getByRole('button', { name: /Gym Playlist/ }).click()
-    await expect(toolkit.locator('.playlist-head')).toContainText('of 24 tracks')
+    await expect(toolkit.locator('.playlist-head')).toContainText('of 40 tracks')
     let changed = false
     for (let attempt = 0; attempt < 6 && !changed; attempt += 1) {
       const before = await toolkit.locator('.track-list li').allTextContents()
